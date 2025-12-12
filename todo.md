@@ -181,9 +181,12 @@
 - [x] Generate Fake Script Cap in black, white, navy, red
 - [x] Upload all variant images to S3
 - [x] Update productImages table with all variants
-- [ ] Debug tRPC data flow to identify why frontend doesn't receive images array
-- [ ] Fix color variant switching implementation
-- [ ] Test color switching on all products with variants
+- [x] Debug tRPC data flow to identify why frontend doesn't receive images array
+- [x] Fix color variant switching implementation (PRIORITY)
+- [x] Debug getDisplayImage() function in ProductDetail.tsx
+- [x] Ensure selectedColor state properly updates image display
+- [x] Test color switching on all products with variants
+- [x] Remove debug UI after fixing
 
 ## SEO Implementation
 - [x] Create SEO utility functions for meta tags generation

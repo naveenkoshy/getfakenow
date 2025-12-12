@@ -173,25 +173,6 @@ export default function ProductDetail() {
       </header>
 
       <div className="container py-8">
-        {/* Debug Info */}
-        {product && (
-          <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
-            <h3 className="font-bold">Debug Info:</h3>
-            <p>Product has images: {product.images ? 'YES' : 'NO'}</p>
-            <p>Images count: {product.images?.length || 0}</p>
-            <p>Selected color: {selectedColor}</p>
-            {product.images && product.images.length > 0 && (
-              <div>
-                <p className="font-semibold mt-2">Available colors:</p>
-                <ul>
-                  {product.images.map((img: any) => (
-                    <li key={img.id}>{img.color}: {img.imageUrl}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
         <Button variant="ghost" onClick={() => setLocation("/products")} className="mb-6">
           ← Back to Shop
         </Button>
@@ -229,25 +210,31 @@ export default function ProductDetail() {
 
             {product.stockQuantity > 0 ? (
               <div className="space-y-6">
-                {/* Color Selection */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Color:</label>
-                  <div className="flex gap-3">
-                    {(['black', 'white', 'navy', 'red'] as const).map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`w-12 h-12 rounded-full border-2 transition-all ${
-                          selectedColor === color ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                        style={{
-                          backgroundColor: color === 'navy' ? '#1e3a8a' : color,
-                        }}
-                        title={color.charAt(0).toUpperCase() + color.slice(1)}
-                      />
-                    ))}
+                {/* Color Selection - Only show available colors */}
+                {product.images && product.images.length > 0 && (
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Color:</label>
+                    <div className="flex gap-3">
+                      {product.images.map((img: any) => {
+                        const colorName = img.color?.toLowerCase() || 'black';
+                        const colorHex = colorName === 'navy' ? '#1e3a8a' : colorName;
+                        return (
+                          <button
+                            key={img.id}
+                            onClick={() => setSelectedColor(colorName)}
+                            className={`w-12 h-12 rounded-full border-2 transition-all ${
+                              selectedColor === colorName ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-gray-300 hover:border-gray-400'
+                            }`}
+                            style={{
+                              backgroundColor: colorHex,
+                            }}
+                            title={img.color?.charAt(0).toUpperCase() + img.color?.slice(1)}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Size Selection */}
                 <div>
