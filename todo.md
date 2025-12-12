@@ -157,3 +157,12 @@
 - [x] Upload hoodie image to S3
 - [x] Update database with hoodie image URL
 - [x] Verify hoodie image displays correctly on all pages
+
+## E-Commerce Policy Pages
+- [x] Create Privacy Policy page with PDPA compliance
+- [x] Create Shipping Policy page with Malaysian shipping details
+- [x] Create Returns & Refunds Policy page
+- [x] Create Terms of Service page
+- [x] Add policy routes to App.tsx
+- [x] Update footer with policy links
+- [x] Verify all policy pages display correctly

@@ -15,6 +15,10 @@ import Orders from "./pages/Orders";
 import Admin from "./pages/Admin";
 import Casual from "./pages/Casual";
 import Professional from "./pages/Professional";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import ReturnsPolicy from "./pages/ReturnsPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function Router() {
   return (
@@ -30,6 +34,10 @@ function Router() {
       <Route path="/account" component={Account} />
       <Route path="/orders" component={Orders} />
       <Route path="/admin" component={Admin} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/shipping-policy" component={ShippingPolicy} />
+      <Route path="/returns-policy" component={ReturnsPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -229,9 +229,10 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Contact</a></li>
-                <li><a href="#" className="hover:text-foreground">Shipping</a></li>
-                <li><a href="#" className="hover:text-foreground">Returns</a></li>
+                <li><Link href="/shipping-policy" className="hover:text-foreground">Shipping Policy</Link></li>
+                <li><Link href="/returns-policy" className="hover:text-foreground">Returns & Refunds</Link></li>
+                <li><Link href="/privacy-policy" className="hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/terms-of-service" className="hover:text-foreground">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
