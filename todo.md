@@ -181,4 +181,23 @@
 - [x] Generate Fake Script Cap in black, white, navy, red
 - [x] Upload all variant images to S3
 - [x] Update productImages table with all variants
-- [ ] Fix color variant switching (backend API returns data correctly, frontend tRPC integration needs debugging)
+- [ ] Debug tRPC data flow to identify why frontend doesn't receive images array
+- [ ] Fix color variant switching implementation
+- [ ] Test color switching on all products with variants
+
+## SEO Implementation
+- [x] Create SEO utility functions for meta tags generation
+- [x] Add meta tags component with title, description, Open Graph, Twitter Cards
+- [x] Implement product schema (JSON-LD) with price, availability, brand, SKU
+- [x] Implement organization schema with logo and social profiles
+- [x] Implement breadcrumb schema for navigation
+- [x] Add local business markup for Malaysian business
+- [x] Generate XML sitemap with all product and page URLs
+- [x] Create robots.txt configuration
+- [x] Add canonical URLs to all pages
+- [x] Optimize all product images with descriptive alt text
+- [x] Ensure semantic HTML structure with proper heading hierarchy
+- [ ] Add structured data for product reviews and ratings (future)
+- [x] Implement image metadata optimization
+- [x] Test structured data with Google Rich Results Test
+- [x] Verify sitemap accessibility and format

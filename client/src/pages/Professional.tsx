@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Search, ShoppingCart, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
 export default function Professional() {
   const { isAuthenticated } = useAuth();
@@ -24,6 +25,27 @@ export default function Professional() {
   });
   
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
+
+  // SEO: Update meta tags
+  useEffect(() => {
+    updateMetaTags({
+      title: 'Professional Collection',
+      description: 'Refined workwear. Oxford button-downs. Chambray shirts. Nordic minimalism meets Malaysian craft. Clothes that work.',
+      image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
+      url: 'https://getfakenow.com/professional',
+      type: 'website',
+    });
+
+    const breadcrumbSchema = generateBreadcrumbSchema([
+      { name: 'Home', url: 'https://getfakenow.com' },
+      { name: 'Professional', url: 'https://getfakenow.com/professional' },
+    ]);
+    injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
+
+    return () => {
+      removeStructuredData('breadcrumb-schema');
+    };
+  }, []);
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
 

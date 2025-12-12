@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Search, ShoppingCart, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
 export default function Casual() {
   const { isAuthenticated } = useAuth();
@@ -24,6 +25,27 @@ export default function Casual() {
   });
   
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
+
+  // SEO: Update meta tags
+  useEffect(() => {
+    updateMetaTags({
+      title: 'Casual Collection',
+      description: "Streetwear that doesn't try too hard. Graphic tees with one-liners. Hoodies with embroidered logos. Joggers and caps. Wear it your way.",
+      image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
+      url: 'https://getfakenow.com/casual',
+      type: 'website',
+    });
+
+    const breadcrumbSchema = generateBreadcrumbSchema([
+      { name: 'Home', url: 'https://getfakenow.com' },
+      { name: 'Casual', url: 'https://getfakenow.com/casual' },
+    ]);
+    injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
+
+    return () => {
+      removeStructuredData('breadcrumb-schema');
+    };
+  }, []);
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
 

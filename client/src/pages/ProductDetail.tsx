@@ -5,9 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Minus, Plus, ShoppingCart, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
+import { updateMetaTags, injectStructuredData, generateProductSchema, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -18,6 +19,55 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('black');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
+
+  // SEO: Update meta tags and inject structured data when product loads
+  useEffect(() => {
+    if (!product) return;
+
+    // Generate cool copywriter-style description
+    const seoDescription = `${product.name}. ${product.description?.split('.')[0] || 'Quality apparel from Fake by Freetown'}. Get yours now.`;
+
+    updateMetaTags({
+      title: product.name,
+      description: seoDescription,
+      image: product.imageUrl || undefined,
+      url: `https://getfakenow.com/product/${product.slug}`,
+      type: 'product',
+      price: product.price,
+      currency: 'MYR',
+      availability: product.stockQuantity > 0 ? 'in stock' : 'out of stock',
+      brand: 'Fake by Freetown',
+      sku: product.id.toString(),
+    });
+
+    // Inject product structured data
+    const productSchema = generateProductSchema({
+      name: product.name,
+      description: product.description || 'Quality apparel from Fake by Freetown',
+      image: product.imageUrl || 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
+      price: product.price / 100,
+      currency: 'MYR',
+      availability: product.stockQuantity > 0 ? 'in stock' : 'out of stock',
+      brand: 'Fake by Freetown',
+      sku: product.id.toString(),
+      url: `https://getfakenow.com/product/${product.slug}`,
+    });
+    injectStructuredData(productSchema, 'product-schema');
+
+    // Inject breadcrumb structured data
+    const breadcrumbSchema = generateBreadcrumbSchema([
+      { name: 'Home', url: 'https://getfakenow.com' },
+      { name: 'Shop', url: 'https://getfakenow.com/shop' },
+      { name: product.name, url: `https://getfakenow.com/product/${product.slug}` },
+    ]);
+    injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
+
+    // Cleanup function to remove structured data when component unmounts
+    return () => {
+      removeStructuredData('product-schema');
+      removeStructuredData('breadcrumb-schema');
+    };
+  }, [product]);
   
   // Get the image URL based on selected color
   const getDisplayImage = () => {
@@ -123,6 +173,25 @@ export default function ProductDetail() {
       </header>
 
       <div className="container py-8">
+        {/* Debug Info */}
+        {product && (
+          <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+            <h3 className="font-bold">Debug Info:</h3>
+            <p>Product has images: {product.images ? 'YES' : 'NO'}</p>
+            <p>Images count: {product.images?.length || 0}</p>
+            <p>Selected color: {selectedColor}</p>
+            {product.images && product.images.length > 0 && (
+              <div>
+                <p className="font-semibold mt-2">Available colors:</p>
+                <ul>
+                  {product.images.map((img: any) => (
+                    <li key={img.id}>{img.color}: {img.imageUrl}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
         <Button variant="ghost" onClick={() => setLocation("/products")} className="mb-6">
           ← Back to Shop
         </Button>
@@ -133,7 +202,7 @@ export default function ProductDetail() {
             {getDisplayImage() ? (
               <img
                 src={getDisplayImage()}
-                alt={product.name}
+                alt={`${product.name} in ${selectedColor || 'default'} color - ${product.description?.split('.')[0] || 'Fake by Freetown apparel'}`}
                 className="w-full h-full object-cover transition-opacity duration-300"
                 key={selectedColor} // Force re-render on color change
               />

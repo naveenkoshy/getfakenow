@@ -5,11 +5,27 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { ShoppingCart, User, Search } from "lucide-react";
 import { Link } from "wouter";
+import { useEffect } from "react";
+import { updateMetaTags, injectStructuredData, generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: products, isLoading } = trpc.products.list.useQuery({ featured: true });
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
+
+  // SEO: Update meta tags and inject structured data
+  useEffect(() => {
+    updateMetaTags({
+      title: 'Fake by Freetown',
+      description: "It's all fake. Malaysian streetwear and workwear that doesn't pretend. Graphic tees, hoodies, shirts that last. Real clothes for people who get it.",
+      image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
+      url: 'https://getfakenow.com',
+      type: 'website',
+    });
+
+    injectStructuredData(generateOrganizationSchema(), 'org-schema');
+    injectStructuredData(generateWebSiteSchema(), 'website-schema');
+  }, []);
 
   const formatPrice = (cents: number) => {
     return `RM${(cents / 100).toFixed(2)}`;
@@ -135,7 +151,7 @@ export default function Home() {
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
-                          alt={product.name}
+                          alt={`${product.name} - ${product.description?.split('.')[0] || 'Fake by Freetown apparel'}`}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
