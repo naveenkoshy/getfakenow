@@ -43,9 +43,9 @@
 }
 
 :root {
-  --primary: oklch(0.35 0.08 265); /* Classic indigo denim blue */
+  --primary: oklch(0.55 0.22 25); /* Vibrant red brand color */
   --primary-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.35 0.08 265);
+  --sidebar-primary: oklch(0.55 0.22 25);
   --sidebar-primary-foreground: oklch(1 0 0);
   --chart-1: oklch(0.75 0.15 25);
   --chart-2: oklch(0.65 0.18 25);
