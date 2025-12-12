@@ -173,3 +173,12 @@
 - [x] Generate missing product images
 - [x] Ensure all images are uploaded to S3
 - [x] Test product pages display correctly
+
+## Color Variant Images Generation
+- [x] Generate Fake Signature Hoodie in black, white, navy, red
+- [x] Generate Classic Pique Polo in black, white, navy, red
+- [x] Generate Essential Joggers in black, white, navy, red
+- [x] Generate Fake Script Cap in black, white, navy, red
+- [x] Upload all variant images to S3
+- [x] Update productImages table with all variants
+- [ ] Fix color variant switching (backend API returns data correctly, frontend tRPC integration needs debugging)

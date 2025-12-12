@@ -1,0 +1,26 @@
+{
+  "query": "\n-- Get product IDs first\nSELECT id, slug FROM products WHERE slug IN ('fake-signature-hoodie', 'classic-pique-polo', 'essential-joggers', 'fake-script-cap');\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute \n-- Get product IDs first\nSELECT id, slug FROM products WHERE slug IN ('fake-signature-hoodie', 'classic-pique-polo', 'essential-joggers', 'fake-script-cap');\n",
+  "rows": [
+    {
+      "id": "30004",
+      "slug": "fake-signature-hoodie"
+    },
+    {
+      "id": "30006",
+      "slug": "classic-pique-polo"
+    },
+    {
+      "id": "30005",
+      "slug": "essential-joggers"
+    },
+    {
+      "id": "30010",
+      "slug": "fake-script-cap"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tslug\n30004\tfake-signature-hoodie\n30006\tclassic-pique-polo\n30005\tessential-joggers\n30010\tfake-script-cap\n",
+  "stderr": "",
+  "execution_time_ms": 1531
+}

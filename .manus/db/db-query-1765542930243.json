@@ -1,0 +1,54 @@
+{
+  "query": "\nSELECT pi.*, p.name, p.slug \nFROM productImages pi\nJOIN products p ON pi.productId = p.id\nWHERE p.slug = 'fake-signature-hoodie';\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute \nSELECT pi.*, p.name, p.slug \nFROM productImages pi\nJOIN products p ON pi.productId = p.id\nWHERE p.slug = 'fake-signature-hoodie';\n",
+  "rows": [
+    {
+      "id": "30001",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-black.png",
+      "fileKey": "products/fake-signature-hoodie/hoodie-black.png",
+      "sortOrder": "0",
+      "createdAt": "2025-12-12 12:31:24",
+      "color": "Black",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie"
+    },
+    {
+      "id": "30002",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-white.png",
+      "fileKey": "products/fake-signature-hoodie/hoodie-white.png",
+      "sortOrder": "0",
+      "createdAt": "2025-12-12 12:31:24",
+      "color": "White",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie"
+    },
+    {
+      "id": "30003",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-navy.png",
+      "fileKey": "products/fake-signature-hoodie/hoodie-navy.png",
+      "sortOrder": "0",
+      "createdAt": "2025-12-12 12:31:24",
+      "color": "Navy",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie"
+    },
+    {
+      "id": "30004",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-red.png",
+      "fileKey": "products/fake-signature-hoodie/hoodie-red.png",
+      "sortOrder": "0",
+      "createdAt": "2025-12-12 12:31:24",
+      "color": "Red",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\timageUrl\tfileKey\tsortOrder\tcreatedAt\tcolor\tname\tslug\n30001\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-black.png\tproducts/fake-signature-hoodie/hoodie-black.png\t0\t2025-12-12 12:31:24\tBlack\tFake Signature Hoodie\tfake-signature-hoodie\n30002\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-white.png\tproducts/fake-signature-hoodie/hoodie-white.png\t0\t2025-12-12 12:31:24\tWhite\tFake Signature Hoodie\tfake-signature-hoodie\n30003\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-navy.png\tproducts/fake-signature-hoodie/hoodie-navy.png\t0\t2025-12-12 12:31:24\tNavy\tFake Signature Hoodie\tfake-signature-hoodie\n30004\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie/hoodie-red.png\tproducts/fake-signature-hoodie/hoodie-red.png\t0\t2025-12-12 12:31:24\tRed\tFake Signature Hoodie\tfake-signature-hoodie\n",
+  "stderr": "",
+  "execution_time_ms": 1515
+}

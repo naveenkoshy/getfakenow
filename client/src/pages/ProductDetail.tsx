@@ -15,7 +15,7 @@ export default function ProductDetail() {
   const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L' | 'XL' | 'XXL' | ''>('');
-  const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('');
+  const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('black');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
   
@@ -24,8 +24,10 @@ export default function ProductDetail() {
     if (!product) return '';
     if (!selectedColor) return product.imageUrl || '';
     
-    // Find image matching selected color
-    const variantImage = product.images?.find(img => img.color === selectedColor);
+    // Find image matching selected color (case-insensitive)
+    const variantImage = product.images?.find(img => 
+      img.color?.toLowerCase() === selectedColor.toLowerCase()
+    );
     return variantImage?.imageUrl || product.imageUrl || '';
   };
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
