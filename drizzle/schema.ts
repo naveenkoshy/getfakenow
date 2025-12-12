@@ -63,6 +63,7 @@ export const productImages = mysqlTable("productImages", {
   productId: int("productId").notNull(),
   imageUrl: text("imageUrl").notNull(),
   fileKey: text("fileKey").notNull(),
+  color: varchar("color", { length: 20 }), // Color variant: black, white, navy, red, or null for default
   sortOrder: int("sortOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

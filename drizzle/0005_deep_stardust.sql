@@ -1,0 +1,1 @@
+ALTER TABLE `productImages` ADD `color` varchar(20);

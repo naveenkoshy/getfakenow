@@ -18,6 +18,16 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
+  
+  // Get the image URL based on selected color
+  const getDisplayImage = () => {
+    if (!product) return '';
+    if (!selectedColor) return product.imageUrl || '';
+    
+    // Find image matching selected color
+    const variantImage = product.images?.find(img => img.color === selectedColor);
+    return variantImage?.imageUrl || product.imageUrl || '';
+  };
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
   
   const addToCartMutation = trpc.cart.add.useMutation({
@@ -118,11 +128,12 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-            {product.imageUrl ? (
+            {getDisplayImage() ? (
               <img
-                src={product.imageUrl}
+                src={getDisplayImage()}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-opacity duration-300"
+                key={selectedColor} // Force re-render on color change
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground">

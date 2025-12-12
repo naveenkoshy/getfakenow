@@ -125,3 +125,10 @@
 - [x] Upload all generated product images to S3 storage
 - [x] Update database products table with S3 image URLs
 - [x] Verify images display correctly on product pages
+
+## Color Variant Image Switching
+- [ ] Generate product images for all color variants (black, white, navy, red)
+- [x] Add color field to product_images table to link images to color variants
+- [x] Map existing variant images to products in database
+- [x] Update product detail page to switch images on color click
+- [x] Test color variant switching functionality
