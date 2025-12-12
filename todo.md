@@ -85,3 +85,9 @@
 - [x] Change "Fake" logo color to red in header
 - [x] Update button colors to red throughout the site
 - [x] Ensure all brand touchpoints use red as primary color
+
+## Copy Revisions
+- [x] Revise hero section copy to be more direct and understated
+- [x] Update brand story section with authentic streetwear voice
+- [x] Remove flowery marketing language throughout site
+- [x] Match tone of premium streetwear brands (Supreme, Stüssy, Carhartt WIP)

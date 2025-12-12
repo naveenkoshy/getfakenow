@@ -86,8 +86,8 @@ export default function Home() {
               <span className="brand-cursive text-primary">Fake</span> it till you make it
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Elevated apparel for the modern professional and the playful spirit. 
-              From boardroom-ready shirts to statement tees that spark conversation.
+              Quality apparel for work and weekends. 
+              Made to last, designed to move.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-base">
@@ -107,7 +107,7 @@ export default function Home() {
           <div className="flex items-end justify-between mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Featured</h2>
-              <p className="text-muted-foreground">Handpicked pieces for this season</p>
+              <p className="text-muted-foreground">New arrivals</p>
             </div>
             <Button asChild variant="ghost">
               <Link href="/products">View All →</Link>
@@ -166,25 +166,25 @@ export default function Home() {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
-              Two Sides, One Brand
+              Built Different
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              <span className="brand-cursive text-primary text-2xl">Fake</span> by Freetown embodies duality. 
-              Bold red tees with cursive confidence for your weekend adventures. 
-              Crisp white shirts with Nordic minimalism for your professional presence. 
-              Both authentic, both you.
+              <span className="brand-cursive text-primary text-2xl">Fake</span> by Freetown. 
+              Graphic tees and hoodies for the street. 
+              Oxford shirts and chambray for the office. 
+              Same quality, different contexts.
             </p>
             <div className="grid md:grid-cols-2 gap-8 mt-12">
               <div className="p-6 bg-primary/5 rounded-lg">
-                <h3 className="font-semibold text-lg mb-2">Playful Spirit</h3>
+                <h3 className="font-semibold text-lg mb-2">Casual</h3>
                 <p className="text-muted-foreground">
-                  Statement pieces that celebrate individuality and spark conversation
+                  Heavyweight cotton. Screen-printed graphics. Built to last.
                 </p>
               </div>
               <div className="p-6 bg-gray-100 rounded-lg">
-                <h3 className="font-semibold text-lg mb-2">Professional Edge</h3>
+                <h3 className="font-semibold text-lg mb-2">Professional</h3>
                 <p className="text-muted-foreground">
-                  Refined essentials designed for the modern workplace
+                  Premium fabrics. Clean construction. Work-ready.
                 </p>
               </div>
             </div>
