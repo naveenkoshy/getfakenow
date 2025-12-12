@@ -120,6 +120,7 @@ export const appRouter = router({
         productId: z.number(),
         quantity: z.number().min(1).default(1),
         size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
+        color: z.enum(['black', 'white', 'navy', 'red']),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if product exists and has stock
@@ -137,6 +138,7 @@ export const appRouter = router({
           productId: input.productId,
           quantity: input.quantity,
           size: input.size,
+          color: input.color,
         });
         
         return { success: true };
@@ -228,6 +230,7 @@ export const appRouter = router({
             productPrice: item.product.price,
             quantity: item.quantity,
             size: item.size,
+            color: item.color,
             subtotal: item.product.price * item.quantity,
           });
         }

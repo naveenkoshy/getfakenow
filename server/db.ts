@@ -234,6 +234,7 @@ export async function getCartItems(userId: number) {
       productId: cartItems.productId,
       quantity: cartItems.quantity,
       size: cartItems.size,
+      color: cartItems.color,
       createdAt: cartItems.createdAt,
       updatedAt: cartItems.updatedAt,
       product: products,

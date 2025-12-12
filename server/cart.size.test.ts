@@ -46,6 +46,7 @@ describe("cart.add with size selection", () => {
       productId: products[0].id,
       quantity: 1,
       size: "M",
+      color: "black",
     });
 
     expect(result).toEqual({ success: true });

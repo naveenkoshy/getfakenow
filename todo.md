@@ -99,3 +99,12 @@
 - [x] Update cart display to show selected sizes
 - [x] Update checkout to include size information in orders
 - [x] Write tests for size selection functionality
+
+## Color Selection Feature
+- [x] Add color field to cart_items table schema
+- [x] Add color field to order_items table schema
+- [x] Update cart procedures to accept and store color
+- [x] Add color swatch UI to ProductDetail page (black, white, navy, red)
+- [x] Update cart display to show selected colors
+- [x] Update checkout to include color information in orders
+- [x] Write tests for color selection functionality

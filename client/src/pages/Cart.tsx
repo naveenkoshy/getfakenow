@@ -120,9 +120,20 @@ export default function Cart() {
                         <p className="text-sm text-muted-foreground mt-1">
                           {formatPrice(item.product?.price || 0)}
                         </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Size: <span className="font-medium">{item.size}</span>
-                        </p>
+                        <div className="flex gap-4 mt-1">
+                          <p className="text-sm text-muted-foreground">
+                            Size: <span className="font-medium">{item.size}</span>
+                          </p>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            Color: 
+                            <span
+                              className="inline-block w-4 h-4 rounded-full border border-gray-300"
+                              style={{ backgroundColor: item.color === 'navy' ? '#1e3a8a' : item.color }}
+                              title={item.color.charAt(0).toUpperCase() + item.color.slice(1)}
+                            />
+                            <span className="font-medium">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span>
+                          </p>
+                        </div>
 
                         <div className="flex items-center gap-4 mt-4">
                           <div className="flex items-center gap-2">

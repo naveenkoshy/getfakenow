@@ -79,6 +79,7 @@ export const cartItems = mysqlTable("cartItems", {
   productId: int("productId").notNull(),
   quantity: int("quantity").notNull(),
   size: varchar("size", { length: 10 }).notNull(), // S, M, L, XL, XXL
+  color: varchar("color", { length: 20 }).notNull(), // black, white, navy, red
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -116,6 +117,7 @@ export const orderItems = mysqlTable("orderItems", {
   productPrice: int("productPrice").notNull(), // Store price at time of purchase (in cents)
   quantity: int("quantity").notNull(),
   size: varchar("size", { length: 10 }).notNull(), // Store size at time of purchase
+  color: varchar("color", { length: 20 }).notNull(), // Store color at time of purchase
   subtotal: int("subtotal").notNull(), // quantity * price (in cents)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

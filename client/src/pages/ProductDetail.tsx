@@ -15,6 +15,7 @@ export default function ProductDetail() {
   const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L' | 'XL' | 'XXL' | ''>('');
+  const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
@@ -39,8 +40,12 @@ export default function ProductDetail() {
       toast.error('Please select a size');
       return;
     }
+    if (!selectedColor) {
+      toast.error('Please select a color');
+      return;
+    }
     if (product) {
-      addToCartMutation.mutate({ productId: product.id, quantity, size: selectedSize });
+      addToCartMutation.mutate({ productId: product.id, quantity, size: selectedSize, color: selectedColor });
     }
   };
 
@@ -142,6 +147,26 @@ export default function ProductDetail() {
 
             {product.stockQuantity > 0 ? (
               <div className="space-y-6">
+                {/* Color Selection */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Color:</label>
+                  <div className="flex gap-3">
+                    {(['black', 'white', 'navy', 'red'] as const).map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-12 h-12 rounded-full border-2 transition-all ${
+                          selectedColor === color ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                        style={{
+                          backgroundColor: color === 'navy' ? '#1e3a8a' : color,
+                        }}
+                        title={color.charAt(0).toUpperCase() + color.slice(1)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
                 {/* Size Selection */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Size:</label>
