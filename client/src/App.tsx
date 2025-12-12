@@ -13,12 +13,16 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import Account from "./pages/Account";
 import Orders from "./pages/Orders";
 import Admin from "./pages/Admin";
+import Casual from "./pages/Casual";
+import Professional from "./pages/Professional";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/products" component={Products} />
+      <Route path="/shop" component={Products} />
+      <Route path="/casual" component={Casual} />
+      <Route path="/professional" component={Professional} />
       <Route path="/product/:slug" component={ProductDetail} />
       <Route path="/cart" component={Cart} />
       <Route path="/checkout" component={Checkout} />

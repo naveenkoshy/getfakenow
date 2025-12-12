@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, name, slug FROM products WHERE name LIKE '%hoodie%' OR name LIKE '%Hoodie%'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM products WHERE name LIKE '%hoodie%' OR name LIKE '%Hoodie%'",
+  "rows": [
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\n30004\tFake Signature Hoodie\tfake-signature-hoodie\n",
+  "stderr": "",
+  "execution_time_ms": 1700
+}

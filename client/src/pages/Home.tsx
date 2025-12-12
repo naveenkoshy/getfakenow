@@ -31,20 +31,20 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/shop" className="text-sm font-medium hover:text-primary transition-colors">
                 Shop
               </Link>
-              <Link href="/products?category=casual" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/casual" className="text-sm font-medium hover:text-primary transition-colors">
                 Casual
               </Link>
-              <Link href="/products?category=professional" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/professional" className="text-sm font-medium hover:text-primary transition-colors">
                 Professional
               </Link>
             </nav>
 
             {/* Actions */}
             <div className="flex items-center gap-4">
-              <Link href="/products">
+              <Link href="/shop">
                 <Button variant="ghost" size="icon">
                   <Search className="h-5 w-5" />
                 </Button>
@@ -91,10 +91,10 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-base">
-                <Link href="/products">Shop Now</Link>
+                <Link href="/shop">Shop Now</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-base">
-                <Link href="/products?featured=true">Featured Collection</Link>
+                <Link href="/shop?featured=true">Featured Collection</Link>
               </Button>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function Home() {
               <p className="text-muted-foreground">New arrivals</p>
             </div>
             <Button asChild variant="ghost">
-              <Link href="/products">View All →</Link>
+              <Link href="/shop">View All →</Link>
             </Button>
           </div>
 

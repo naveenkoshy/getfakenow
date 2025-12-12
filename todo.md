@@ -144,3 +144,10 @@
 - [x] Identify products without images
 - [x] Generate images for products missing photos
 - [x] Upload new images to S3 and update database
+
+## Collection Pages
+- [x] Create Casual collection page component
+- [x] Create Professional collection page component
+- [x] Add collection routes to App.tsx
+- [x] Update navigation to include Casual and Professional links
+- [x] Update hoodie product name to "Fake Signature Hoodie"
