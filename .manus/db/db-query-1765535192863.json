@@ -1,0 +1,13 @@
+{
+  "query": "SHOW TABLES LIKE '%image%'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SHOW TABLES LIKE '%image%'",
+  "rows": [
+    {
+      "Tables_in_mnC6672QxsyxZGLVMrqTHR (%image%)": "productImages"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_mnC6672QxsyxZGLVMrqTHR (%image%)\nproductImages\n",
+  "stderr": "",
+  "execution_time_ms": 1576
+}

@@ -1,0 +1,115 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.categoryId, c.name as categoryName FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.categoryId, p.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.categoryId, c.name as categoryName FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.categoryId, p.name",
+  "rows": [
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "categoryId": "30001",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "categoryId": "30002",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "slug": "heritage-chambray",
+      "categoryId": "30002",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "slug": "indigo-chambray",
+      "categoryId": "30002",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "categoryId": "30002",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "slug": "white-oxford-shirt",
+      "categoryId": "30002",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "categoryId": "30003",
+      "categoryName": "Accessories"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategoryId\tcategoryName\n30006\tClassic Pique Polo\tclassic-pique-polo\t30001\tCasual\n30003\tConfidence Tee\tconfidence-tee\t30001\tCasual\n30005\tEssential Joggers\tessential-joggers\t30001\tCasual\n30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\tCasual\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\tCasual\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\tCasual\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\tCasual\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\tCasual\n30002\tTill You Make It Tee\ttill-you-make-it-tee\t30001\tCasual\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t30002\tProfessional\n60005\tHeritage Chambray\theritage-chambray\t30002\tProfessional\n60006\tIndigo Chambray\tindigo-chambray\t30002\tProfessional\n30008\tLight Blue Oxford\tlight-blue-oxford\t30002\tProfessional\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\t30002\tProfessional\n30010\tFake Script Cap\tfake-script-cap\t30003\tAccessories\n",
+  "stderr": "",
+  "execution_time_ms": 1615
+}

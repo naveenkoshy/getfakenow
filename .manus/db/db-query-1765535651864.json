@@ -1,0 +1,28 @@
+{
+  "query": "SELECT p.categoryId, c.name as categoryName, c.slug, MIN(p.name) as sampleProduct FROM products p JOIN categories c ON p.categoryId = c.id WHERE p.active = 1 GROUP BY p.categoryId, c.name, c.slug ORDER BY p.categoryId",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.categoryId, c.name as categoryName, c.slug, MIN(p.name) as sampleProduct FROM products p JOIN categories c ON p.categoryId = c.id WHERE p.active = 1 GROUP BY p.categoryId, c.name, c.slug ORDER BY p.categoryId",
+  "rows": [
+    {
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual",
+      "sampleProduct": "Classic Pique Polo"
+    },
+    {
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional",
+      "sampleProduct": "Classic Chambray Work Shirt"
+    },
+    {
+      "categoryId": "30003",
+      "categoryName": "Accessories",
+      "slug": "accessories",
+      "sampleProduct": "Fake Script Cap"
+    }
+  ],
+  "messages": [],
+  "stdout": "categoryId\tcategoryName\tslug\tsampleProduct\n30001\tCasual\tcasual\tClassic Pique Polo\n30002\tProfessional\tprofessional\tClassic Chambray Work Shirt\n30003\tAccessories\taccessories\tFake Script Cap\n",
+  "stderr": "",
+  "execution_time_ms": 1513
+}

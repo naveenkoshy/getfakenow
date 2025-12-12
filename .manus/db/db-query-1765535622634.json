@@ -1,0 +1,115 @@
+{
+  "query": "SELECT p.id, p.name, p.categoryId, c.name as categoryName, c.slug FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE p.active = 1 ORDER BY p.categoryId, p.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.categoryId, c.name as categoryName, c.slug FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE p.active = 1 ORDER BY p.categoryId, p.name",
+  "rows": [
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "categoryId": "30001",
+      "categoryName": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "categoryId": "30002",
+      "categoryName": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "categoryId": "30003",
+      "categoryName": "Accessories",
+      "slug": "accessories"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcategoryId\tcategoryName\tslug\n30006\tClassic Pique Polo\t30001\tCasual\tcasual\n30003\tConfidence Tee\t30001\tCasual\tcasual\n30005\tEssential Joggers\t30001\tCasual\tcasual\n30001\tFake It Classic Tee\t30001\tCasual\tcasual\n30004\tFake Signature Hoodie\t30001\tCasual\tcasual\n60002\tFake is not Hate Tee\t30001\tCasual\tcasual\n60001\tIt's all Fake Tee\t30001\tCasual\tcasual\n60003\tLive Life. Stay Fake. Tee\t30001\tCasual\tcasual\n30002\tTill You Make It Tee\t30001\tCasual\tcasual\n30009\tClassic Chambray Work Shirt\t30002\tProfessional\tprofessional\n60005\tHeritage Chambray\t30002\tProfessional\tprofessional\n60006\tIndigo Chambray\t30002\tProfessional\tprofessional\n30008\tLight Blue Oxford\t30002\tProfessional\tprofessional\n30007\tWhite Oxford Shirt\t30002\tProfessional\tprofessional\n30010\tFake Script Cap\t30003\tAccessories\taccessories\n",
+  "stderr": "",
+  "execution_time_ms": 1517
+}

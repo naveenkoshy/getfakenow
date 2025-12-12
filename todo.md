@@ -151,3 +151,9 @@
 - [x] Add collection routes to App.tsx
 - [x] Update navigation to include Casual and Professional links
 - [x] Update hoodie product name to "Fake Signature Hoodie"
+
+## Fake Signature Hoodie Image
+- [x] Generate professional mannequin photo of Fake Signature Hoodie with embroidered logo
+- [x] Upload hoodie image to S3
+- [x] Update database with hoodie image URL
+- [x] Verify hoodie image displays correctly on all pages

@@ -1,14 +1,28 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ShoppingCart, User } from "lucide-react";
+import { Search, ShoppingCart, User } from "lucide-react";
+import { useState } from "react";
 import { Link } from "wouter";
 
 export default function Casual() {
   const { isAuthenticated } = useAuth();
-  const { data: products, isLoading } = trpc.products.list.useQuery({ categoryId: 1 }); // Casual category
+  const [search, setSearch] = useState("");
+
+  // Fetch categories and find Casual category by slug
+  const { data: categories } = trpc.categories.list.useQuery();
+  const casualCategory = categories?.find(cat => cat.slug === "casual");
+  
+  const { data: products, isLoading } = trpc.products.list.useQuery({
+    search: search || undefined,
+    categoryId: casualCategory?.id,
+  }, {
+    enabled: !!casualCategory, // Only fetch products when category is loaded
+  });
+  
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
@@ -24,11 +38,20 @@ export default function Casual() {
                 <span className="text-sm text-muted-foreground font-light">by Freetown</span>
               </div>
             </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/shop"><span className="text-sm hover:text-primary cursor-pointer transition-colors">Shop</span></Link>
-              <Link href="/casual"><span className="text-sm font-medium text-primary cursor-pointer">Casual</span></Link>
-              <Link href="/professional"><span className="text-sm hover:text-primary cursor-pointer transition-colors">Professional</span></Link>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <Link href="/shop" className="text-sm font-medium hover:text-primary transition-colors">
+                Shop
+              </Link>
+              <Link href="/casual" className="text-sm font-medium text-primary">
+                Casual
+              </Link>
+              <Link href="/professional" className="text-sm font-medium hover:text-primary transition-colors">
+                Professional
+              </Link>
             </nav>
+
             <div className="flex items-center gap-4">
               {isAuthenticated ? (
                 <>
@@ -58,12 +81,32 @@ export default function Casual() {
         </div>
       </header>
 
-      <div className="container py-12">
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold tracking-tight mb-4">Casual</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            Streetwear essentials. Graphic tees, hoodies, and everyday pieces with bold branding.
-          </p>
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-red-50 to-white py-16 md:py-20">
+        <div className="container">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4">
+              <span className="brand-cursive text-primary">Casual</span> Collection
+            </h1>
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              Graphic tees, hoodies, joggers. Heavyweight cotton, screen-printed graphics. 
+              Built for the street.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container py-8">
+        <div className="mb-8">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search casual wear..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {isLoading ? (
@@ -118,7 +161,10 @@ export default function Casual() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No casual products available</p>
+            <p className="text-muted-foreground text-lg">No casual wear products found</p>
+            <Button onClick={() => setSearch("")} className="mt-4">
+              Clear Search
+            </Button>
           </div>
         )}
       </div>

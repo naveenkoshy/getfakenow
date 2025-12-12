@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, slug, imageUrl FROM products WHERE slug = 'fake-signature-hoodie'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, imageUrl FROM products WHERE slug = 'fake-signature-hoodie'",
+  "rows": [
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "imageUrl": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\timageUrl\n30004\tFake Signature Hoodie\tfake-signature-hoodie\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1613
+}

@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO productImages (productId, imageUrl, color) SELECT id, 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.png', 'black' FROM products WHERE slug = 'classic-hoodie'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute INSERT INTO productImages (productId, imageUrl, color) SELECT id, 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.png', 'black' FROM products WHERE slug = 'classic-hoodie'",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1568
+}
