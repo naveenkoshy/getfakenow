@@ -59,3 +59,10 @@
 
 ## Deployment
 - [ ] Create final checkpoint for deployment
+
+## Design Updates - Levi's Aesthetic
+- [x] Update color scheme to classic Levi's-inspired palette (indigo, red tab accent)
+- [ ] Revise typography for heritage denim brand feel
+- [ ] Update hero section messaging for apparel focus
+- [x] Update seed data with selected apparel: graphic tees, joggers, polos, hoodies, oxford shirts, chambray shirts, caps
+- [x] Create authentic clothing descriptions with sizes and materials
