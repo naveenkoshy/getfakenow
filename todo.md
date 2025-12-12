@@ -108,3 +108,20 @@
 - [x] Update cart display to show selected colors
 - [x] Update checkout to include color information in orders
 - [x] Write tests for color selection functionality
+
+## Product Image Generation
+- [x] Generate t-shirt images with Fake logo (black, white, red, navy)
+- [x] Generate oxford button-down shirt images (professional line)
+- [x] Generate chambray work shirt images (professional line)
+
+## Slogan Graphic Tees & Mannequin Display
+- [x] Generate "It's all Fake" slogan tees on mannequins (multiple colors)
+- [x] Generate "Fake is not Hate" slogan tees on mannequins (multiple colors)
+- [x] Generate "Live Life. Stay Fake." slogan tees on mannequins (multiple colors)
+- [x] Regenerate logo tees on mannequins for store-like presentation
+- [x] Regenerate office shirts on mannequins for professional display
+
+## Product Image Upload
+- [x] Upload all generated product images to S3 storage
+- [x] Update database products table with S3 image URLs
+- [x] Verify images display correctly on product pages
