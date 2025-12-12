@@ -31,14 +31,14 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/products">
-                <a className="text-sm font-medium hover:text-primary transition-colors">Shop</a>
+              <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">
+                Shop
               </Link>
-              <Link href="/products?category=casual">
-                <a className="text-sm font-medium hover:text-primary transition-colors">Casual</a>
+              <Link href="/products?category=casual" className="text-sm font-medium hover:text-primary transition-colors">
+                Casual
               </Link>
-              <Link href="/products?category=professional">
-                <a className="text-sm font-medium hover:text-primary transition-colors">Professional</a>
+              <Link href="/products?category=professional" className="text-sm font-medium hover:text-primary transition-colors">
+                Professional
               </Link>
             </nav>
 
@@ -208,9 +208,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Shop</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/products"><a className="hover:text-foreground">All Products</a></Link></li>
-                <li><Link href="/products?category=casual"><a className="hover:text-foreground">Casual</a></Link></li>
-                <li><Link href="/products?category=professional"><a className="hover:text-foreground">Professional</a></Link></li>
+                <li><Link href="/products" className="hover:text-foreground">All Products</Link></li>
+                <li><Link href="/products?category=casual" className="hover:text-foreground">Casual</Link></li>
+                <li><Link href="/products?category=professional" className="hover:text-foreground">Professional</Link></li>
               </ul>
             </div>
             <div>
@@ -218,8 +218,8 @@ export default function Home() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {isAuthenticated ? (
                   <>
-                    <li><Link href="/account"><a className="hover:text-foreground">My Account</a></Link></li>
-                    <li><Link href="/orders"><a className="hover:text-foreground">Orders</a></Link></li>
+                    <li><Link href="/account" className="hover:text-foreground">My Account</Link></li>
+                    <li><Link href="/orders" className="hover:text-foreground">Orders</Link></li>
                   </>
                 ) : (
                   <li><a href={getLoginUrl()} className="hover:text-foreground">Sign In</a></li>

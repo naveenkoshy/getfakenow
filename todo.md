@@ -66,3 +66,6 @@
 - [ ] Update hero section messaging for apparel focus
 - [x] Update seed data with selected apparel: graphic tees, joggers, polos, hoodies, oxford shirts, chambray shirts, caps
 - [x] Create authentic clothing descriptions with sizes and materials
+
+## Bug Fixes
+- [x] Fix nested anchor tag error on home page
