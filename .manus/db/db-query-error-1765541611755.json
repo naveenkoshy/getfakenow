@@ -1,0 +1,8 @@
+{
+  "query": "SELECT pi.productId, p.name, pi.color, pi.imageUrl, COUNT(*) as image_count\nFROM productImages pi\nLEFT JOIN products p ON pi.productId = p.id\nGROUP BY pi.productId, p.name, pi.color\nORDER BY pi.productId, pi.color;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT pi.productId, p.name, pi.color, pi.imageUrl, COUNT(*) as image_count\nFROM productImages pi\nLEFT JOIN products p ON pi.productId = p.id\nGROUP BY pi.productId, p.name, pi.color\nORDER BY pi.productId, pi.color;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1055 (42000) at line 1: Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'mnC6672QxsyxZGLVMrqTHR.pi.imageUrl' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by"
+  ]
+}

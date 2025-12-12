@@ -1,0 +1,8 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.imageUrl, p.colors, c.name as category \nFROM products p \nLEFT JOIN categories c ON p.categoryId = c.id \nORDER BY c.name, p.name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.imageUrl, p.colors, c.name as category \nFROM products p \nLEFT JOIN categories c ON p.categoryId = c.id \nORDER BY c.name, p.name;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'p.colors' in 'field list'"
+  ]
+}

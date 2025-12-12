@@ -1,0 +1,80 @@
+{
+  "query": "SELECT pi.id, pi.productId, p.name as product_name, pi.color, pi.imageUrl\nFROM productImages pi\nLEFT JOIN products p ON pi.productId = p.id\nORDER BY pi.productId, pi.color;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT pi.id, pi.productId, p.name as product_name, pi.color, pi.imageUrl\nFROM productImages pi\nLEFT JOIN products p ON pi.productId = p.id\nORDER BY pi.productId, pi.color;",
+  "rows": [
+    {
+      "id": "4",
+      "productId": "30001",
+      "product_name": "Fake It Classic Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/N_-UMlVn8AL9NsivVoSxF.png"
+    },
+    {
+      "id": "5",
+      "productId": "30002",
+      "product_name": "Till You Make It Tee",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/mnB5KTGrdQN6CD_YYngmo.png"
+    },
+    {
+      "id": "6",
+      "productId": "30003",
+      "product_name": "Confidence Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/WixAtW8s8xyMtDLoOflXk.png"
+    },
+    {
+      "id": "7",
+      "productId": "30007",
+      "product_name": "White Oxford Shirt",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/-UPthWscnsgkMGOtlSLxB.png"
+    },
+    {
+      "id": "8",
+      "productId": "30008",
+      "product_name": "Light Blue Oxford",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/POFnwXJYf3K-DSyrAyezv.png"
+    },
+    {
+      "id": "1",
+      "productId": "60001",
+      "product_name": "It's all Fake Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/KTPd3q5hvjdDc0oQCYV19.png"
+    },
+    {
+      "id": "2",
+      "productId": "60002",
+      "product_name": "Fake is not Hate Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/0IiAnD9ZgdigYsyZDhPpr.png"
+    },
+    {
+      "id": "3",
+      "productId": "60003",
+      "product_name": "Live Life. Stay Fake. Tee",
+      "color": "red",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/ApIvzMTVZovLWVqHhWpGD.png"
+    },
+    {
+      "id": "9",
+      "productId": "60005",
+      "product_name": "Heritage Chambray",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/ENJGHnPUKjC54bQXSzR_h.png"
+    },
+    {
+      "id": "10",
+      "productId": "60006",
+      "product_name": "Indigo Chambray",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/H1ikEAerRnyR8s6g3Ru8-.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\tproduct_name\tcolor\timageUrl\n4\t30001\tFake It Classic Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/N_-UMlVn8AL9NsivVoSxF.png\n5\t30002\tTill You Make It Tee\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/mnB5KTGrdQN6CD_YYngmo.png\n6\t30003\tConfidence Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/WixAtW8s8xyMtDLoOflXk.png\n7\t30007\tWhite Oxford Shirt\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/-UPthWscnsgkMGOtlSLxB.png\n8\t30008\tLight Blue Oxford\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/POFnwXJYf3K-DSyrAyezv.png\n1\t60001\tIt's all Fake Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/KTPd3q5hvjdDc0oQCYV19.png\n2\t60002\tFake is not Hate Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/0IiAnD9ZgdigYsyZDhPpr.png\n3\t60003\tLive Life. Stay Fake. Tee\tred\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/ApIvzMTVZovLWVqHhWpGD.png\n9\t60005\tHeritage Chambray\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/ENJGHnPUKjC54bQXSzR_h.png\n10\t60006\tIndigo Chambray\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/H1ikEAerRnyR8s6g3Ru8-.png\n",
+  "stderr": "",
+  "execution_time_ms": 1503
+}
