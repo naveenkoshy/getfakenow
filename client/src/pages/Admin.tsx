@@ -35,7 +35,7 @@ export default function Admin() {
     },
   });
 
-  const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
   const formatDate = (date: Date) => new Date(date).toLocaleDateString();
 
   if (!isAuthenticated || !user) {

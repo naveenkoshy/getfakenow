@@ -132,3 +132,15 @@
 - [x] Map existing variant images to products in database
 - [x] Update product detail page to switch images on color click
 - [x] Test color variant switching functionality
+
+## Footer Update
+- [x] Update copyright year to 2026 in all page footers
+
+## Currency Update
+- [x] Change currency from USD ($) to Malaysian Ringgit (RM) across all pages
+- [x] Update formatPrice function to use RM symbol
+
+## Missing Product Images
+- [x] Identify products without images
+- [x] Generate images for products missing photos
+- [x] Upload new images to S3 and update database

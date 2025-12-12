@@ -1,0 +1,52 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.description, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE p.imageUrl IS NULL OR p.imageUrl = '' ORDER BY p.name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.description, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE p.imageUrl IS NULL OR p.imageUrl = '' ORDER BY p.name;",
+  "rows": [
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "description": "Heritage-inspired chambray shirt in lightweight denim. Chest pockets and pearl snap buttons.",
+      "category": "Professional"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "description": "Timeless polo shirt in premium pique cotton. Three-button placket and ribbed collar.",
+      "category": "Casual"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "description": "Tailored joggers in premium cotton terry. Tapered fit with elastic waistband and cuffs.",
+      "category": "Casual"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "description": "Classic six-panel cap with embroidered script. Adjustable strap, curved brim.",
+      "category": "Accessories"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "description": "Premium heavyweight hoodie with embroidered logo. Brushed fleece interior, adjustable drawstrings.",
+      "category": "Casual"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "description": "Classic light blue oxford shirt. Non-iron cotton blend for easy care.",
+      "category": "Professional"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tdescription\tcategory\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\tHeritage-inspired chambray shirt in lightweight denim. Chest pockets and pearl snap buttons.\tProfessional\n30006\tClassic Pique Polo\tclassic-pique-polo\tTimeless polo shirt in premium pique cotton. Three-button placket and ribbed collar.\tCasual\n30005\tEssential Joggers\tessential-joggers\tTailored joggers in premium cotton terry. Tapered fit with elastic waistband and cuffs.\tCasual\n30010\tFake Script Cap\tfake-script-cap\tClassic six-panel cap with embroidered script. Adjustable strap, curved brim.\tAccessories\n30004\tFake Signature Hoodie\tfake-signature-hoodie\tPremium heavyweight hoodie with embroidered logo. Brushed fleece interior, adjustable drawstrings.\tCasual\n30008\tLight Blue Oxford\tlight-blue-oxford\tClassic light blue oxford shirt. Non-iron cotton blend for easy care.\tProfessional\n",
+  "stderr": "",
+  "execution_time_ms": 1611
+}

@@ -21,7 +21,7 @@ export default function Products() {
   const { data: categories } = trpc.categories.list.useQuery();
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
-  const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
 
   return (
     <div className="min-h-screen bg-background">

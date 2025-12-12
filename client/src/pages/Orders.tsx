@@ -14,7 +14,7 @@ export default function Orders() {
   });
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
-  const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
   const formatDate = (date: Date) => new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",

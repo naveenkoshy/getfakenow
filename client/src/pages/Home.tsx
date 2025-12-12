@@ -12,7 +12,7 @@ export default function Home() {
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
   const formatPrice = (cents: number) => {
-    return `$${(cents / 100).toFixed(2)}`;
+    return `RM${(cents / 100).toFixed(2)}`;
   };
 
   return (
@@ -236,7 +236,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © 2024 Fake by Freetown. All rights reserved.
+            © 2026 Fake by Freetown. All rights reserved.
           </div>
         </div>
       </footer>

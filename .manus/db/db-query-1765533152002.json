@@ -1,0 +1,46 @@
+{
+  "query": "SELECT id, name, slug, imageUrl FROM products WHERE imageUrl IS NULL OR imageUrl = '' ORDER BY name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, imageUrl FROM products WHERE imageUrl IS NULL OR imageUrl = '' ORDER BY name;",
+  "rows": [
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "imageUrl": "NULL"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "imageUrl": "NULL"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "imageUrl": "NULL"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "imageUrl": "NULL"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "imageUrl": "NULL"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "imageUrl": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\timageUrl\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\tNULL\n30006\tClassic Pique Polo\tclassic-pique-polo\tNULL\n30005\tEssential Joggers\tessential-joggers\tNULL\n30010\tFake Script Cap\tfake-script-cap\tNULL\n30004\tFake Signature Hoodie\tfake-signature-hoodie\tNULL\n30008\tLight Blue Oxford\tlight-blue-oxford\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1619
+}
