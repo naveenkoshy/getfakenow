@@ -1,28 +1,427 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { nanoid } from "nanoid";
+import * as db from "./db";
+import { storagePut } from "./storage";
+import { createCheckoutSession } from "./stripe";
+
+// Admin-only procedure
+const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'admin') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+  }
+  return next({ ctx });
+});
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
+  
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+      return { success: true } as const;
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  // Categories
+  categories: router({
+    list: publicProcedure.query(async () => {
+      return db.getAllCategories();
+    }),
+    
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const category = await db.getCategoryById(input.id);
+        if (!category) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Category not found' });
+        }
+        return category;
+      }),
+  }),
+
+  // Products
+  products: router({
+    list: publicProcedure
+      .input(z.object({
+        categoryId: z.number().optional(),
+        search: z.string().optional(),
+        featured: z.boolean().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return db.getAllProducts(input);
+      }),
+    
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const product = await db.getProductById(input.id);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        // Get category info
+        const category = await db.getCategoryById(product.categoryId);
+        
+        // Get additional images
+        const images = await db.getProductImages(input.id);
+        
+        return {
+          ...product,
+          category,
+          images,
+        };
+      }),
+    
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const product = await db.getProductBySlug(input.slug);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        const category = await db.getCategoryById(product.categoryId);
+        const images = await db.getProductImages(product.id);
+        
+        return {
+          ...product,
+          category,
+          images,
+        };
+      }),
+  }),
+
+  // Shopping Cart
+  cart: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const items = await db.getCartItems(ctx.user.id);
+      
+      // Calculate total
+      const total = items.reduce((sum, item) => {
+        return sum + (item.product?.price || 0) * item.quantity;
+      }, 0);
+      
+      return {
+        items,
+        total,
+        itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+      };
+    }),
+    
+    add: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        quantity: z.number().min(1).default(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Check if product exists and has stock
+        const product = await db.getProductById(input.productId);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        if (product.stockQuantity < input.quantity) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Insufficient stock' });
+        }
+        
+        await db.addToCart({
+          userId: ctx.user.id,
+          productId: input.productId,
+          quantity: input.quantity,
+        });
+        
+        return { success: true };
+      }),
+    
+    updateQuantity: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        quantity: z.number().min(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateCartItemQuantity(input.id, input.quantity);
+        return { success: true };
+      }),
+    
+    remove: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.removeFromCart(input.id, ctx.user.id);
+        return { success: true };
+      }),
+    
+    clear: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.clearCart(ctx.user.id);
+      return { success: true };
+    }),
+  }),
+
+  // Stripe Checkout
+  checkout: router({
+    createSession: protectedProcedure
+      .input(z.object({
+        shippingAddress: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get cart items
+        const cartItems = await db.getCartItems(ctx.user.id);
+        
+        if (cartItems.length === 0) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cart is empty' });
+        }
+        
+        // Check stock availability
+        for (const item of cartItems) {
+          if (!item.product) {
+            throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found in cart' });
+          }
+          
+          if (item.product.stockQuantity < item.quantity) {
+            throw new TRPCError({ 
+              code: 'BAD_REQUEST', 
+              message: `Insufficient stock for ${item.product.name}` 
+            });
+          }
+        }
+        
+        // Generate order number
+        const orderNumber = `ORD-${nanoid(10).toUpperCase()}`;
+        
+        // Calculate total
+        const totalAmount = cartItems.reduce((sum, item) => {
+          return sum + (item.product?.price || 0) * item.quantity;
+        }, 0);
+        
+        // Create pending order
+        await db.createOrder({
+          userId: ctx.user.id,
+          orderNumber,
+          totalAmount,
+          shippingAddress: input.shippingAddress,
+          status: 'pending',
+          paymentStatus: 'pending',
+        });
+        
+        // Get the created order
+        const order = await db.getOrderByNumber(orderNumber);
+        if (!order) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create order' });
+        }
+        
+        // Create order items
+        for (const item of cartItems) {
+          if (!item.product) continue;
+          
+          await db.createOrderItem({
+            orderId: order.id,
+            productId: item.productId,
+            productName: item.product.name,
+            productPrice: item.product.price,
+            quantity: item.quantity,
+            subtotal: item.product.price * item.quantity,
+          });
+        }
+        
+        // Create Stripe checkout session
+        const origin = ctx.req.headers.origin || 'http://localhost:3000';
+        const session = await createCheckoutSession({
+          userId: ctx.user.id,
+          userEmail: ctx.user.email || '',
+          userName: ctx.user.name || '',
+          items: cartItems.map(item => ({
+            name: item.product!.name,
+            description: item.product!.description || undefined,
+            price: item.product!.price,
+            quantity: item.quantity,
+            images: item.product!.imageUrl ? [item.product!.imageUrl] : undefined,
+          })),
+          origin,
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+        });
+        
+        return {
+          sessionId: session.id,
+          url: session.url,
+          orderNumber: order.orderNumber,
+        };
+      }),
+  }),
+
+  // Orders
+  orders: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserOrders(ctx.user.id);
+    }),
+    
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const order = await db.getOrderById(input.id);
+        
+        if (!order) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Order not found' });
+        }
+        
+        // Check if user owns this order or is admin
+        if (order.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        const items = await db.getOrderItems(input.id);
+        
+        return {
+          ...order,
+          items,
+        };
+      }),
+    
+    getByNumber: protectedProcedure
+      .input(z.object({ orderNumber: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const order = await db.getOrderByNumber(input.orderNumber);
+        
+        if (!order) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Order not found' });
+        }
+        
+        if (order.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        const items = await db.getOrderItems(order.id);
+        
+        return {
+          ...order,
+          items,
+        };
+      }),
+  }),
+
+  // Admin operations
+  admin: router({
+    // Product management
+    products: router({
+      list: adminProcedure.query(async () => {
+        // Get all products including inactive ones
+        const allDb = await db.getDb();
+        if (!allDb) return [];
+        
+        const { products } = await import("../drizzle/schema");
+        return allDb.select().from(products);
+      }),
+      
+      create: adminProcedure
+        .input(z.object({
+          name: z.string().min(1),
+          slug: z.string().min(1),
+          description: z.string().optional(),
+          price: z.number().min(0),
+          categoryId: z.number(),
+          stockQuantity: z.number().min(0).default(0),
+          imageUrl: z.string().optional(),
+          featured: z.boolean().default(false),
+        }))
+        .mutation(async ({ input }) => {
+          await db.createProduct({
+            ...input,
+            active: true,
+          });
+          return { success: true };
+        }),
+      
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().min(1).optional(),
+          slug: z.string().min(1).optional(),
+          description: z.string().optional(),
+          price: z.number().min(0).optional(),
+          categoryId: z.number().optional(),
+          stockQuantity: z.number().min(0).optional(),
+          imageUrl: z.string().optional(),
+          featured: z.boolean().optional(),
+          active: z.boolean().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, ...updates } = input;
+          await db.updateProduct(id, updates);
+          return { success: true };
+        }),
+      
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteProduct(input.id);
+          return { success: true };
+        }),
+      
+      uploadImage: adminProcedure
+        .input(z.object({
+          productId: z.number(),
+          imageData: z.string(), // base64 encoded
+          fileName: z.string(),
+          mimeType: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+          // Decode base64
+          const buffer = Buffer.from(input.imageData, 'base64');
+          
+          // Generate unique file key
+          const fileKey = `products/${input.productId}/${nanoid()}-${input.fileName}`;
+          
+          // Upload to S3
+          const { url } = await storagePut(fileKey, buffer, input.mimeType);
+          
+          // Save to database
+          await db.addProductImage({
+            productId: input.productId,
+            imageUrl: url,
+            fileKey,
+            sortOrder: 0,
+          });
+          
+          return { url, fileKey };
+        }),
+    }),
+    
+    // Order management
+    orders: router({
+      list: adminProcedure.query(async () => {
+        const orders = await db.getAllOrders();
+        
+        // Get user info for each order
+        const ordersWithUsers = await Promise.all(
+          orders.map(async (order) => {
+            const user = await db.getUserById(order.userId);
+            return {
+              ...order,
+              user,
+            };
+          })
+        );
+        
+        return ordersWithUsers;
+      }),
+      
+      updateStatus: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
+        }))
+        .mutation(async ({ input }) => {
+          await db.updateOrderStatus(input.id, input.status);
+          return { success: true };
+        }),
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
