@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Minus, Plus, ShoppingCart, User } from "lucide-react";
@@ -13,6 +14,7 @@ export default function ProductDetail() {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L' | 'XL' | 'XXL' | ''>('');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
@@ -33,8 +35,12 @@ export default function ProductDetail() {
       window.location.href = getLoginUrl();
       return;
     }
+    if (!selectedSize) {
+      toast.error('Please select a size');
+      return;
+    }
     if (product) {
-      addToCartMutation.mutate({ productId: product.id, quantity });
+      addToCartMutation.mutate({ productId: product.id, quantity, size: selectedSize });
     }
   };
 
@@ -136,6 +142,23 @@ export default function ProductDetail() {
 
             {product.stockQuantity > 0 ? (
               <div className="space-y-6">
+                {/* Size Selection */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Size:</label>
+                  <Select value={selectedSize} onValueChange={(value) => setSelectedSize(value as 'S' | 'M' | 'L' | 'XL' | 'XXL')}>
+                    <SelectTrigger className="w-full md:w-48">
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="S">S</SelectItem>
+                      <SelectItem value="M">M</SelectItem>
+                      <SelectItem value="L">L</SelectItem>
+                      <SelectItem value="XL">XL</SelectItem>
+                      <SelectItem value="XXL">XXL</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="flex items-center gap-4">
                   <span className="text-sm font-medium">Quantity:</span>
                   <div className="flex items-center gap-2">

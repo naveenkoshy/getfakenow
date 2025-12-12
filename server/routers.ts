@@ -119,6 +119,7 @@ export const appRouter = router({
       .input(z.object({
         productId: z.number(),
         quantity: z.number().min(1).default(1),
+        size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if product exists and has stock
@@ -135,6 +136,7 @@ export const appRouter = router({
           userId: ctx.user.id,
           productId: input.productId,
           quantity: input.quantity,
+          size: input.size,
         });
         
         return { success: true };
@@ -225,6 +227,7 @@ export const appRouter = router({
             productName: item.product.name,
             productPrice: item.product.price,
             quantity: item.quantity,
+            size: item.size,
             subtotal: item.product.price * item.quantity,
           });
         }

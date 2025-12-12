@@ -91,3 +91,11 @@
 - [x] Update brand story section with authentic streetwear voice
 - [x] Remove flowery marketing language throughout site
 - [x] Match tone of premium streetwear brands (Supreme, Stüssy, Carhartt WIP)
+
+## Size Selection Feature
+- [x] Add size field to cart_items table schema
+- [x] Update cart procedures to accept and store size
+- [x] Add size dropdown to ProductDetail page
+- [x] Update cart display to show selected sizes
+- [x] Update checkout to include size information in orders
+- [x] Write tests for size selection functionality

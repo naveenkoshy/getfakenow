@@ -15,6 +15,20 @@
       "when": 1765509453737,
       "tag": "0001_flat_wolf_cub",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1765517559703,
+      "tag": "0002_thin_franklin_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1765517799138,
+      "tag": "0003_loving_vulture",
+      "breakpoints": true
     }
   ]
 }

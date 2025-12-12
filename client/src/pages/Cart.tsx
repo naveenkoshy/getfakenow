@@ -120,6 +120,9 @@ export default function Cart() {
                         <p className="text-sm text-muted-foreground mt-1">
                           {formatPrice(item.product?.price || 0)}
                         </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Size: <span className="font-medium">{item.size}</span>
+                        </p>
 
                         <div className="flex items-center gap-4 mt-4">
                           <div className="flex items-center gap-2">

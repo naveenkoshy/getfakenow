@@ -1,0 +1,1 @@
+ALTER TABLE `cartItems` ADD `size` varchar(10) NOT NULL;
