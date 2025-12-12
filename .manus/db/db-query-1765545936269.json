@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, productId, color, imageUrl FROM productImages WHERE productId = 30004 ORDER BY sortOrder LIMIT 4;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, productId, color, imageUrl FROM productImages WHERE productId = 30004 ORDER BY sortOrder LIMIT 4;",
+  "rows": [
+    {
+      "id": "30002",
+      "productId": "30004",
+      "color": "White",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-white.jpg"
+    },
+    {
+      "id": "30003",
+      "productId": "30004",
+      "color": "Navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-navy.jpg"
+    },
+    {
+      "id": "30004",
+      "productId": "30004",
+      "color": "Red",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg"
+    },
+    {
+      "id": "30001",
+      "productId": "30004",
+      "color": "Black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\tcolor\timageUrl\n30002\t30004\tWhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-white.jpg\n30003\t30004\tNavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-navy.jpg\n30004\t30004\tRed\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg\n30001\t30004\tBlack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg\n",
+  "stderr": "",
+  "execution_time_ms": 1595
+}

@@ -201,3 +201,19 @@
 - [x] Implement image metadata optimization
 - [x] Test structured data with Google Rich Results Test
 - [x] Verify sitemap accessibility and format
+
+## Image Naming Optimization for SEO
+- [x] Audit all current product image filenames in database
+- [x] Audit all productImages (color variants) filenames in database
+- [x] Define SEO-optimized naming convention (descriptive, keyword-rich, hyphen-separated)
+- [x] Generate new SEO-friendly names for all main product images
+- [x] Generate new SEO-friendly names for all color variant images
+- [x] Upload renamed images to S3 with new filenames
+- [x] Update products table with new main image URLs
+- [x] Update productImages table with new variant image URLs
+- [x] Validate all images are accessible at new URLs
+- [x] Verify all product pages display images correctly
+- [x] Verify all collection pages display images correctly
+- [x] Update image alt text to match new descriptive filenames
+- [x] Run final validation across entire site
+- [ ] Clean up old image files from S3 (optional)
