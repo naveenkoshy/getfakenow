@@ -220,3 +220,11 @@
 - [x] Update image alt text to match new descriptive filenames
 - [x] Run final validation across entire site
 - [ ] Clean up old image files from S3 (optional)
+
+## Branding Updates
+- [x] Generate custom favicon for Fake by Freetown brand
+- [x] Update site title from "Are You Fake?" to brand-appropriate title
+- [x] Rewrite site description with cool copywriter voice
+- [x] Update VITE_APP_TITLE environment variable
+- [x] Update favicon in client/public directory
+- [x] Test favicon display across browsers
