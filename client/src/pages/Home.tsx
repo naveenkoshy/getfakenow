@@ -1,7 +1,8 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getLoginUrl } from "@/const";
+import { AuthModal } from "@/components/AuthModal";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { ShoppingCart, User, Search } from "lucide-react";
 import { Link } from "wouter";
@@ -12,6 +13,7 @@ export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: products, isLoading } = trpc.products.list.useQuery({ featured: true });
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // SEO: Update meta tags and inject structured data
   useEffect(() => {
@@ -85,14 +87,17 @@ export default function Home() {
                   </Link>
                 </>
               ) : (
-                <Button asChild size="sm">
-                  <a href={getLoginUrl()}>Sign In</a>
+                <Button onClick={() => setAuthModalOpen(true)} size="sm">
+                  Sign In
                 </Button>
               )}
             </div>
           </div>
         </div>
       </header>
+
+      {/* Auth Modal */}
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-gray-50 to-white py-20 md:py-32">
@@ -238,7 +243,7 @@ export default function Home() {
                     <li><Link href="/orders" className="hover:text-foreground">Orders</Link></li>
                   </>
                 ) : (
-                  <li><a href={getLoginUrl()} className="hover:text-foreground">Sign In</a></li>
+                  <li><button onClick={() => setAuthModalOpen(true)} className="hover:text-foreground">Sign In</button></li>
                 )}
               </ul>
             </div>

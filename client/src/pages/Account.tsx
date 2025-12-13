@@ -1,34 +1,39 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getLoginUrl } from "@/const";
+import { AuthModal } from "@/components/AuthModal";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { ShoppingCart, User, Package } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Account() {
   const [, setLocation] = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { toast } = useToast();
   
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => {
-      toast.success("Logged out successfully");
-      window.location.href = "/";
-    },
-  });
+  const handleLogout = async () => {
+    await logout();
+    toast({ title: "Logged out", description: "You've been logged out successfully" });
+    window.location.href = "/";
+  };
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Sign in to view your account</h2>
-          <Button asChild>
-            <a href={getLoginUrl()}>Sign In</a>
-          </Button>
+      <>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Sign in to view your account</h2>
+            <Button onClick={() => setAuthModalOpen(true)}>
+              Sign In
+            </Button>
+          </div>
         </div>
-      </div>
+        <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+      </>
     );
   }
 
@@ -78,10 +83,9 @@ export default function Account() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => logoutMutation.mutate()}
-                disabled={logoutMutation.isPending}
+                onClick={handleLogout}
               >
-                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                Logout
               </Button>
             </CardContent>
           </Card>

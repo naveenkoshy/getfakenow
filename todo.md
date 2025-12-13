@@ -228,3 +228,91 @@
 - [x] Update VITE_APP_TITLE environment variable
 - [x] Update favicon in client/public directory
 - [x] Test favicon display across browsers
+
+## Day 1: Custom Authentication System
+- [x] Remove Manus OAuth dependencies from server/routers.ts
+- [x] Install bcrypt for password hashing
+- [x] Create auth.register procedure (email/password with validation)
+- [x] Create auth.login procedure (JWT token generation)
+- [x] Implement password reset flow (token-based)
+- [x] Add email validation and duplicate checking
+- [x] Build frontend signup modal component
+- [x] Build frontend login modal component
+- [x] Add "Remember me" functionality
+- [x] Update useAuth hook to use custom auth
+- [x] Update tRPC context to verify JWT tokens
+- [x] Create toast notification system
+- [ ] Test registration flow end-to-end
+- [ ] Test login flow end-to-end
+- [ ] Test password reset flow
+
+## Day 1: Customer Account Pages
+- [x] Update Account page to remove OAuth dependency
+- [x] Implement logout functionality
+- [x] Build "Profile Settings" component (UI complete, backend pending)
+- [ ] Add backend endpoint for profile updates
+- [ ] Add backend endpoint for password change
+- [ ] Build "My Orders" page with order history
+- [ ] Add "Saved Addresses" management page
+- [ ] Add protected route guards for account pages
+
+## Day 2: Admin Dashboard Foundation
+- [ ] Create /admin route with role-based access control
+- [ ] Build admin layout with sidebar navigation
+- [ ] Add admin login page (separate from customer)
+- [ ] Implement admin role checking middleware
+- [ ] Create dashboard home with key metrics
+- [ ] Add sales chart and analytics
+
+## Day 2: Inventory Management
+- [ ] Build "Products" admin page with searchable table
+- [ ] Create "Add Product" form with image upload
+- [ ] Build "Edit Product" functionality
+- [ ] Add "Delete Product" with confirmation
+- [ ] Implement bulk actions (delete multiple, update stock)
+- [ ] Add product variant management (colors, sizes, stock)
+- [ ] Test inventory CRUD operations
+
+## Day 2: Order Management
+- [ ] Build "Orders" admin page with filterable list
+- [ ] Create order detail view (customer info, items, payment)
+- [ ] Add order status update functionality
+- [ ] Implement order search by customer/email/ID
+- [ ] Add "Print Packing Slip" feature
+- [ ] Test order management workflow
+
+## Day 3: Shopping Cart
+- [ ] Persist cart in localStorage for guest users
+- [ ] Sync cart to database for logged-in users
+- [ ] Build cart page with quantity adjustment
+- [ ] Add "Remove item" and "Clear cart" functionality
+- [ ] Calculate subtotal, tax, shipping
+- [ ] Add promo code input field
+
+## Day 3: Checkout Flow
+- [ ] Build checkout page with multi-step form
+- [ ] Add shipping address step (autofill for logged-in)
+- [ ] Integrate Stripe Payment Element
+- [ ] Add payment method step
+- [ ] Build order review step
+- [ ] Implement "Continue as Guest" option
+- [ ] Add address validation
+- [ ] Create order confirmation page
+
+## Day 3: Post-Purchase
+- [ ] Build order creation endpoint
+- [ ] Implement inventory auto-deduction
+- [ ] Add "Out of Stock" prevention
+- [ ] Send order confirmation email
+- [ ] Add order tracking page for customers
+- [ ] Test full checkout flow (guest + logged-in)
+
+## Polish & Testing
+- [ ] Add loading states throughout
+- [ ] Implement error handling
+- [ ] Test edge cases (out of stock, payment failures)
+- [ ] Add email notifications for order status
+- [ ] Mobile responsiveness check
+- [ ] Security audit (SQL injection, XSS prevention)
+- [ ] Update React to latest version
+- [ ] Write vitest tests for critical flows

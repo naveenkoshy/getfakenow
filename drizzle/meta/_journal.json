@@ -43,6 +43,13 @@
       "when": 1765532740699,
       "tag": "0005_deep_stardust",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1765555798501,
+      "tag": "0006_tense_silvermane",
+      "breakpoints": true
     }
   ]
 }

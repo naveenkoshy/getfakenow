@@ -8,6 +8,9 @@ import { nanoid } from "nanoid";
 import * as db from "./db";
 import { storagePut } from "./storage";
 import { createCheckoutSession } from "./stripe";
+import * as auth from "./auth";
+import jwt from "jsonwebtoken";
+import { ENV } from "./_core/env";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -22,6 +25,163 @@ export const appRouter = router({
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
+    
+    register: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(8),
+        name: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Validate email format
+        if (!auth.isValidEmail(input.email)) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid email format' });
+        }
+        
+        // Validate password strength
+        if (!auth.isValidPassword(input.password)) {
+          throw new TRPCError({ 
+            code: 'BAD_REQUEST', 
+            message: 'Password must be at least 8 characters with uppercase, lowercase, and number' 
+          });
+        }
+        
+        // Check if user already exists
+        const existingUser = await auth.getUserByEmail(input.email);
+        if (existingUser) {
+          throw new TRPCError({ code: 'CONFLICT', message: 'Email already registered' });
+        }
+        
+        // Create user
+        await auth.createUser({
+          email: input.email,
+          password: input.password,
+          name: input.name,
+        });
+        
+        // Get the created user
+        const user = await auth.getUserByEmail(input.email);
+        if (!user) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create user' });
+        }
+        
+        // Create JWT token
+        const token = jwt.sign(
+          { userId: user.id, email: user.email },
+          ENV.jwtSecret,
+          { expiresIn: '30d' }
+        );
+        
+        // Set session cookie
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, {
+          ...cookieOptions,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        
+        return {
+          success: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        };
+      }),
+    
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string(),
+        rememberMe: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Get user by email
+        const user = await auth.getUserByEmail(input.email);
+        if (!user || !user.passwordHash) {
+          throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid email or password' });
+        }
+        
+        // Verify password
+        const isValid = await auth.verifyPassword(input.password, user.passwordHash);
+        if (!isValid) {
+          throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid email or password' });
+        }
+        
+        // Update last sign-in
+        await auth.updateLastSignIn(user.id);
+        
+        // Create JWT token
+        const expiresIn = input.rememberMe ? '30d' : '7d';
+        const token = jwt.sign(
+          { userId: user.id, email: user.email },
+          ENV.jwtSecret,
+          { expiresIn }
+        );
+        
+        // Set session cookie
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        const maxAge = input.rememberMe 
+          ? 30 * 24 * 60 * 60 * 1000 // 30 days
+          : 7 * 24 * 60 * 60 * 1000;  // 7 days
+        
+        ctx.res.cookie(COOKIE_NAME, token, {
+          ...cookieOptions,
+          maxAge,
+        });
+        
+        return {
+          success: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        };
+      }),
+    
+    requestPasswordReset: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const user = await auth.getUserByEmail(input.email);
+        if (!user) {
+          // Don't reveal if email exists for security
+          return { success: true, message: 'If email exists, reset link sent' };
+        }
+        
+        const token = auth.generateResetToken();
+        await auth.setResetToken(input.email, token);
+        
+        // TODO: Send email with reset link
+        // For now, just return success
+        console.log(`Password reset token for ${input.email}: ${token}`);
+        
+        return { success: true, message: 'If email exists, reset link sent' };
+      }),
+    
+    resetPassword: publicProcedure
+      .input(z.object({
+        token: z.string(),
+        newPassword: z.string().min(8),
+      }))
+      .mutation(async ({ input }) => {
+        if (!auth.isValidPassword(input.newPassword)) {
+          throw new TRPCError({ 
+            code: 'BAD_REQUEST', 
+            message: 'Password must be at least 8 characters with uppercase, lowercase, and number' 
+          });
+        }
+        
+        try {
+          await auth.resetPassword(input.token, input.newPassword);
+          return { success: true, message: 'Password reset successfully' };
+        } catch (error) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid or expired reset token' });
+        }
+      }),
+    
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });

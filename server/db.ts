@@ -39,20 +39,28 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
   try {
     const values: InsertUser = {
-      openId: user.openId,
+      openId: user.openId || null,
+      email: user.email || `user_${Date.now()}@fake.local`, // Temporary email for OAuth users
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod"] as const;
+    const textFields = ["name", "loginMethod"] as const;
     type TextField = (typeof textFields)[number];
 
     const assignNullable = (field: TextField) => {
       const value = user[field];
       if (value === undefined) return;
       const normalized = value ?? null;
-      values[field] = normalized;
+      values[field] = normalized as any;
       updateSet[field] = normalized;
     };
+
+    // Handle email separately since it's required
+    if (user.email !== undefined) {
+      const emailValue = user.email || `user_${Date.now()}@fake.local`;
+      values.email = emailValue;
+      updateSet.email = emailValue;
+    }
 
     textFields.forEach(assignNullable);
 

@@ -277,8 +277,8 @@ class SDKServer {
         await db.upsertUser({
           openId: userInfo.openId,
           name: userInfo.name || null,
-          email: userInfo.email ?? null,
-          loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
+          email: userInfo.email || `oauth_${userInfo.openId}@fake.local`,
+          loginMethod: userInfo.loginMethod ?? userInfo.platform ?? "oauth",
           lastSignedIn: signedInAt,
         });
         user = await db.getUserByOpenId(userInfo.openId);
@@ -293,7 +293,8 @@ class SDKServer {
     }
 
     await db.upsertUser({
-      openId: user.openId,
+      openId: user.openId || null,
+      email: user.email,
       lastSignedIn: signedInAt,
     });
 
