@@ -12,7 +12,8 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Account from "./pages/Account";
 import Orders from "./pages/Orders";
-import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminProducts from "./pages/admin/Products";
 import Casual from "./pages/Casual";
 import Professional from "./pages/Professional";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -33,7 +34,8 @@ function Router() {
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/account" component={Account} />
       <Route path="/orders" component={Orders} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/products" component={AdminProducts} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/shipping-policy" component={ShippingPolicy} />
       <Route path="/returns-policy" component={ReturnsPolicy} />

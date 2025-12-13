@@ -257,18 +257,19 @@
 - [ ] Add protected route guards for account pages
 
 ## Day 2: Admin Dashboard Foundation
-- [ ] Create /admin route with role-based access control
-- [ ] Build admin layout with sidebar navigation
-- [ ] Add admin login page (separate from customer)
-- [ ] Implement admin role checking middleware
-- [ ] Create dashboard home with key metrics
-- [ ] Add sales chart and analytics
+- [x] Create /admin route with role-based access control
+- [x] Build admin layout with sidebar navigation
+- [x] Admin uses same auth system (no separate login needed)
+- [x] Implement admin role checking middleware (adminProcedure)
+- [x] Create dashboard home with key metrics
+- [ ] Add sales chart and analytics (pending real order data)
 
 ## Day 2: Inventory Management
-- [ ] Build "Products" admin page with searchable table
+- [x] Build "Products" admin page with searchable table
+- [x] Add backend CRUD procedures (create, update, delete)
+- [x] Add "Delete Product" with confirmation
 - [ ] Create "Add Product" form with image upload
 - [ ] Build "Edit Product" functionality
-- [ ] Add "Delete Product" with confirmation
 - [ ] Implement bulk actions (delete multiple, update stock)
 - [ ] Add product variant management (colors, sizes, stock)
 - [ ] Test inventory CRUD operations

@@ -256,6 +256,78 @@ export const appRouter = router({
           images,
         };
       }),
+    
+    // Admin: Create product
+    create: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        slug: z.string().min(1),
+        description: z.string().optional(),
+        price: z.number().int().positive(),
+        categoryId: z.number(),
+        stockQuantity: z.number().int().nonnegative().default(0),
+        imageUrl: z.string().optional(),
+        featured: z.boolean().default(false),
+        active: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        // Check if slug already exists
+        const existing = await db.getProductBySlug(input.slug);
+        if (existing) {
+          throw new TRPCError({ code: 'CONFLICT', message: 'Product with this slug already exists' });
+        }
+        
+        const productId = await db.createProduct(input);
+        return { id: productId, ...input };
+      }),
+    
+    // Admin: Update product
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        slug: z.string().min(1).optional(),
+        description: z.string().optional(),
+        price: z.number().int().positive().optional(),
+        categoryId: z.number().optional(),
+        stockQuantity: z.number().int().nonnegative().optional(),
+        imageUrl: z.string().optional(),
+        featured: z.boolean().optional(),
+        active: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        
+        // Check if product exists
+        const product = await db.getProductById(id);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        // If slug is being updated, check for conflicts
+        if (updates.slug && updates.slug !== product.slug) {
+          const existing = await db.getProductBySlug(updates.slug);
+          if (existing) {
+            throw new TRPCError({ code: 'CONFLICT', message: 'Product with this slug already exists' });
+          }
+        }
+        
+        await db.updateProduct(id, updates);
+        return { success: true };
+      }),
+    
+    // Admin: Delete product
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const product = await db.getProductById(input.id);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        await db.deleteProduct(input.id);
+        return { success: true };
+      }),
   }),
 
   // Shopping Cart
