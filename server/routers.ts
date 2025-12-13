@@ -376,6 +376,20 @@ export const appRouter = router({
         return { success: true };
       }),
     
+    update: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        quantity: z.number().min(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const items = await db.getCartItems(ctx.user.id);
+        const item = items.find(i => i.productId === input.productId);
+        if (item) {
+          await db.updateCartItemQuantity(item.id, input.quantity);
+        }
+        return { success: true };
+      }),
+    
     updateQuantity: protectedProcedure
       .input(z.object({
         id: z.number(),

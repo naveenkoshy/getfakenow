@@ -317,3 +317,23 @@
 - [ ] Security audit (SQL injection, XSS prevention)
 - [ ] Update React to latest version
 - [ ] Write vitest tests for critical flows
+
+## Checkout Flow Implementation
+- [ ] Create cart context for state management
+- [ ] Implement localStorage cart persistence for guest users
+- [ ] Sync cart to database for logged-in users
+- [ ] Build "Add to Cart" functionality on product pages
+- [ ] Update cart page with quantity adjustment
+- [ ] Add remove item and clear cart functionality
+- [ ] Calculate subtotal, tax, and shipping
+- [ ] Build checkout page with shipping address form
+- [ ] Integrate Stripe Payment Element
+- [ ] Create Stripe payment intent backend endpoint
+- [ ] Wire up "Pay with Stripe" button to initiate payment
+- [ ] Handle Stripe payment success webhook
+- [ ] Create order on successful payment
+- [ ] Deduct inventory on order creation
+- [ ] Build order confirmation page
+- [ ] Send order confirmation email
+- [ ] Add "My Orders" page for customers
+- [ ] Test complete purchase flow (guest + logged-in)

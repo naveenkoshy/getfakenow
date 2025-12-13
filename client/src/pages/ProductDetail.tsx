@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,37 +81,36 @@ export default function ProductDetail() {
     );
     return variantImage?.imageUrl || product.imageUrl || '';
   };
-  const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
-  
-  const addToCartMutation = trpc.cart.add.useMutation({
-    onSuccess: () => {
-      toast.success("Added to cart!");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { itemCount, addItem, isLoading: cartLoading } = useCart();
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
-
+  
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
-      window.location.href = getLoginUrl();
-      return;
-    }
+    if (!product) return;
+    
     if (!selectedSize) {
-      toast.error('Please select a size');
+      toast.success("Please select a size");
       return;
     }
     if (!selectedColor) {
-      toast.error('Please select a color');
+      toast.success("Please select a color");
       return;
     }
-    if (product) {
-      addToCartMutation.mutate({ productId: product.id, quantity, size: selectedSize, color: selectedColor });
-    }
+    
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: getDisplayImage(),
+      slug: product.slug,
+      quantity,
+      size: selectedSize as any,
+      color: selectedColor as any,
+    });
+    
+    toast.success("Added to cart!");
   };
-
+  
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -149,9 +149,9 @@ export default function ProductDetail() {
                   <Link href="/cart">
                     <Button variant="ghost" size="icon" className="relative">
                       <ShoppingCart className="h-5 w-5" />
-                      {cart && cart.itemCount > 0 && (
+                      {itemCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {cart.itemCount}
+                          {itemCount}
                         </span>
                       )}
                     </Button>
@@ -283,10 +283,10 @@ export default function ProductDetail() {
                   size="lg"
                   className="w-full md:w-auto"
                   onClick={handleAddToCart}
-                  disabled={addToCartMutation.isPending}
+                  disabled={cartLoading}
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+                  {cartLoading ? "Adding..." : "Add to Cart"}
                 </Button>
               </div>
             ) : (

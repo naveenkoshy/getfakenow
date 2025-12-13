@@ -1,55 +1,21 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getLoginUrl } from "@/const";
-import { trpc } from "@/lib/trpc";
 import { Minus, Plus, ShoppingCart, Trash2, User } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
+import { useState } from "react";
+import { AuthModal } from "@/components/AuthModal";
 
 export default function Cart() {
   const [, setLocation] = useLocation();
-  const { isAuthenticated } = useAuth();
-  const utils = trpc.useUtils();
-
-  const { data: cart, isLoading } = trpc.cart.get.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
-
-  const updateQuantityMutation = trpc.cart.updateQuantity.useMutation({
-    onSuccess: () => {
-      utils.cart.get.invalidate();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const removeMutation = trpc.cart.remove.useMutation({
-    onSuccess: () => {
-      utils.cart.get.invalidate();
-      toast.success("Item removed from cart");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { user } = useAuth();
+  const { items, total, updateQuantity, removeItem, isLoading: cartLoading } = useCart();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h2 className="text-2xl font-bold mb-4">Sign in to view your cart</h2>
-          <Button asChild>
-            <a href={getLoginUrl()}>Sign In</a>
-          </Button>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,11 +42,11 @@ export default function Cart() {
       <div className="container py-8">
         <h1 className="text-4xl font-bold tracking-tight mb-8">Shopping Cart</h1>
 
-        {isLoading ? (
+        {cartLoading ? (
           <div className="flex justify-center py-16">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
           </div>
-        ) : !cart || cart.items.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="text-center py-16">
             <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
@@ -93,15 +59,15 @@ export default function Cart() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cart.items.map((item) => (
-                <Card key={item.id}>
+              {items.map((item) => (
+                <Card key={item.productId}>
                   <CardContent className="p-6">
                     <div className="flex gap-4">
                       <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                        {item.product?.imageUrl ? (
+                        {item.imageUrl ? (
                           <img
-                            src={item.product.imageUrl}
-                            alt={item.product.name}
+                            src={item.imageUrl}
+                            alt={item.name}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -112,28 +78,34 @@ export default function Cart() {
                       </div>
 
                       <div className="flex-1">
-                        <Link href={`/product/${item.product?.slug}`}>
+                        <Link href={`/product/${item.slug}`}>
                           <h3 className="font-medium hover:text-primary transition-colors cursor-pointer">
-                            {item.product?.name}
+                            {item.name}
                           </h3>
                         </Link>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {formatPrice(item.product?.price || 0)}
+                          {formatPrice(item.price)}
                         </p>
-                        <div className="flex gap-4 mt-1">
-                          <p className="text-sm text-muted-foreground">
-                            Size: <span className="font-medium">{item.size}</span>
-                          </p>
-                          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                            Color: 
-                            <span
-                              className="inline-block w-4 h-4 rounded-full border border-gray-300"
-                              style={{ backgroundColor: item.color === 'navy' ? '#1e3a8a' : item.color }}
-                              title={item.color.charAt(0).toUpperCase() + item.color.slice(1)}
-                            />
-                            <span className="font-medium">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span>
-                          </p>
-                        </div>
+                        {(item.size || item.color) && (
+                          <div className="flex gap-4 mt-1">
+                            {item.size && (
+                              <p className="text-sm text-muted-foreground">
+                                Size: <span className="font-medium">{item.size}</span>
+                              </p>
+                            )}
+                            {item.color && (
+                              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                                Color: 
+                                <span
+                                  className="inline-block w-4 h-4 rounded-full border border-gray-300"
+                                  style={{ backgroundColor: item.color === 'navy' ? '#1e3a8a' : item.color }}
+                                  title={item.color.charAt(0).toUpperCase() + item.color.slice(1)}
+                                />
+                                <span className="font-medium">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span>
+                              </p>
+                            )}
+                          </div>
+                        )}
 
                         <div className="flex items-center gap-4 mt-4">
                           <div className="flex items-center gap-2">
@@ -141,13 +113,8 @@ export default function Cart() {
                               variant="outline"
                               size="icon"
                               className="h-8 w-8"
-                              onClick={() =>
-                                updateQuantityMutation.mutate({
-                                  id: item.id,
-                                  quantity: item.quantity - 1,
-                                })
-                              }
-                              disabled={updateQuantityMutation.isPending}
+                              onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                              disabled={cartLoading}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
@@ -156,16 +123,8 @@ export default function Cart() {
                               variant="outline"
                               size="icon"
                               className="h-8 w-8"
-                              onClick={() =>
-                                updateQuantityMutation.mutate({
-                                  id: item.id,
-                                  quantity: item.quantity + 1,
-                                })
-                              }
-                              disabled={
-                                updateQuantityMutation.isPending ||
-                                item.quantity >= (item.product?.stockQuantity || 0)
-                              }
+                              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                              disabled={cartLoading}
                             >
                               <Plus className="h-3 w-3" />
                             </Button>
@@ -174,8 +133,8 @@ export default function Cart() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeMutation.mutate({ id: item.id })}
-                            disabled={removeMutation.isPending}
+                            onClick={() => removeItem(item.productId)}
+                            disabled={cartLoading}
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Remove
@@ -185,7 +144,7 @@ export default function Cart() {
 
                       <div className="text-right">
                         <p className="font-semibold">
-                          {formatPrice((item.product?.price || 0) * item.quantity)}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -203,7 +162,7 @@ export default function Cart() {
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span className="font-medium">{formatPrice(cart.total)}</span>
+                      <span className="font-medium">{formatPrice(total)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
@@ -211,14 +170,20 @@ export default function Cart() {
                     </div>
                     <div className="border-t pt-3 flex justify-between">
                       <span className="font-semibold">Total</span>
-                      <span className="font-bold text-xl">{formatPrice(cart.total)}</span>
+                      <span className="font-bold text-xl">{formatPrice(total)}</span>
                     </div>
                   </div>
 
                   <Button
                     className="w-full"
                     size="lg"
-                    onClick={() => setLocation("/checkout")}
+                    onClick={() => {
+                      if (!user) {
+                        setAuthModalOpen(true);
+                      } else {
+                        setLocation("/checkout");
+                      }
+                    }}
                   >
                     Proceed to Checkout
                   </Button>
@@ -236,6 +201,8 @@ export default function Cart() {
           </div>
         )}
       </div>
+      
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </div>
   );
 }
