@@ -418,3 +418,8 @@
 - [x] Deduct inventory when payment completes
 - [ ] Test admin access control with non-admin user
 - [ ] Test Stripe webhook with test payment
+
+## Footer Link Fixes
+- [x] Fix broken footer links (All Products, Casual, Professional returning 404)
+- [x] Update footer URLs to match correct routes (/shop, /casual, /professional)
+- [x] Test all footer navigation links

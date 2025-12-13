@@ -229,9 +229,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Shop</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/products" className="hover:text-foreground">All Products</Link></li>
-                <li><Link href="/products?category=casual" className="hover:text-foreground">Casual</Link></li>
-                <li><Link href="/products?category=professional" className="hover:text-foreground">Professional</Link></li>
+                <li><Link href="/shop" className="hover:text-foreground">All Products</Link></li>
+                <li><Link href="/casual" className="hover:text-foreground">Casual</Link></li>
+                <li><Link href="/professional" className="hover:text-foreground">Professional</Link></li>
               </ul>
             </div>
             <div>
