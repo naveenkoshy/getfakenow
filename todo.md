@@ -428,3 +428,10 @@
 - [x] Add /products route to App.tsx
 - [x] Support category filtering via query parameters (?category=casual)
 - [x] Test /products and /products?category=casual routes
+
+## Guest Cart Support
+- [x] Investigate current cart authentication requirements
+- [x] Update backend cart procedures to support guest sessions - Not needed, localStorage used for guests
+- [x] Update frontend cart UI to work without authentication - Already implemented in CartContext
+- [x] Test add to cart for guest users - Working correctly
+- [x] Test cart persistence across page refreshes for guests - localStorage persists data
