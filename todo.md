@@ -423,3 +423,8 @@
 - [x] Fix broken footer links (All Products, Casual, Professional returning 404)
 - [x] Update footer URLs to match correct routes (/shop, /casual, /professional)
 - [x] Test all footer navigation links
+
+## Products Route Fix
+- [x] Add /products route to App.tsx
+- [x] Support category filtering via query parameters (?category=casual)
+- [x] Test /products and /products?category=casual routes

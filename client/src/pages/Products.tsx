@@ -7,19 +7,32 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Search, ShoppingCart, User } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
 export default function Products() {
   const { isAuthenticated } = useAuth();
+  const [location] = useLocation();
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState<number | undefined>();
 
+  const { data: categories } = trpc.categories.list.useQuery();
   const { data: products, isLoading } = trpc.products.list.useQuery({
     search: search || undefined,
     categoryId,
   });
-  const { data: categories } = trpc.categories.list.useQuery();
+
+  // Handle category query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    if (categoryParam && categories) {
+      const category = categories.find(c => c.name.toLowerCase() === categoryParam.toLowerCase());
+      if (category) {
+        setCategoryId(category.id);
+      }
+    }
+  }, [location, categories]);
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
   // SEO: Update meta tags
