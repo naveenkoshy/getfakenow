@@ -15,6 +15,8 @@ import Account from "./pages/Account";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
+import AddProduct from "./pages/admin/AddProduct";
+import AdminOrders from "./pages/admin/Orders";
 import Casual from "./pages/Casual";
 import Professional from "./pages/Professional";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -37,6 +39,9 @@ function Router() {
       <Route path="/orders" component={Orders} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
+      <Route path="/admin/products/new" component={AddProduct} />
+      <Route path="/admin/products/add" component={AddProduct} />
+      <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/shipping-policy" component={ShippingPolicy} />
       <Route path="/returns-policy" component={ReturnsPolicy} />

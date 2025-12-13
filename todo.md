@@ -337,3 +337,52 @@
 - [ ] Send order confirmation email
 - [ ] Add "My Orders" page for customers
 - [ ] Test complete purchase flow (guest + logged-in)
+
+## Feature Build: Product Management Forms
+- [x] Create ProductForm component for add/edit
+- [x] Add image upload functionality with S3 storage
+- [x] Build product create page in admin
+- [x] Add form validation (name, price, description, category)
+- [ ] Build product edit page in admin (pending)
+- [ ] Test product creation flow
+- [ ] Test product editing flow
+
+## Feature Build: Variant Management
+- [ ] Add color variant management UI
+- [ ] Add size variant management UI
+- [ ] Add stock level tracking per variant
+- [ ] Update product form to include variants
+- [ ] Test variant creation and editing
+
+## Feature Build: Order Management Dashboard
+- [x] Create Orders admin page with table view
+- [x] Add order status filter (pending, processing, shipped, delivered)
+- [x] Add order status update functionality
+- [x] Add search/filter by customer name or order ID
+- [ ] Build order detail view (pending)
+- [ ] Test order management workflow
+
+## Feature Build: Customer My Orders Page
+- [x] Create My Orders page for customers (already exists)
+- [x] Display order history with status
+- [x] Show shipping address
+- [ ] Add order detail modal (pending)
+- [ ] Add reorder functionality (pending)
+- [ ] Test order viewing as customer
+
+## Feature Build: Wishlist/Favorites
+- [ ] Create wishlist database table
+- [ ] Add wishlist backend procedures
+- [ ] Add "Add to Wishlist" button on product pages
+- [ ] Create Wishlist page for customers
+- [ ] Add remove from wishlist functionality
+- [ ] Test wishlist add/remove
+
+## Feature Build: Product Reviews & Ratings
+- [ ] Create reviews database table
+- [ ] Add review backend procedures
+- [ ] Build review submission form
+- [ ] Display reviews on product pages
+- [ ] Add star rating display
+- [ ] Calculate average rating per product
+- [ ] Test review submission and display
