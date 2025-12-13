@@ -19,12 +19,19 @@ import {
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Search, Eye, Package } from "lucide-react";
+import { AdminOrderDetailModal } from "@/components/AdminOrderDetailModal";
 
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   
   const { data: orders, isLoading } = trpc.admin.orders.list.useQuery();
+  const { data: selectedOrder } = trpc.orders.getById.useQuery(
+    { id: selectedOrderId! },
+    { enabled: !!selectedOrderId }
+  );
   const utils = trpc.useUtils();
   
   const updateStatusMutation = trpc.admin.orders.updateStatus.useMutation({
@@ -164,7 +171,15 @@ export default function AdminOrders() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" title="View details">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          title="View details"
+                          onClick={() => {
+                            setSelectedOrderId(order.id);
+                            setModalOpen(true);
+                          }}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon" title="Print packing slip">
@@ -185,6 +200,12 @@ export default function AdminOrders() {
           </Table>
         </div>
       </div>
+
+      <AdminOrderDetailModal
+        order={selectedOrder || null}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+      />
     </AdminLayout>
   );
 }

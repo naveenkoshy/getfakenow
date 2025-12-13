@@ -417,7 +417,14 @@ export const appRouter = router({
   checkout: router({
     createSession: protectedProcedure
       .input(z.object({
+        shippingName: z.string(),
+        shippingEmail: z.string().email(),
+        shippingPhone: z.string(),
         shippingAddress: z.string(),
+        shippingCity: z.string(),
+        shippingState: z.string(),
+        shippingPostalCode: z.string(),
+        shippingCountry: z.string().default("Malaysia"),
       }))
       .mutation(async ({ ctx, input }) => {
         // Get cart items
@@ -454,7 +461,14 @@ export const appRouter = router({
           userId: ctx.user.id,
           orderNumber,
           totalAmount,
+          shippingName: input.shippingName,
+          shippingEmail: input.shippingEmail,
+          shippingPhone: input.shippingPhone,
           shippingAddress: input.shippingAddress,
+          shippingCity: input.shippingCity,
+          shippingState: input.shippingState,
+          shippingPostalCode: input.shippingPostalCode,
+          shippingCountry: input.shippingCountry,
           status: 'pending',
           paymentStatus: 'pending',
         });

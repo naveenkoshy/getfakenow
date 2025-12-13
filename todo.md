@@ -396,3 +396,16 @@
 - [ ] Add edit button to Products admin table
 - [ ] Add route for /admin/products/edit/:id
 - [ ] Test product update flow
+
+## Order Detail Modals
+- [x] Create backend procedure to fetch complete order details with items
+- [x] Create AdminOrderDetailModal component with full order information
+- [x] Create CustomerOrderDetailModal component with order tracking
+- [x] Add modal trigger to admin Orders page
+- [x] Add modal trigger to customer Orders page
+- [x] Display itemized product list with images, sizes, colors
+- [x] Update database schema with detailed shipping fields (name, email, phone, address, city, state, postal, country)
+- [x] Show shipping address and customer contact information
+- [x] Display payment status and order timeline
+- [x] Test admin order modal functionality
+- [x] Test customer order modal functionality

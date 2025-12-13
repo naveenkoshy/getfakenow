@@ -4,14 +4,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ShoppingCart, User, Package } from "lucide-react";
+import { ShoppingCart, User, Package, Eye } from "lucide-react";
 import { Link } from "wouter";
+import { CustomerOrderDetailModal } from "@/components/CustomerOrderDetailModal";
+import { useState } from "react";
 
 export default function Orders() {
   const { isAuthenticated } = useAuth();
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  
   const { data: orders, isLoading } = trpc.orders.list.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+  const { data: selectedOrder } = trpc.orders.getById.useQuery(
+    { id: selectedOrderId! },
+    { enabled: !!selectedOrderId }
+  );
   const { data: cart } = trpc.cart.get.useQuery(undefined, { enabled: isAuthenticated });
 
   const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
@@ -122,20 +131,30 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {order.shippingAddress && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Shipping Address:</p>
-                      <p className="text-sm text-muted-foreground whitespace-pre-line">
-                        {order.shippingAddress}
-                      </p>
-                    </div>
-                  )}
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedOrderId(order.id);
+                        setModalOpen(true);
+                      }}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      <CustomerOrderDetailModal
+        order={selectedOrder || null}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+      />
     </div>
   );
 }

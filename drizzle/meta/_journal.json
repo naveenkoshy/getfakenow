@@ -50,6 +50,13 @@
       "when": 1765555798501,
       "tag": "0006_tense_silvermane",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1765596563955,
+      "tag": "0007_flashy_scarecrow",
+      "breakpoints": true
     }
   ]
 }

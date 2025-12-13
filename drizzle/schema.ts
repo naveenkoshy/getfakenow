@@ -101,7 +101,16 @@ export const orders = mysqlTable("orders", {
   orderNumber: varchar("orderNumber", { length: 64 }).notNull().unique(),
   status: mysqlEnum("status", ["pending", "processing", "shipped", "delivered", "cancelled"]).default("pending").notNull(),
   totalAmount: int("totalAmount").notNull(), // Total in cents
-  shippingAddress: text("shippingAddress"),
+  // Shipping details
+  shippingName: varchar("shippingName", { length: 255 }).notNull(),
+  shippingEmail: varchar("shippingEmail", { length: 320 }).notNull(),
+  shippingPhone: varchar("shippingPhone", { length: 50 }).notNull(),
+  shippingAddress: text("shippingAddress").notNull(),
+  shippingCity: varchar("shippingCity", { length: 100 }).notNull(),
+  shippingState: varchar("shippingState", { length: 100 }).notNull(),
+  shippingPostalCode: varchar("shippingPostalCode", { length: 20 }).notNull(),
+  shippingCountry: varchar("shippingCountry", { length: 100 }).notNull().default("Malaysia"),
+  // Payment
   paymentIntentId: varchar("paymentIntentId", { length: 255 }),
   paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "failed", "refunded"]).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
