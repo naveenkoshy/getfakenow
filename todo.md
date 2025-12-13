@@ -435,3 +435,10 @@
 - [x] Update frontend cart UI to work without authentication - Already implemented in CartContext
 - [x] Test add to cart for guest users - Working correctly
 - [x] Test cart persistence across page refreshes for guests - localStorage persists data
+
+## Cache Management
+- [x] Check Manus Management UI for cache purge options - Happens automatically on publish
+- [x] Add cache-busting configuration to Vite build - Enhanced with cache control headers
+- [ ] Create new checkpoint with all recent fixes
+- [ ] Publish to production to deploy fresh code
+- [ ] Verify production site serves updated code
