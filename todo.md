@@ -40,7 +40,8 @@
 ## Admin Panel
 - [x] Admin dashboard layout with sidebar navigation
 - [x] Product management page (list, add, edit, delete)
-- [ ] Product image upload interface
+- [x] Product edit page with pre-populated form
+- [x] Product image upload interface
 - [x] Inventory management interface
 - [x] Order management page with status updates
 - [ ] Order details view for admin
@@ -386,3 +387,12 @@
 - [ ] Add star rating display
 - [ ] Calculate average rating per product
 - [ ] Test review submission and display
+
+## Product Edit Page
+- [ ] Create EditProduct page component
+- [ ] Fetch existing product data by ID
+- [ ] Pre-populate form with current product details
+- [ ] Handle image replacement (keep existing or upload new)
+- [ ] Add edit button to Products admin table
+- [ ] Add route for /admin/products/edit/:id
+- [ ] Test product update flow

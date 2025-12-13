@@ -11,16 +11,23 @@ import { Upload, X } from "lucide-react";
 
 interface ProductFormProps {
   productId?: number;
+  initialData?: {
+    name?: string;
+    description?: string;
+    price?: number;
+    categoryId?: number;
+    imageUrl?: string;
+  };
   onSuccess?: () => void;
 }
 
-export function ProductForm({ productId, onSuccess }: ProductFormProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [categoryId, setCategoryId] = useState<number>(1); // 1 = Casual, 2 = Professional
+export function ProductForm({ productId, initialData, onSuccess }: ProductFormProps) {
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [price, setPrice] = useState(initialData?.price ? (initialData.price / 100).toFixed(2) : "");
+  const [categoryId, setCategoryId] = useState<number>(initialData?.categoryId || 1);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl || "");
   const [isUploading, setIsUploading] = useState(false);
 
   const utils = trpc.useUtils();
@@ -33,6 +40,17 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
     },
     onError: (error) => {
       toast.error(`Failed to create product: ${error.message}`);
+    },
+  });
+  
+  const updateProduct = trpc.products.update.useMutation({
+    onSuccess: () => {
+      toast.success("Product updated successfully!");
+      utils.products.invalidate();
+      onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(`Failed to update product: ${error.message}`);
     },
   });
 
@@ -109,19 +127,30 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
     }
 
     try {
-      let imageUrl = "";
+      let imageUrl = imagePreview; // Keep existing image if no new one uploaded
       if (imageFile) {
         imageUrl = await uploadImage();
       }
 
-      createProduct.mutate({
+      const productData = {
         name,
         description,
         price: priceInCents,
         categoryId,
         imageUrl,
         slug: name.toLowerCase().replace(/\s+/g, "-"),
-      });
+      };
+
+      if (productId) {
+        // Update existing product
+        updateProduct.mutate({
+          id: productId,
+          ...productData,
+        });
+      } else {
+        // Create new product
+        createProduct.mutate(productData);
+      }
     } catch (error) {
       toast.error("Failed to upload image");
     }
@@ -234,10 +263,10 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
         <div className="flex gap-4">
           <Button
             type="submit"
-            disabled={createProduct.isPending || isUploading}
+            disabled={createProduct.isPending || updateProduct.isPending || isUploading}
             className="flex-1"
           >
-            {isUploading ? "Uploading..." : createProduct.isPending ? "Creating..." : "Create Product"}
+            {isUploading ? "Uploading..." : productId ? (updateProduct.isPending ? "Updating..." : "Update Product") : (createProduct.isPending ? "Creating..." : "Create Product")}
           </Button>
           <Button type="button" variant="outline" onClick={resetForm}>
             Reset
