@@ -409,3 +409,12 @@
 - [x] Display payment status and order timeline
 - [x] Test admin order modal functionality
 - [x] Test customer order modal functionality
+
+## Critical Fixes from Audit
+- [x] Fix broken policy page links in footer (404 errors) - Links were already correct
+- [x] Implement admin access control with role checking
+- [x] Create Stripe webhook handler for payment completion
+- [x] Update order status when payment succeeds
+- [x] Deduct inventory when payment completes
+- [ ] Test admin access control with non-admin user
+- [ ] Test Stripe webhook with test payment

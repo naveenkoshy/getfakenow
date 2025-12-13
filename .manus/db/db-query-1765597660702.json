@@ -1,0 +1,145 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.price, p.stockQuantity, p.imageUrl, c.name as categoryName FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY c.name, p.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.price, p.stockQuantity, p.imageUrl, c.name as categoryName FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY c.name, p.name",
+  "rows": [
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "price": "2800",
+      "stockQuantity": "80",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg",
+      "categoryName": "Accessories"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "price": "4500",
+      "stockQuantity": "50",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "price": "3800",
+      "stockQuantity": "40",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "price": "5500",
+      "stockQuantity": "40",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "price": "3500",
+      "stockQuantity": "50",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "price": "6500",
+      "stockQuantity": "35",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "price": "3500",
+      "stockQuantity": "50",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "price": "3500",
+      "stockQuantity": "50",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "price": "3500",
+      "stockQuantity": "50",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "price": "3500",
+      "stockQuantity": "45",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg",
+      "categoryName": "Casual"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "price": "6800",
+      "stockQuantity": "42",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "slug": "heritage-chambray",
+      "price": "7500",
+      "stockQuantity": "25",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "slug": "indigo-chambray",
+      "price": "7500",
+      "stockQuantity": "25",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "price": "7500",
+      "stockQuantity": "38",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg",
+      "categoryName": "Professional"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "slug": "white-oxford-shirt",
+      "price": "7500",
+      "stockQuantity": "40",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg",
+      "categoryName": "Professional"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tprice\tstockQuantity\timageUrl\tcategoryName\n30010\tFake Script Cap\tfake-script-cap\t2800\t80\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg\tAccessories\n30006\tClassic Pique Polo\tclassic-pique-polo\t4500\t50\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg\tCasual\n30003\tConfidence Tee\tconfidence-tee\t3800\t40\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg\tCasual\n30005\tEssential Joggers\tessential-joggers\t5500\t40\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg\tCasual\n30001\tFake It Classic Tee\tfake-it-classic-tee\t3500\t50\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg\tCasual\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t6500\t35\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg\tCasual\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t3500\t50\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg\tCasual\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t3500\t50\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg\tCasual\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t3500\t50\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg\tCasual\n30002\tTill You Make It Tee\ttill-you-make-it-tee\t3500\t45\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg\tCasual\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t6800\t42\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg\tProfessional\n60005\tHeritage Chambray\theritage-chambray\t7500\t25\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg\tProfessional\n60006\tIndigo Chambray\tindigo-chambray\t7500\t25\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg\tProfessional\n30008\tLight Blue Oxford\tlight-blue-oxford\t7500\t38\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg\tProfessional\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\t7500\t40\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg\tProfessional\n",
+  "stderr": "",
+  "execution_time_ms": 1609
+}

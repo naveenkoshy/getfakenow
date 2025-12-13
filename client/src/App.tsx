@@ -24,6 +24,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import ReturnsPolicy from "./pages/ReturnsPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import { AdminRoute } from "./components/AdminRoute";
 
 function Router() {
   return (
@@ -38,12 +39,22 @@ function Router() {
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/account" component={Account} />
       <Route path="/orders" component={Orders} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/products" component={AdminProducts} />
-      <Route path="/admin/products/new" component={AddProduct} />
-      <Route path="/admin/products/add" component={AddProduct} />
-      <Route path="/admin/products/:id/edit" component={EditProduct} />
-      <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin">
+        {() => <AdminRoute><AdminDashboard /></AdminRoute>}
+      </Route>
+      <Route path="/admin/products">
+        {() => <AdminRoute><AdminProducts /></AdminRoute>}
+      </Route>
+      <Route path="/admin/products/new">
+        {() => <AdminRoute><AddProduct /></AdminRoute>}
+      </Route>
+      <Route path="/admin/products/add">
+        {() => <AdminRoute><AddProduct /></AdminRoute>}
+      </Route>
+      <Route path="/admin/products/:id/edit" component={(props: any) => <AdminRoute><EditProduct {...props.params} /></AdminRoute>} />
+      <Route path="/admin/orders">
+        {() => <AdminRoute><AdminOrders /></AdminRoute>}
+      </Route>
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/shipping-policy" component={ShippingPolicy} />
       <Route path="/returns-policy" component={ReturnsPolicy} />
