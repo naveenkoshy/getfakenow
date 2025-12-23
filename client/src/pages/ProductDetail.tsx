@@ -89,11 +89,11 @@ export default function ProductDetail() {
     if (!product) return;
     
     if (!selectedSize) {
-      toast.success("Please select a size");
+      toast.error("Please select a size");
       return;
     }
     if (!selectedColor) {
-      toast.success("Please select a color");
+      toast.error("Please select a color");
       return;
     }
     

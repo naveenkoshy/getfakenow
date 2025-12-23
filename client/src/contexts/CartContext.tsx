@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -94,7 +94,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const addItem = (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+  // Define removeItem first since updateQuantity depends on it
+  const removeItem = useCallback((productId: number) => {
+    if (user) {
+      removeFromCartMutation.mutate({ id: productId });
+    } else {
+      setLocalCart(prev => prev.filter(item => item.productId !== productId));
+    }
+  }, [user, removeFromCartMutation]);
+
+  const addItem = useCallback((item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
     const quantity = item.quantity || 1;
 
     if (user) {
@@ -119,9 +128,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return [...prev, { ...item, quantity }];
       });
     }
-  };
+  }, [user, addToCartMutation]);
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = useCallback((productId: number, quantity: number) => {
     if (quantity <= 0) {
       removeItem(productId);
       return;
@@ -136,23 +145,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         )
       );
     }
-  };
+  }, [user, updateCartMutation, removeItem]);
 
-  const removeItem = (productId: number) => {
-    if (user) {
-      removeFromCartMutation.mutate({ id: productId });
-    } else {
-      setLocalCart(prev => prev.filter(item => item.productId !== productId));
-    }
-  };
-
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     if (user) {
       clearCartMutation.mutate();
     } else {
       setLocalCart([]);
     }
-  };
+  }, [user, clearCartMutation]);
 
   const isLoading =
     addToCartMutation.isPending ||

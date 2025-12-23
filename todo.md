@@ -442,3 +442,12 @@
 - [ ] Create new checkpoint with all recent fixes
 - [ ] Publish to production to deploy fresh code
 - [ ] Verify production site serves updated code
+
+## Cart Functionality Bugs
+- [ ] Fix validation warnings not showing when size not selected
+- [ ] Fix add to cart not working on production site
+- [ ] Verify toast notifications are displaying correctly
+- [ ] Test cart functionality for both guest and authenticated users
+
+## Critical Bug Fixes
+- [x] Fix Add to Cart button unresponsive issue (missing useCallback in CartContext)
