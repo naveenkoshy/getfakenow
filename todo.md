@@ -451,3 +451,9 @@
 
 ## Critical Bug Fixes
 - [x] Fix Add to Cart button unresponsive issue (missing useCallback in CartContext)
+
+## Color Scheme Fix
+- [x] Investigate why site is showing blue instead of red
+- [x] Restore red color scheme across entire palette (buttons, logo, accents)
+- [x] Update CSS variables in index.css
+- [x] Verify color consistency across all pages
