@@ -100,21 +100,22 @@ export default function Home() {
       <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-50 to-white py-20 md:py-32">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black py-24 md:py-40">
         <div className="container">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-              <span className="brand-cursive text-primary">Fake</span> it till you make it
+          <div className="max-w-4xl">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8">
+              <span className="brand-cursive text-primary">Fake</span>{" "}
+              <span className="text-white">it till you make it</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed max-w-2xl">
               Quality apparel for work and weekends. 
               Made to last, designed to move.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="text-base">
+              <Button asChild size="lg" className="text-base px-8 py-6 text-lg">
                 <Link href="/shop">Shop Now</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base">
+              <Button asChild variant="outline" size="lg" className="text-base px-8 py-6 text-lg border-2 border-white text-white hover:bg-white hover:text-black">
                 <Link href="/shop?featured=true">Featured Collection</Link>
               </Button>
             </div>
@@ -123,12 +124,12 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 md:py-24">
+      <section className="py-20 md:py-32 bg-white">
         <div className="container">
-          <div className="flex items-end justify-between mb-12">
+          <div className="flex items-end justify-between mb-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Featured</h2>
-              <p className="text-muted-foreground">New arrivals</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">Featured</h2>
+              <p className="text-lg text-muted-foreground">New arrivals</p>
             </div>
             <Button asChild variant="ghost">
               <Link href="/shop">View All →</Link>
@@ -136,7 +137,7 @@ export default function Home() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[...Array(4)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <div className="aspect-square bg-muted animate-pulse" />
@@ -148,10 +149,10 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {products?.slice(0, 4).map((product) => (
                 <Link key={product.id} href={`/product/${product.slug}`}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                  <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group border-0 shadow-md">
                     <div className="aspect-square overflow-hidden bg-gray-100">
                       {product.imageUrl ? (
                         <img
@@ -165,14 +166,14 @@ export default function Home() {
                         </div>
                       )}
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
                         {product.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                         {product.description}
                       </p>
-                      <p className="font-semibold text-lg">{formatPrice(product.price)}</p>
+                      <p className="font-bold text-xl text-foreground">{formatPrice(product.price)}</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -183,28 +184,28 @@ export default function Home() {
       </section>
 
       {/* Brand Story */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-20 md:py-32 bg-gray-50">
         <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-center">
               Built Different
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              <span className="brand-cursive text-primary text-2xl">Fake</span> by Freetown. 
+            <p className="text-xl text-foreground leading-relaxed mb-16 text-center">
+              <span className="brand-cursive text-primary text-3xl">Fake</span> by Freetown. 
               Graphic tees and hoodies for the street. 
               Oxford shirts and chambray for the office. 
               Same quality, different contexts.
             </p>
             <div className="grid md:grid-cols-2 gap-8 mt-12">
-              <div className="p-6 bg-primary/5 rounded-lg">
-                <h3 className="font-semibold text-lg mb-2">Casual</h3>
-                <p className="text-muted-foreground">
+              <div className="p-8 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                <h3 className="font-bold text-2xl mb-4 text-foreground">Casual</h3>
+                <p className="text-base text-foreground leading-relaxed">
                   Heavyweight cotton. Screen-printed graphics. Built to last.
                 </p>
               </div>
-              <div className="p-6 bg-gray-100 rounded-lg">
-                <h3 className="font-semibold text-lg mb-2">Professional</h3>
-                <p className="text-muted-foreground">
+              <div className="p-8 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                <h3 className="font-bold text-2xl mb-4 text-foreground">Professional</h3>
+                <p className="text-base text-foreground leading-relaxed">
                   Premium fabrics. Clean construction. Work-ready.
                 </p>
               </div>
@@ -214,50 +215,50 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12 bg-white">
+      <footer className="border-t border-border py-16 bg-gray-900 text-white">
         <div className="container">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="brand-cursive text-3xl text-primary">Fake</span>
-                <span className="text-xs text-muted-foreground">by Freetown</span>
+                <span className="text-xs text-gray-400">by Freetown</span>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-400">
                 Elevated apparel for every occasion
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Shop</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/shop" className="hover:text-foreground">All Products</Link></li>
-                <li><Link href="/casual" className="hover:text-foreground">Casual</Link></li>
-                <li><Link href="/professional" className="hover:text-foreground">Professional</Link></li>
+              <h4 className="font-bold mb-4 text-white">Shop</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/shop" className="hover:text-white transition-colors">All Products</Link></li>
+                <li><Link href="/casual" className="hover:text-white transition-colors">Casual</Link></li>
+                <li><Link href="/professional" className="hover:text-white transition-colors">Professional</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Account</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-bold mb-4 text-white">Account</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
                 {isAuthenticated ? (
                   <>
-                    <li><Link href="/account" className="hover:text-foreground">My Account</Link></li>
-                    <li><Link href="/orders" className="hover:text-foreground">Orders</Link></li>
+                    <li><Link href="/account" className="hover:text-white transition-colors">My Account</Link></li>
+                    <li><Link href="/orders" className="hover:text-white transition-colors">Orders</Link></li>
                   </>
                 ) : (
-                  <li><button onClick={() => setAuthModalOpen(true)} className="hover:text-foreground">Sign In</button></li>
+                  <li><button onClick={() => setAuthModalOpen(true)} className="hover:text-white transition-colors">Sign In</button></li>
                 )}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/shipping-policy" className="hover:text-foreground">Shipping Policy</Link></li>
-                <li><Link href="/returns-policy" className="hover:text-foreground">Returns & Refunds</Link></li>
-                <li><Link href="/privacy-policy" className="hover:text-foreground">Privacy Policy</Link></li>
-                <li><Link href="/terms-of-service" className="hover:text-foreground">Terms of Service</Link></li>
+              <h4 className="font-bold mb-4 text-white">Support</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link></li>
+                <li><Link href="/returns-policy" className="hover:text-white transition-colors">Returns & Refunds</Link></li>
+                <li><Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
             © 2026 Fake by Freetown. All rights reserved.
           </div>
         </div>

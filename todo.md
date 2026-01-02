@@ -457,3 +457,13 @@
 - [x] Restore red color scheme across entire palette (buttons, logo, accents)
 - [x] Update CSS variables in index.css
 - [x] Verify color consistency across all pages
+
+## Visual Aesthetics Improvements
+- [x] Fix grey text on white background (improve contrast)
+- [x] Update foreground/muted text colors for better readability
+- [x] Improve layout spacing and hierarchy on home page
+- [x] Enhance product card design and layout
+- [x] Improve hero section visual impact
+- [x] Update typography scale and weights
+- [x] Add visual interest with backgrounds and textures
+- [x] Improve overall page layouts and grid systems
