@@ -49,13 +49,13 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/shop" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/shop" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
                 Shop
               </Link>
-              <Link href="/casual" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/casual" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
                 Casual
               </Link>
-              <Link href="/professional" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link href="/professional" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
                 Professional
               </Link>
             </nav>
@@ -190,7 +190,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-center">
               Built Different
             </h2>
-            <p className="text-xl text-foreground leading-relaxed mb-16 text-center">
+            <p className="text-xl leading-relaxed mb-16 text-center" style={{color: 'oklch(0.15 0.015 65)'}}>
               <span className="brand-cursive text-primary text-3xl">Fake</span> by Freetown. 
               Graphic tees and hoodies for the street. 
               Oxford shirts and chambray for the office. 
@@ -198,14 +198,14 @@ export default function Home() {
             </p>
             <div className="grid md:grid-cols-2 gap-8 mt-12">
               <div className="p-8 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-2xl mb-4 text-foreground">Casual</h3>
-                <p className="text-base text-foreground leading-relaxed">
+                <h3 className="font-bold text-2xl mb-4" style={{color: 'oklch(0.15 0.015 65)'}}>Casual</h3>
+                <p className="text-base leading-relaxed" style={{color: 'oklch(0.15 0.015 65)'}}>
                   Heavyweight cotton. Screen-printed graphics. Built to last.
                 </p>
               </div>
               <div className="p-8 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-2xl mb-4 text-foreground">Professional</h3>
-                <p className="text-base text-foreground leading-relaxed">
+                <h3 className="font-bold text-2xl mb-4" style={{color: 'oklch(0.15 0.015 65)'}}>Professional</h3>
+                <p className="text-base leading-relaxed" style={{color: 'oklch(0.15 0.015 65)'}}>
                   Premium fabrics. Clean construction. Work-ready.
                 </p>
               </div>

@@ -467,3 +467,8 @@
 - [x] Update typography scale and weights
 - [x] Add visual interest with backgrounds and textures
 - [x] Improve overall page layouts and grid systems
+
+## Text Readability Fixes
+- [x] Fix header navigation text color (too light, hard to read)
+- [x] Improve contrast for navigation links against white background
+- [x] Fix Built Different section text readability
