@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AuthModal } from "@/components/AuthModal";
@@ -135,6 +136,7 @@ export default function Account() {
           </Card>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

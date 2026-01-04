@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -59,6 +60,7 @@ export default function OrderConfirmation() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

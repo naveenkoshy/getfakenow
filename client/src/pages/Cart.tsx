@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Minus, Plus, ShoppingCart, Trash2, User } from "lucide-react";
@@ -203,6 +204,7 @@ export default function Cart() {
       </div>
       
       <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+      <Footer />
     </div>
   );
 }

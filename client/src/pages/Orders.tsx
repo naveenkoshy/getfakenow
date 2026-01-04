@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -155,6 +156,7 @@ export default function Orders() {
         open={modalOpen}
         onOpenChange={setModalOpen}
       />
+      <Footer />
     </div>
   );
 }

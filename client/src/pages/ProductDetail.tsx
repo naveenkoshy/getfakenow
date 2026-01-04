@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -298,6 +299,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
