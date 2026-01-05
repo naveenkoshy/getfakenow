@@ -478,3 +478,11 @@
 - [x] Create reusable Footer component
 - [x] Add footer to all pages (Shop, Product Detail, Cart, Checkout, Account, etc.)
 - [x] Ensure consistent footer styling across all pages
+
+## Related Products Feature
+- [x] Create tRPC procedure to fetch related products by category
+- [x] Exclude current product from related products list
+- [x] Limit related products to 4-6 items
+- [x] Design Related Products section UI component
+- [x] Add Related Products section to product detail page
+- [x] Test related products display and navigation

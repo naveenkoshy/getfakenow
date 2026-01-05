@@ -257,6 +257,28 @@ export const appRouter = router({
         };
       }),
     
+    getRelated: publicProcedure
+      .input(z.object({ 
+        productId: z.number(),
+        limit: z.number().optional().default(4),
+      }))
+      .query(async ({ input }) => {
+        const product = await db.getProductById(input.productId);
+        if (!product) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+        }
+        
+        // Get products from the same category, excluding the current product
+        const relatedProducts = await db.getAllProducts({ 
+          categoryId: product.categoryId,
+        });
+        
+        // Filter out current product and limit results
+        return relatedProducts
+          .filter(p => p.id !== input.productId)
+          .slice(0, input.limit);
+      }),
+    
     // Admin: Create product
     create: adminProcedure
       .input(z.object({

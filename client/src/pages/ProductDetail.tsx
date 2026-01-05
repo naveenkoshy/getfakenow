@@ -21,6 +21,10 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('black');
 
   const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
+  const { data: relatedProducts } = trpc.products.getRelated.useQuery(
+    { productId: product?.id!, limit: 4 },
+    { enabled: !!product?.id }
+  );
 
   // SEO: Update meta tags and inject structured data when product loads
   useEffect(() => {
@@ -299,6 +303,53 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts && relatedProducts.length > 0 && (
+        <div className="container py-16">
+          <h2 className="text-3xl font-bold tracking-tight mb-8">You May Also Like</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((relatedProduct) => (
+              <Link key={relatedProduct.id} href={`/product/${relatedProduct.slug}`}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
+                  <div className="aspect-square bg-gray-100 overflow-hidden">
+                    {relatedProduct.imageUrl ? (
+                      <img
+                        src={relatedProduct.imageUrl}
+                        alt={relatedProduct.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                      {relatedProduct.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {relatedProduct.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-bold">
+                        RM{(relatedProduct.price / 100).toFixed(2)}
+                      </span>
+                      {relatedProduct.stockQuantity > 0 ? (
+                        <span className="text-xs text-green-600 font-medium">In Stock</span>
+                      ) : (
+                        <span className="text-xs text-red-600 font-medium">Out of Stock</span>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );
