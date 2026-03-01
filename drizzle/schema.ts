@@ -50,6 +50,7 @@ export const products = mysqlTable("products", {
   categoryId: int("categoryId").notNull(),
   stockQuantity: int("stockQuantity").default(0).notNull(),
   imageUrl: text("imageUrl"),
+  productType: mysqlEnum("productType", ["physical", "digital", "bundle"]).default("physical").notNull(),
   featured: boolean("featured").default(false).notNull(),
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -138,3 +139,63 @@ export const orderItems = mysqlTable("orderItems", {
 
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = typeof orderItems.$inferInsert;
+
+/**
+ * Digital products (guides, PDFs, e-books)
+ */
+export const digitalProducts = mysqlTable("digitalProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  price: int("price").notNull(), // Price in cents
+  fileUrl: text("fileUrl").notNull(), // S3 URL to the PDF/file
+  fileKey: text("fileKey").notNull(), // S3 key for reference
+  previewUrl: text("previewUrl"), // Optional preview image/cover
+  fileSize: int("fileSize"), // File size in bytes
+  downloadCount: int("downloadCount").default(0).notNull(),
+  featured: boolean("featured").default(false).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DigitalProduct = typeof digitalProducts.$inferSelect;
+export type InsertDigitalProduct = typeof digitalProducts.$inferInsert;
+
+/**
+ * Content posts (blog articles, tips, guides)
+ */
+export const contentPosts = mysqlTable("contentPosts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  excerpt: text("excerpt"),
+  body: text("body").notNull(),
+  category: mysqlEnum("category", ["tips", "hacks", "lifestyle", "guides", "news"]).default("tips").notNull(),
+  featuredImage: text("featuredImage"),
+  featured: boolean("featured").default(false).notNull(),
+  published: boolean("published").default(false).notNull(),
+  viewCount: int("viewCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  publishedAt: timestamp("publishedAt"),
+});
+
+export type ContentPost = typeof contentPosts.$inferSelect;
+export type InsertContentPost = typeof contentPosts.$inferInsert;
+
+/**
+ * Order downloads - track digital product downloads
+ */
+export const orderDownloads = mysqlTable("orderDownloads", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  digitalProductId: int("digitalProductId").notNull(),
+  downloadCount: int("downloadCount").default(0).notNull(),
+  lastDownloadedAt: timestamp("lastDownloadedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OrderDownload = typeof orderDownloads.$inferSelect;
+export type InsertOrderDownload = typeof orderDownloads.$inferInsert;

@@ -1,185 +1,440 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* Luxury Color Palette */
 :root {
-  --primary: oklch(0.55 0.22 25); /* Vibrant red brand color */
-  --primary-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.55 0.22 25);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --chart-1: oklch(0.75 0.15 25);
-  --chart-2: oklch(0.65 0.18 25);
-  --chart-3: oklch(0.55 0.22 25);
-  --chart-4: oklch(0.45 0.20 25);
-  --chart-5: oklch(0.35 0.18 25);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.15 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.45 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.55 0.22 25);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.55 0.22 25);
+  --primary-black: #000000;
+  --primary-white: #ffffff;
+  --text-dark: #1a1a1a;
+  --text-light: #666666;
+  --border-light: #e5e5e5;
+  --bg-light: #f9f9f9;
+  --accent-gold: #d4af37;
 }
 
-.dark {
-  --primary: oklch(0.55 0.22 25);
-  --primary-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.55 0.22 25);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.55 0.22 25);
-  --chart-1: oklch(0.75 0.15 25);
-  --chart-2: oklch(0.65 0.18 25);
-  --chart-3: oklch(0.55 0.22 25);
-  --chart-4: oklch(0.45 0.20 25);
-  --chart-5: oklch(0.35 0.18 25);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.55 0.22 25);
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-light);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [type="button"]:not(:disabled),
-  [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-@layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
-  .container {
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+header a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Logo */
+.logo {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: var(--primary-black);
+  text-transform: uppercase;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  gap: 32px;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+nav a {
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+  position: relative;
+  text-transform: uppercase;
+}
+
+nav a:hover {
+  color: var(--text-light);
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--primary-black);
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Hero Section */
+.immersive-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px;
+  overflow: hidden;
+  background: var(--primary-white);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.hero-content h1 {
+  font-size: clamp(48px, 10vw, 80px);
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  color: var(--primary-black);
+  line-height: 1.2;
+}
+
+.hero-tagline {
+  font-size: 32px;
+  font-weight: 300;
+  margin-bottom: 30px;
+  line-height: 1.2;
+  color: var(--primary-black);
+}
+
+.hero-tagline .red {
+  color: var(--primary-black);
+}
+
+.hero-tagline .cyan {
+  color: var(--primary-black);
+}
+
+.hero-subtitle {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--primary-black);
+  margin-bottom: 20px;
+}
+
+.hero-description {
+  font-size: 16px;
+  color: var(--text-light);
+  margin-bottom: 40px;
+  max-width: 600px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+/* Buttons */
+.btn-neon-yellow {
+  background: var(--primary-black);
+  color: var(--primary-white);
+  border: 1px solid var(--primary-black);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  display: inline-block;
+}
+
+.btn-neon-yellow:hover {
+  background: var(--primary-white);
+  color: var(--primary-black);
+}
+
+.btn-neon-cyan {
+  background: transparent;
+  color: var(--primary-black);
+  border: 1px solid var(--primary-black);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  display: inline-block;
+}
+
+.btn-neon-cyan:hover {
+  background: var(--primary-black);
+  color: var(--primary-white);
+}
+
+/* CTA Container */
+.cta-container {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Featured Section */
+.featured-section {
+  position: relative;
+  z-index: 10;
+  padding: 80px 20px;
+  background: var(--bg-light);
+}
+
+.featured-section h2 {
+  font-size: clamp(32px, 8vw, 56px);
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--primary-black);
+  letter-spacing: -1px;
+}
+
+.featured-section > p {
+  text-align: center;
+  color: var(--text-light);
+  margin-bottom: 60px;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+/* Product Card */
+.product-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Neon Borders - Updated for luxury */
+.neon-border-red,
+.neon-border-cyan,
+.neon-border-purple,
+.neon-border-yellow {
+  border: 1px solid var(--border-light);
+  box-shadow: none;
+}
+
+.neon-border-red:hover,
+.neon-border-cyan:hover,
+.neon-border-purple:hover,
+.neon-border-yellow:hover {
+  border-color: var(--primary-black);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Content */
+.card-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .card-image {
+  background: #f0f0f0;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--primary-black);
+  margin-bottom: 8px;
+}
+
+.card-message {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.card-button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--primary-black);
+  color: var(--primary-white);
+  border: 1px solid var(--primary-black);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.card-button:hover {
+  background: var(--primary-white);
+  color: var(--primary-black);
+}
+
+/* Footer */
+footer {
+  background: var(--primary-white);
+  color: var(--text-dark);
+  padding: 60px 20px 30px;
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid var(--border-light);
+}
+
+footer .container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+footer h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: var(--primary-black);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+footer a {
+  display: block;
+  color: var(--text-light);
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+footer a:hover {
+  color: var(--primary-black);
+}
+
+footer .footer-bottom {
+  border-top: 1px solid var(--border-light);
+  padding-top: 30px;
+  text-align: center;
+}
+
+footer .footer-bottom p {
+  color: var(--text-light);
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+footer .footer-tagline {
+  color: var(--primary-black);
+  font-weight: 400;
+  font-size: 14px;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bounce 2s infinite;
+  z-index: 10;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
+}
+
+/* Colorful Blobs - Hidden for luxury aesthetic */
+.blob-yellow,
+.blob-cyan,
+.blob-red {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+  }
+
+  .hero-content h1 {
+    font-size: 40px;
+  }
+
+  .hero-tagline {
+    font-size: 24px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-container {
+    flex-direction: column;
+  }
+
+  .btn-neon-yellow,
+  .btn-neon-cyan {
     width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
-    padding-right: 1rem;
-  }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
-  }
-  
-  /* Brand cursive text for "Fake" logo */
-  .brand-cursive {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
-      padding-right: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem; /* 32px - desktop padding */
-      padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
-    }
   }
 }
