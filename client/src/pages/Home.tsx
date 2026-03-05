@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Link } from 'wouter';
 import { ShoppingCart, User, ChevronRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
@@ -6,253 +7,225 @@ import { Footer } from '@/components/Footer';
 export default function Home() {
   const { items } = useCart();
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
+  const [hoveredCollection, setHoveredCollection] = useState<number | null>(null);
+  const [hoveredBadge, setHoveredBadge] = useState<number | null>(null);
+
+  const trendingProducts = [
+    { id: 1, name: 'Classic Tee', price: '$89', emoji: '👕', rating: '4.8' },
+    { id: 2, name: 'Luxury Hoodie', price: '$189', emoji: '🧥', rating: '4.9' },
+    { id: 3, name: 'Tailored Pants', price: '$159', emoji: '👖', rating: '4.7' },
+    { id: 4, name: 'Wool Jacket', price: '$249', emoji: '🧥', rating: '4.8' },
+  ];
+
+  const collections = [
+    { name: 'Essentials', description: 'The basics, elevated' },
+    { name: 'Bold', description: 'Make a statement' },
+    { name: 'Comfort', description: 'All-day wearability' },
+    { name: 'Professional', description: 'Work with edge' },
+  ];
+
+  const testimonials = [
+    { text: 'Best quality I\'ve found. Worth every penny.', author: 'Sarah M.', rating: 5, verified: true },
+    { text: 'The attention to detail is incredible. Highly recommend.', author: 'James T.', rating: 5, verified: true },
+    { text: 'Finally found a brand that gets it. Timeless pieces.', author: 'Alex R.', rating: 5, verified: true },
+  ];
+
+  const trustBadges = [
+    { icon: '📦', title: 'Fast Shipping', description: 'Free over $100' },
+    { icon: '🔄', title: 'Easy Returns', description: '30-day guarantee' },
+    { icon: '🛡️', title: 'Secure Checkout', description: 'SSL encrypted' },
+    { icon: '💬', title: '24/7 Support', description: 'We\'re here to help' },
+  ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ background: '#0f0f0f', color: '#fff', minHeight: '100vh' }}>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-light tracking-widest text-black">
-            FAKE
+      <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: 'rgba(15, 15, 15, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #333' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', fontFamily: "'Space Mono', monospace" }}>FAKE</div>
           </Link>
           
-          <nav className="hidden md:flex gap-12 text-xs font-light tracking-wide">
-            <a href="#" className="text-gray-700 hover:text-black transition duration-300">SHOP</a>
-            <a href="#" className="text-gray-700 hover:text-black transition duration-300">ABOUT</a>
-            <a href="#" className="text-gray-700 hover:text-black transition duration-300">CONTACT</a>
+          <nav style={{ display: 'flex', gap: '32px', fontSize: '12px', fontWeight: 500, letterSpacing: '1px' }}>
+            <a href="#" style={{ color: '#b3b3b3', textDecoration: 'none', textTransform: 'uppercase', transition: 'all 0.3s ease', cursor: 'pointer' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#00d9ff'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#b3b3b3'}>Shop</a>
+            <a href="#" style={{ color: '#b3b3b3', textDecoration: 'none', textTransform: 'uppercase', transition: 'all 0.3s ease', cursor: 'pointer' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#00d9ff'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#b3b3b3'}>About</a>
+            <a href="#" style={{ color: '#b3b3b3', textDecoration: 'none', textTransform: 'uppercase', transition: 'all 0.3s ease', cursor: 'pointer' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#00d9ff'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#b3b3b3'}>Contact</a>
           </nav>
 
-          <div className="flex items-center gap-6">
-            <button className="p-2 hover:bg-gray-100 rounded transition duration-300">
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-            <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded transition duration-300">
-              <ShoppingCart className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button style={{ background: 'none', border: 'none', color: '#b3b3b3', cursor: 'pointer', padding: '8px', fontSize: '20px' }}>🔍</button>
+            <Link href="/cart" style={{ position: 'relative', textDecoration: 'none', color: '#b3b3b3', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontSize: '20px' }}>🛒</span>
               {cartCount > 0 && (
-                <span className="absolute top-1 right-1 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-light">
+                <span style={{ position: 'absolute', top: '-5px', right: '-10px', background: '#00d9ff', color: '#0f0f0f', fontSize: '10px', fontWeight: 700, borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {cartCount}
                 </span>
               )}
             </Link>
-            <button className="p-2 hover:bg-gray-100 rounded transition duration-300">
-              <User className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
-            </button>
+            <button style={{ background: 'none', border: 'none', color: '#b3b3b3', cursor: 'pointer', padding: '8px', fontSize: '20px' }}>👤</button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 md:px-8 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
-            <div className="space-y-8 animate-fade-in">
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl font-light tracking-tight text-black leading-tight">
-                  Elevate Your Presence
-                </h1>
-                <p className="text-lg text-gray-600 font-light leading-relaxed">
-                  Curated apparel for those who refuse to compromise on quality. Timeless pieces that speak to your refined taste.
-                </p>
-              </div>
-
-              <div className="flex gap-4 pt-4">
-                <Link href="/shop" className="group inline-flex items-center gap-3 px-8 py-3 bg-black text-white text-sm font-light tracking-wide hover:bg-gray-900 transition duration-500">
-                  EXPLORE COLLECTION
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition duration-300" strokeWidth={1.5} />
-                </Link>
-                <button className="px-8 py-3 border border-black text-black text-sm font-light tracking-wide hover:bg-black hover:text-white transition duration-500">
-                  LEARN MORE
-                </button>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="pt-8 border-t border-gray-200 flex gap-8 text-xs text-gray-600 font-light">
-                <div>
-                  <p className="text-black font-medium mb-1">Premium Quality</p>
-                  <p>Ethically sourced materials</p>
-                </div>
-                <div>
-                  <p className="text-black font-medium mb-1">Global Shipping</p>
-                  <p>Free on orders over $100</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Visual */}
-            <div className="relative h-96 md:h-full min-h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden group">
-              <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-20 group-hover:opacity-30 transition duration-500">
-                👕
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Collection */}
-      <section className="py-20 px-4 md:px-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <p className="text-xs font-light tracking-widest text-gray-600 uppercase">Our Selection</p>
-            <h2 className="text-4xl md:text-5xl font-light text-black">Signature Pieces</h2>
-            <p className="text-gray-600 font-light max-w-2xl mx-auto">
-              Each item in our collection represents a commitment to excellence and timeless style.
-            </p>
-          </div>
-
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Product 1 */}
-            <div className="group cursor-pointer">
-              <div className="relative h-80 bg-white rounded-lg overflow-hidden mb-4 border border-gray-200 hover:border-gray-400 transition duration-500">
-                <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30 group-hover:opacity-50 transition duration-500">
-                  👕
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-transparent opacity-0 group-hover:opacity-10 transition duration-500" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-light text-black">Classic T-Shirt</h3>
-                <p className="text-xs text-gray-600 font-light">Premium cotton blend</p>
-                <p className="text-sm font-light text-black">$89</p>
-              </div>
-            </div>
-
-            {/* Product 2 */}
-            <div className="group cursor-pointer">
-              <div className="relative h-80 bg-white rounded-lg overflow-hidden mb-4 border border-gray-200 hover:border-gray-400 transition duration-500">
-                <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30 group-hover:opacity-50 transition duration-500">
-                  🧥
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-transparent opacity-0 group-hover:opacity-10 transition duration-500" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-light text-black">Luxury Hoodie</h3>
-                <p className="text-xs text-gray-600 font-light">Cashmere blend comfort</p>
-                <p className="text-sm font-light text-black">$189</p>
-              </div>
-            </div>
-
-            {/* Product 3 */}
-            <div className="group cursor-pointer">
-              <div className="relative h-80 bg-white rounded-lg overflow-hidden mb-4 border border-gray-200 hover:border-gray-400 transition duration-500">
-                <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30 group-hover:opacity-50 transition duration-500">
-                  👖
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-transparent opacity-0 group-hover:opacity-10 transition duration-500" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-light text-black">Tailored Pants</h3>
-                <p className="text-xs text-gray-600 font-light">Italian wool fabric</p>
-                <p className="text-sm font-light text-black">$159</p>
-              </div>
-            </div>
-
-            {/* Product 4 */}
-            <div className="group cursor-pointer">
-              <div className="relative h-80 bg-white rounded-lg overflow-hidden mb-4 border border-gray-200 hover:border-gray-400 transition duration-500">
-                <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30 group-hover:opacity-50 transition duration-500">
-                  🧥
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-transparent opacity-0 group-hover:opacity-10 transition duration-500" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-light text-black">Wool Jacket</h3>
-                <p className="text-xs text-gray-600 font-light">Timeless elegance</p>
-                <p className="text-sm font-light text-black">$249</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-16">
-            <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-light text-black hover:text-gray-600 transition duration-300 border-b border-black hover:border-gray-400">
-              VIEW ALL PRODUCTS
-              <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px', overflow: 'hidden', background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)' }}>
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '900px', margin: '0 auto', padding: '40px', textAlign: 'center' }}>
+          <h1 style={{ fontSize: 'clamp(48px, 12vw, 80px)', fontWeight: 700, letterSpacing: '-2px', marginBottom: '20px', lineHeight: 1.1, fontFamily: "'Space Mono', monospace" }}>LIVE YOUR TRUTH</h1>
+          <p style={{ fontSize: '28px', fontWeight: 300, marginBottom: '20px', lineHeight: 1.3, color: '#b3b3b3' }}>Curated lifestyle for the <span style={{ color: '#00d9ff' }}>modern you</span></p>
+          <p style={{ fontSize: '16px', color: '#b3b3b3', marginBottom: '40px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto', fontWeight: 300, lineHeight: 1.8 }}>Timeless pieces that transcend trends. Quality that speaks for itself. A lifestyle that's authentically yours.</p>
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '40px' }}>
+            <Link href="/shop">
+              <button style={{ background: '#fff', color: '#0f0f0f', border: '2px solid #fff', fontWeight: 600, fontSize: '12px', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '2px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.background = '#0f0f0f'; (e.target as HTMLButtonElement).style.color = '#fff'; }} onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.background = '#fff'; (e.target as HTMLButtonElement).style.color = '#0f0f0f'; }}>Shop Now</button>
             </Link>
+            <button style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', fontWeight: 600, fontSize: '12px', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '2px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.background = '#fff'; (e.target as HTMLButtonElement).style.color = '#0f0f0f'; }} onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.color = '#fff'; }}>Explore Collections</button>
+          </div>
+          <div style={{ fontSize: '14px', color: '#b3b3b3' }}>
+            <div>⭐ 4.8/5 • 12K+ Reviews</div>
+            <div style={{ marginTop: '8px' }}>Free shipping over $100 • 30-day returns</div>
+          </div>
+        </div>
+        <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', animation: 'bounce 2s infinite', zIndex: 10, color: '#00d9ff', fontSize: '24px' }}>↓</div>
+      </section>
+
+      {/* Trending Now */}
+      <section style={{ padding: '60px 20px', background: '#0f0f0f' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <h3 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '40px', color: '#fff', fontFamily: "'Space Mono', monospace" }}>TRENDING NOW</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+            {trendingProducts.map((product) => (
+              <div key={product.id} style={{ position: 'relative', borderRadius: '4px', overflow: 'hidden', transition: 'all 0.3s ease', background: '#1a1a1a', border: '1px solid #333', cursor: 'pointer', borderColor: hoveredProduct === product.id ? '#00d9ff' : '#333', transform: hoveredProduct === product.id ? 'translateY(-8px)' : 'translateY(0)', boxShadow: hoveredProduct === product.id ? '0 20px 40px rgba(0, 217, 255, 0.1)' : 'none' }} onMouseEnter={() => setHoveredProduct(product.id)} onMouseLeave={() => setHoveredProduct(null)}>
+                <div style={{ width: '100%', aspectRatio: '1', background: 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}>{product.emoji}</div>
+                <div style={{ padding: '16px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>{product.name}</div>
+                  <div style={{ fontSize: '12px', fontWeight: 400, color: '#b3b3b3', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>⭐ {product.rating}</div>
+                  <div style={{ fontSize: '16px', fontWeight: 700, color: '#d4af37', marginBottom: '16px' }}>{product.price}</div>
+                  <button style={{ width: '100%', padding: '12px', borderRadius: '2px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', background: '#00d9ff', color: '#0f0f0f', border: '2px solid #00d9ff', cursor: 'pointer', transition: 'all 0.3s ease' }} onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.color = '#00d9ff'; }} onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.background = '#00d9ff'; (e.target as HTMLButtonElement).style.color = '#0f0f0f'; }}>Quick Add</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-20 px-4 md:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="space-y-4 group">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl group-hover:scale-110 transition duration-300">
-                ✓
-              </div>
-              <h3 className="text-lg font-light text-black">Uncompromising Quality</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
-                Every piece is crafted with meticulous attention to detail using only the finest materials.
-              </p>
-            </div>
+      {/* Search & Filters */}
+      <section style={{ padding: '40px 20px', background: '#1a1a1a', borderTop: '1px solid #333' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+          <input type="text" placeholder="🔍 Search products, collections, guides..." style={{ flex: 1, minWidth: '200px', padding: '12px 16px', background: '#2a2a2a', border: '1px solid #333', color: '#fff', borderRadius: '4px', fontSize: '14px' }} />
+          <select style={{ padding: '12px 16px', background: '#2a2a2a', border: '1px solid #333', color: '#fff', borderRadius: '4px', cursor: 'pointer' }}>
+            <option>All Categories</option>
+            <option>Apparel</option>
+            <option>Accessories</option>
+            <option>Lifestyle</option>
+          </select>
+          <select style={{ padding: '12px 16px', background: '#2a2a2a', border: '1px solid #333', color: '#fff', borderRadius: '4px', cursor: 'pointer' }}>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Newest</option>
+            <option>Best Sellers</option>
+          </select>
+        </div>
+      </section>
 
-            <div className="space-y-4 group">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl group-hover:scale-110 transition duration-300">
-                ◆
+      {/* Collections */}
+      <section style={{ padding: '80px 20px', background: '#0f0f0f' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '50px', textAlign: 'center', fontFamily: "'Space Mono', monospace" }}>COLLECTIONS</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '50px' }}>
+            {collections.map((collection, idx) => (
+              <div key={idx} style={{ position: 'relative', aspectRatio: '1', background: 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #333', borderColor: hoveredCollection === idx ? '#00d9ff' : '#333', transform: hoveredCollection === idx ? 'scale(1.02)' : 'scale(1)' }} onMouseEnter={() => setHoveredCollection(idx)} onMouseLeave={() => setHoveredCollection(null)}>
+                <div style={{ textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '28px', fontWeight: 700, color: '#fff', fontFamily: "'Space Mono', monospace" }}>{collection.name}</h3>
+                  <p style={{ fontSize: '14px', color: '#b3b3b3', marginTop: '10px' }}>{collection.description}</p>
+                </div>
               </div>
-              <h3 className="text-lg font-light text-black">Timeless Design</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
-                Our collection transcends trends, offering pieces that remain relevant for years to come.
-              </p>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="space-y-4 group">
-              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl group-hover:scale-110 transition duration-300">
-                ◇
+      {/* Trust Badges */}
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', padding: '40px 20px', background: '#0f0f0f', maxWidth: '1400px', margin: '0 auto' }}>
+        {trustBadges.map((badge, idx) => (
+          <div key={idx} style={{ textAlign: 'center', padding: '20px', border: '1px solid #333', borderRadius: '4px', transition: 'all 0.3s ease', cursor: 'pointer', borderColor: hoveredBadge === idx ? '#00d9ff' : '#333', background: hoveredBadge === idx ? 'rgba(0, 217, 255, 0.05)' : 'transparent' }} onMouseEnter={() => setHoveredBadge(idx)} onMouseLeave={() => setHoveredBadge(null)}>
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>{badge.icon}</div>
+            <div style={{ fontWeight: 600, marginBottom: '5px', color: '#fff' }}>{badge.title}</div>
+            <div style={{ fontSize: '14px', color: '#b3b3b3' }}>{badge.description}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* Social Proof */}
+      <section style={{ padding: '60px 20px', background: '#1a1a1a' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, textAlign: 'center', marginBottom: '50px', fontFamily: "'Space Mono', monospace" }}>CUSTOMER LOVE</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '50px' }}>
+            {testimonials.map((testimonial, idx) => (
+              <div key={idx} style={{ background: '#2a2a2a', padding: '30px', borderRadius: '4px', border: '1px solid #333' }}>
+                <div style={{ color: '#d4af37', marginBottom: '15px', fontSize: '14px' }}>
+                  {'⭐'.repeat(testimonial.rating)}
+                </div>
+                <div style={{ color: '#b3b3b3', marginBottom: '15px', fontSize: '14px', lineHeight: 1.8 }}>"{testimonial.text}"</div>
+                <div style={{ color: '#fff', fontWeight: 600, fontSize: '14px' }}>
+                  {testimonial.author}
+                  {testimonial.verified && ' ✓ Verified Purchase'}
+                </div>
               </div>
-              <h3 className="text-lg font-light text-black">Ethical Sourcing</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
-                We partner with suppliers who share our commitment to sustainability and fair practices.
-              </p>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <button style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', fontWeight: 600, fontSize: '12px', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '2px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.background = '#fff'; (e.target as HTMLButtonElement).style.color = '#0f0f0f'; }} onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.color = '#fff'; }}>Load More Reviews</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Editorial Section */}
+      <section style={{ padding: '80px 20px', background: '#1a1a1a' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '50px', textAlign: 'center', fontFamily: "'Space Mono', monospace" }}>STYLE GUIDES & INSPIRATION</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px' }}>
+            <div style={{ background: '#2a2a2a', padding: '30px', borderRadius: '4px', border: '1px solid #333' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>📖</div>
+              <h3 style={{ marginBottom: '10px', fontWeight: 600 }}>5 Ways to Style the Classic Tee</h3>
+              <p style={{ color: '#b3b3b3', marginBottom: '16px', fontSize: '14px' }}>Discover how to make our signature tee work for every occasion.</p>
+              <a href="#" style={{ color: '#00d9ff', textDecoration: 'none', fontWeight: 600 }}>Read More →</a>
+            </div>
+            <div style={{ background: '#2a2a2a', padding: '30px', borderRadius: '4px', border: '1px solid #333' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌱</div>
+              <h3 style={{ marginBottom: '10px', fontWeight: 600 }}>Sustainable Fashion 101</h3>
+              <p style={{ color: '#b3b3b3', marginBottom: '16px', fontSize: '14px' }}>Learn about our commitment to ethical sourcing and sustainability.</p>
+              <a href="#" style={{ color: '#00d9ff', textDecoration: 'none', fontWeight: 600 }}>Read More →</a>
+            </div>
+            <div style={{ background: '#2a2a2a', padding: '30px', borderRadius: '4px', border: '1px solid #333' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎯</div>
+              <h3 style={{ marginBottom: '10px', fontWeight: 600 }}>Seasonal Essentials 2026</h3>
+              <p style={{ color: '#b3b3b3', marginBottom: '16px', fontSize: '14px' }}>Your curated guide to building a timeless wardrobe for the year ahead.</p>
+              <a href="#" style={{ color: '#00d9ff', textDecoration: 'none', fontWeight: 600 }}>Read More →</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 md:px-8 bg-black text-white">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl md:text-5xl font-light leading-tight">
-            Join the Community of Discerning Individuals
-          </h2>
-          <p className="text-gray-300 font-light text-lg">
-            Subscribe to receive exclusive previews, early access to new collections, and curated style insights.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <input 
-              type="email" 
-              placeholder="Enter your email" 
-              className="px-6 py-3 bg-white/10 border border-white/30 text-white placeholder-gray-400 font-light text-sm focus:outline-none focus:border-white transition duration-300"
-            />
-            <button className="px-8 py-3 bg-white text-black font-light tracking-wide hover:bg-gray-100 transition duration-300">
-              SUBSCRIBE
-            </button>
+      {/* Newsletter CTA */}
+      <section style={{ padding: '80px 20px', background: '#0f0f0f', textAlign: 'center' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '20px', fontFamily: "'Space Mono', monospace" }}>JOIN THE COMMUNITY</h2>
+          <p style={{ color: '#b3b3b3', marginBottom: '30px' }}>Get exclusive previews, early access to new collections, and curated style insights.</p>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <input type="email" placeholder="Enter your email" style={{ flex: 1, padding: '12px 16px', background: '#1a1a1a', border: '1px solid #333', color: '#fff', borderRadius: '4px', fontSize: '14px' }} />
+            <button style={{ background: '#00d9ff', color: '#0f0f0f', border: '2px solid #00d9ff', fontWeight: 600, fontSize: '12px', letterSpacing: '1px', cursor: 'pointer', textTransform: 'uppercase', padding: '12px 24px', borderRadius: '2px', transition: 'all 0.3s ease' }} onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.color = '#00d9ff'; }} onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.background = '#00d9ff'; (e.target as HTMLButtonElement).style.color = '#0f0f0f'; }}>Subscribe</button>
           </div>
+          <p style={{ fontSize: '12px', color: '#808080' }}>We respect your privacy. Unsubscribe anytime.</p>
         </div>
       </section>
 
       {/* Footer */}
       <Footer />
 
-      {/* Animations */}
       <style>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.8s ease-out;
+        @keyframes bounce {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(10px); }
         }
       `}</style>
     </div>
