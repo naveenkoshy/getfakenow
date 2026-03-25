@@ -142,3 +142,12 @@
 - [x] Create Women's category page (products accessible via /shop?category=women)
 - [x] Update product detail page to display materials and care instructions
 - [x] Update homepage to feature women's section
+
+## Men's Product Personality & Details
+- [x] Give each printed tee a product name and personality description with materials/care
+- [x] Give each casual product a product name and personality description with materials/care
+- [x] Give each business product a product name and personality description with materials/care
+
+## Hero & Shop Improvements
+- [x] Add Women's Line CTA button to hero section
+- [x] Fix shop page category filter to properly filter women's products

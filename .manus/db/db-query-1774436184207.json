@@ -1,0 +1,22 @@
+{
+  "query": "SELECT p.id, p.name, p.categoryId, c.name as catName FROM products p JOIN categories c ON p.categoryId = c.id WHERE p.name = 'The Boardroom';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.categoryId, c.name as catName FROM products p JOIN categories c ON p.categoryId = c.id WHERE p.name = 'The Boardroom';",
+  "rows": [
+    {
+      "id": "30007",
+      "name": "The Boardroom",
+      "categoryId": "30002",
+      "catName": "Professional"
+    },
+    {
+      "id": "90010",
+      "name": "The Boardroom",
+      "categoryId": "30004",
+      "catName": "Women"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcategoryId\tcatName\n30007\tThe Boardroom\t30002\tProfessional\n90010\tThe Boardroom\t30004\tWomen\n",
+  "stderr": "",
+  "execution_time_ms": 1594
+}

@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM productImages WHERE productId IN (70005, 70006, 70007, 70008); DELETE FROM cartItems WHERE productId IN (70005, 70006, 70007, 70008); DELETE FROM products WHERE id IN (70005, 70006, 70007, 70008);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute DELETE FROM productImages WHERE productId IN (70005, 70006, 70007, 70008); DELETE FROM cartItems WHERE productId IN (70005, 70006, 70007, 70008); DELETE FROM products WHERE id IN (70005, 70006, 70007, 70008);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2029
+}

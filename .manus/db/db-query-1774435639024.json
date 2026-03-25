@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, name, slug FROM products WHERE slug LIKE '%plus%' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM products WHERE slug LIKE '%plus%' ORDER BY id;",
+  "rows": [
+    {
+      "id": "70005",
+      "name": "You Fake Bro? (Plus)",
+      "slug": "you-fake-bro-plus"
+    },
+    {
+      "id": "70006",
+      "name": "Life is Fake (Plus)",
+      "slug": "life-is-fake-plus"
+    },
+    {
+      "id": "70007",
+      "name": "Fake Office (Plus)",
+      "slug": "fake-office-plus"
+    },
+    {
+      "id": "70008",
+      "name": "The Real Fake (Plus)",
+      "slug": "the-real-fake-plus"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\n70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\n70006\tLife is Fake (Plus)\tlife-is-fake-plus\n70007\tFake Office (Plus)\tfake-office-plus\n70008\tThe Real Fake (Plus)\tthe-real-fake-plus\n",
+  "stderr": "",
+  "execution_time_ms": 1503
+}

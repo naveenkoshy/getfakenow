@@ -1,0 +1,274 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.categoryId, c.name as catName, LEFT(p.description, 60) as desc_preview FROM products p JOIN categories c ON p.categoryId = c.id WHERE c.slug NOT IN ('women') ORDER BY p.categoryId, p.id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.categoryId, c.name as catName, LEFT(p.description, 60) as desc_preview FROM products p JOIN categories c ON p.categoryId = c.id WHERE c.slug NOT IN ('women') ORDER BY p.categoryId, p.id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Our signature graphic tee featuring the iconic 'Fake' script"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Witty one-liner meets premium comfort. Soft cotton blend wit"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Bold statement piece with 'Fake Confidence' graphic. Heavywe"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium heavyweight hoodie with embroidered logo. Brushed fl"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Tailored joggers in premium cotton terry. Tapered fit with e"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Timeless polo shirt in premium pique cotton. Three-button pl"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium cotton tee with bold statement. 100% cotton, regular"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Spread positivity. Premium cotton, comfortable fit."
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Live authentic. Premium cotton tee with attitude."
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium heavyweight cotton tee with bold \"You Fake Bro?\" pri"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium heavyweight cotton tee with \"Life is Fake, Just Make"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium heavyweight cotton tee with \"Fake Like My Office\" pr"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium heavyweight cotton tee with \"The Real Fake\" print. 1"
+    },
+    {
+      "id": "70005",
+      "name": "You Fake Bro? (Plus)",
+      "slug": "you-fake-bro-plus",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Plus Size (XL-4XL) premium heavyweight cotton tee with bold "
+    },
+    {
+      "id": "70006",
+      "name": "Life is Fake (Plus)",
+      "slug": "life-is-fake-plus",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Plus Size (XL-4XL) premium heavyweight cotton tee with \"Life"
+    },
+    {
+      "id": "70007",
+      "name": "Fake Office (Plus)",
+      "slug": "fake-office-plus",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Plus Size (XL-4XL) premium heavyweight cotton tee with \"Fake"
+    },
+    {
+      "id": "70008",
+      "name": "The Real Fake (Plus)",
+      "slug": "the-real-fake-plus",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Plus Size (XL-4XL) premium heavyweight cotton tee with \"The "
+    },
+    {
+      "id": "80001",
+      "name": "Sweat Pants",
+      "slug": "sweat-pants",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Premium cotton-blend sweat pants with Fake by Freetown embro"
+    },
+    {
+      "id": "80002",
+      "name": "Windbreaker",
+      "slug": "windbreaker",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Red and white colorblock windbreaker with Fake by Freetown c"
+    },
+    {
+      "id": "80003",
+      "name": "Polo Tee",
+      "slug": "polo-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Classic polo with Fake by Freetown embroidered chest logo. P"
+    },
+    {
+      "id": "80004",
+      "name": "Mandarin Collar",
+      "slug": "mandarin-collar",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Mandarin collar tee with subtle Fake by Freetown embroidery."
+    },
+    {
+      "id": "80005",
+      "name": "V-Neck Tee",
+      "slug": "v-neck-tee",
+      "categoryId": "30001",
+      "catName": "Casual",
+      "desc_preview": "Soft heather gray V-neck with Fake by Freetown tag logo. Lig"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "slug": "white-oxford-shirt",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Essential white oxford in premium cotton. Button-down collar"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Classic light blue oxford shirt. Non-iron cotton blend for e"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Heritage-inspired chambray shirt in lightweight denim. Chest"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "slug": "heritage-chambray",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Medium blue chambray work shirt. Durable cotton construction"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "slug": "indigo-chambray",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Dark indigo chambray shirt. Heritage workwear styling. Perfe"
+    },
+    {
+      "id": "80006",
+      "name": "Dress Shirt",
+      "slug": "dress-shirt",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Crisp white dress shirt with Fake by Freetown cursive embroi"
+    },
+    {
+      "id": "80007",
+      "name": "Dress Slacks",
+      "slug": "dress-slacks",
+      "categoryId": "30002",
+      "catName": "Professional",
+      "desc_preview": "Charcoal dress slacks with Fake by Freetown inner waistband "
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "categoryId": "30003",
+      "catName": "Accessories",
+      "desc_preview": "Classic six-panel cap with embroidered script. Adjustable st"
+    },
+    {
+      "id": "80008",
+      "name": "Dress Socks",
+      "slug": "dress-socks",
+      "categoryId": "30003",
+      "catName": "Accessories",
+      "desc_preview": "Black dress socks with subtle Fake by Freetown woven logo at"
+    },
+    {
+      "id": "80009",
+      "name": "Pocket Square",
+      "slug": "pocket-square",
+      "categoryId": "30003",
+      "catName": "Accessories",
+      "desc_preview": "White silk pocket square with red Fake by Freetown cursive b"
+    },
+    {
+      "id": "80010",
+      "name": "Silk Tie",
+      "slug": "silk-tie",
+      "categoryId": "30003",
+      "catName": "Accessories",
+      "desc_preview": "Red silk tie with tonal Fake by Freetown pattern. 100% Itali"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategoryId\tcatName\tdesc_preview\n30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\tCasual\tOur signature graphic tee featuring the iconic 'Fake' script\n30002\tTill You Make It Tee\ttill-you-make-it-tee\t30001\tCasual\tWitty one-liner meets premium comfort. Soft cotton blend wit\n30003\tConfidence Tee\tconfidence-tee\t30001\tCasual\tBold statement piece with 'Fake Confidence' graphic. Heavywe\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\tCasual\tPremium heavyweight hoodie with embroidered logo. Brushed fl\n30005\tEssential Joggers\tessential-joggers\t30001\tCasual\tTailored joggers in premium cotton terry. Tapered fit with e\n30006\tClassic Pique Polo\tclassic-pique-polo\t30001\tCasual\tTimeless polo shirt in premium pique cotton. Three-button pl\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\tCasual\tPremium cotton tee with bold statement. 100% cotton, regular\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\tCasual\tSpread positivity. Premium cotton, comfortable fit.\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\tCasual\tLive authentic. Premium cotton tee with attitude.\n70001\tYou Fake Bro?\tyou-fake-bro\t30001\tCasual\tPremium heavyweight cotton tee with bold \"You Fake Bro?\" pri\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\t30001\tCasual\tPremium heavyweight cotton tee with \"Life is Fake, Just Make\n70003\tFake Like My Office\tfake-like-my-office\t30001\tCasual\tPremium heavyweight cotton tee with \"Fake Like My Office\" pr\n70004\tThe Real Fake\tthe-real-fake\t30001\tCasual\tPremium heavyweight cotton tee with \"The Real Fake\" print. 1\n70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\t30001\tCasual\tPlus Size (XL-4XL) premium heavyweight cotton tee with bold \n70006\tLife is Fake (Plus)\tlife-is-fake-plus\t30001\tCasual\tPlus Size (XL-4XL) premium heavyweight cotton tee with \"Life\n70007\tFake Office (Plus)\tfake-office-plus\t30001\tCasual\tPlus Size (XL-4XL) premium heavyweight cotton tee with \"Fake\n70008\tThe Real Fake (Plus)\tthe-real-fake-plus\t30001\tCasual\tPlus Size (XL-4XL) premium heavyweight cotton tee with \"The \n80001\tSweat Pants\tsweat-pants\t30001\tCasual\tPremium cotton-blend sweat pants with Fake by Freetown embro\n80002\tWindbreaker\twindbreaker\t30001\tCasual\tRed and white colorblock windbreaker with Fake by Freetown c\n80003\tPolo Tee\tpolo-tee\t30001\tCasual\tClassic polo with Fake by Freetown embroidered chest logo. P\n80004\tMandarin Collar\tmandarin-collar\t30001\tCasual\tMandarin collar tee with subtle Fake by Freetown embroidery.\n80005\tV-Neck Tee\tv-neck-tee\t30001\tCasual\tSoft heather gray V-neck with Fake by Freetown tag logo. Lig\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\t30002\tProfessional\tEssential white oxford in premium cotton. Button-down collar\n30008\tLight Blue Oxford\tlight-blue-oxford\t30002\tProfessional\tClassic light blue oxford shirt. Non-iron cotton blend for e\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t30002\tProfessional\tHeritage-inspired chambray shirt in lightweight denim. Chest\n60005\tHeritage Chambray\theritage-chambray\t30002\tProfessional\tMedium blue chambray work shirt. Durable cotton construction\n60006\tIndigo Chambray\tindigo-chambray\t30002\tProfessional\tDark indigo chambray shirt. Heritage workwear styling. Perfe\n80006\tDress Shirt\tdress-shirt\t30002\tProfessional\tCrisp white dress shirt with Fake by Freetown cursive embroi\n80007\tDress Slacks\tdress-slacks\t30002\tProfessional\tCharcoal dress slacks with Fake by Freetown inner waistband \n30010\tFake Script Cap\tfake-script-cap\t30003\tAccessories\tClassic six-panel cap with embroidered script. Adjustable st\n80008\tDress Socks\tdress-socks\t30003\tAccessories\tBlack dress socks with subtle Fake by Freetown woven logo at\n80009\tPocket Square\tpocket-square\t30003\tAccessories\tWhite silk pocket square with red Fake by Freetown cursive b\n80010\tSilk Tie\tsilk-tie\t30003\tAccessories\tRed silk tie with tonal Fake by Freetown pattern. 100% Itali\n",
+  "stderr": "",
+  "execution_time_ms": 1625
+}

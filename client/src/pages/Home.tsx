@@ -283,6 +283,9 @@ export default function Home() {
             <Link href="/shop" className="inline-flex items-center justify-center bg-red-600 text-white px-10 py-3.5 text-sm font-semibold tracking-wider hover:bg-red-700 transition-all duration-200 shadow-lg shadow-red-600/30">
               SHOP NOW
             </Link>
+            <a href="#women" className="inline-flex items-center justify-center border-2 border-white text-white px-10 py-3.5 text-sm font-semibold tracking-wider hover:bg-white hover:text-gray-900 transition-all duration-200">
+              WOMEN'S LINE
+            </a>
             <a href="#business" className="inline-flex items-center justify-center border-2 border-white text-white px-10 py-3.5 text-sm font-semibold tracking-wider hover:bg-white hover:text-gray-900 transition-all duration-200">
               BUSINESS LINE
             </a>
