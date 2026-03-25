@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO categories (id, name, slug, description, imageUrl) VALUES (30004, 'Women', 'women', 'The women''s line. Same attitude, different angles. Every piece runs S to 10XL — no separate section, no surcharge, no compromise.', 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cropped-tee-jmtLpHHmj9XLs3acr8md6X.webp');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute INSERT INTO categories (id, name, slug, description, imageUrl) VALUES (30004, 'Women', 'women', 'The women''s line. Same attitude, different angles. Every piece runs S to 10XL — no separate section, no surcharge, no compromise.', 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cropped-tee-jmtLpHHmj9XLs3acr8md6X.webp');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1546
+}

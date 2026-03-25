@@ -162,8 +162,9 @@ export default function ProductDetail() {
           <nav className="hidden md:flex items-center gap-10">
             <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">SHOP</Link>
             <Link href="/shop?category=casual" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">CASUAL</Link>
-            <Link href="/shop?category=business" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">BUSINESS</Link>
-            <a href="/#about" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">ABOUT</a>
+            <Link href="/shop?category=women" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">WOMEN</Link>
+            <Link href="/shop?category=professional" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">BUSINESS</Link>
+            <Link href="/about" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">ABOUT</Link>
           </nav>
           <div className="flex items-center gap-5">
             <button className="text-gray-500 hover:text-red-600 transition-colors" aria-label="Search">
@@ -171,7 +172,9 @@ export default function ProductDetail() {
             </button>
             <Link href="/cart" className="relative text-gray-500 hover:text-red-600 transition-colors">
               <ShoppingCart size={18} strokeWidth={2} />
-              <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{itemCount}</span>
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{itemCount}</span>
+              )}
             </Link>
             <Link href="/account" className="text-gray-500 hover:text-red-600 transition-colors hidden sm:block">
               <User size={18} strokeWidth={2} />
@@ -185,7 +188,9 @@ export default function ProductDetail() {
           <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-3">
             <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
             <Link href="/shop?category=casual" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Casual</Link>
-            <Link href="/shop?category=business" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Business</Link>
+            <Link href="/shop?category=women" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Women</Link>
+            <Link href="/shop?category=professional" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Business</Link>
+            <Link href="/about" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>About</Link>
             <Link href="/account" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Account</Link>
           </div>
         )}
@@ -265,10 +270,19 @@ export default function ProductDetail() {
               <span className="text-sm text-gray-400">4.8 (342 reviews)</span>
             </div>
 
-            {/* Description */}
-            <p className="mt-6 text-gray-500 leading-relaxed">
-              {product.description || `Premium heavyweight cotton tee with "${product.name}" print. Pre-shrunk fabric, relaxed fit, ribbed crew neck. Designed in Freetown. Made to last.`}
-            </p>
+            {/* Description - parse out MATERIALS and CARE sections */}
+            {(() => {
+              const desc = product.description || `Premium heavyweight cotton tee with "${product.name}" print. Pre-shrunk fabric, relaxed fit, ribbed crew neck. Designed in Freetown. Made to last.`;
+              const materialsIdx = desc.indexOf('MATERIALS:');
+              const mainDesc = materialsIdx > -1 ? desc.substring(0, materialsIdx).trim() : desc;
+              return (
+                <div className="mt-6 text-gray-500 leading-relaxed space-y-3">
+                  {mainDesc.split('\n').filter((l: string) => l.trim()).map((paragraph: string, i: number) => (
+                    <p key={i}>{paragraph}</p>
+                  ))}
+                </div>
+              );
+            })()}
 
             {/* Divider */}
             <div className="border-t border-gray-100 my-6" />
@@ -438,41 +452,104 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Care Instructions Accordion */}
-            <div className="mt-6 border-t border-gray-100">
-              <button
-                onClick={() => setShowCareInfo(!showCareInfo)}
-                className="w-full flex items-center justify-between py-4 text-sm font-semibold text-gray-900 hover:text-red-600 transition-colors"
-              >
-                Product Details & Care
-                {showCareInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-              {showCareInfo && (
-                <div className="pb-4 text-sm text-gray-500 space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Material</h4>
-                    <p>100% premium combed cotton, 220 GSM heavyweight</p>
+            {/* Materials & Care Accordion - parsed from description */}
+            {(() => {
+              const desc = product.description || '';
+              const materialsIdx = desc.indexOf('MATERIALS:');
+              const careIdx = desc.indexOf('CARE:');
+              const hasParsedSections = materialsIdx > -1;
+
+              if (hasParsedSections) {
+                const materialsText = careIdx > -1
+                  ? desc.substring(materialsIdx + 'MATERIALS:'.length, careIdx).trim()
+                  : desc.substring(materialsIdx + 'MATERIALS:'.length).trim();
+                const careText = careIdx > -1
+                  ? desc.substring(careIdx + 'CARE:'.length).trim()
+                  : '';
+                const materialLines = materialsText.split('\n').map((l: string) => l.replace(/^[\u2022\-\*]\s*/, '').trim()).filter(Boolean);
+                const careLines = careText.split('\n').map((l: string) => l.replace(/^[\u2022\-\*]\s*/, '').trim()).filter(Boolean);
+
+                return (
+                  <div className="mt-6 border-t border-gray-100">
+                    <button
+                      onClick={() => setShowCareInfo(!showCareInfo)}
+                      className="w-full flex items-center justify-between py-4 text-sm font-semibold text-gray-900 hover:text-red-600 transition-colors"
+                    >
+                      Materials & Care
+                      {showCareInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </button>
+                    {showCareInfo && (
+                      <div className="pb-4 text-sm text-gray-500 space-y-4">
+                        {materialLines.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Materials</h4>
+                            <ul className="space-y-1.5">
+                              {materialLines.map((line: string, i: number) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-red-600 mt-0.5">\u2022</span>
+                                  <span>{line}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {careLines.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Care Instructions</h4>
+                            <ul className="space-y-1.5">
+                              {careLines.map((line: string, i: number) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-red-600 mt-0.5">\u2022</span>
+                                  <span>{line}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Fit</h4>
-                    <p>Relaxed fit, pre-shrunk, ribbed crew neck, double-stitched hems</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Care</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>Machine wash cold, inside out</li>
-                      <li>Tumble dry low or hang dry</li>
-                      <li>Do not bleach</li>
-                      <li>Iron on reverse side only</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-1">Print</h4>
-                    <p>DTG (Direct to Garment) printing. Won't crack, peel, or fade.</p>
-                  </div>
+                );
+              }
+
+              // Fallback for products without parsed sections
+              return (
+                <div className="mt-6 border-t border-gray-100">
+                  <button
+                    onClick={() => setShowCareInfo(!showCareInfo)}
+                    className="w-full flex items-center justify-between py-4 text-sm font-semibold text-gray-900 hover:text-red-600 transition-colors"
+                  >
+                    Product Details & Care
+                    {showCareInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
+                  {showCareInfo && (
+                    <div className="pb-4 text-sm text-gray-500 space-y-3">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Material</h4>
+                        <p>100% premium combed cotton, 220 GSM heavyweight</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Fit</h4>
+                        <p>Relaxed fit, pre-shrunk, ribbed crew neck, double-stitched hems</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Care</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          <li>Machine wash cold, inside out</li>
+                          <li>Tumble dry low or hang dry</li>
+                          <li>Do not bleach</li>
+                          <li>Iron on reverse side only</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Print</h4>
+                        <p>DTG (Direct to Garment) printing. Won't crack, peel, or fade.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
         </div>
       </section>
@@ -541,7 +618,8 @@ export default function ProductDetail() {
               <ul className="space-y-2.5">
                 <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">All Products</Link></li>
                 <li><Link href="/shop?category=casual" className="text-sm text-gray-400 hover:text-white transition-colors">Casual</Link></li>
-                <li><Link href="/shop?category=business" className="text-sm text-gray-400 hover:text-white transition-colors">Business</Link></li>
+                <li><Link href="/shop?category=women" className="text-sm text-gray-400 hover:text-white transition-colors">Women</Link></li>
+                <li><Link href="/shop?category=professional" className="text-sm text-gray-400 hover:text-white transition-colors">Business</Link></li>
               </ul>
             </div>
             <div>

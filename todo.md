@@ -132,3 +132,13 @@
 ## Copy Updates
 - [x] Update size promise section on About page with new brand copy
 - [x] Update size promise section on Homepage with new brand copy
+
+## Women's Section
+- [x] Create women's clothing category in database
+- [x] Design women's product line with names, descriptions, materials, care instructions
+- [x] Generate AI product images for women's clothing (multiple angles)
+- [x] Seed women's products into database with full details
+- [x] Add Women's nav link to header across all pages
+- [x] Create Women's category page (products accessible via /shop?category=women)
+- [x] Update product detail page to display materials and care instructions
+- [x] Update homepage to feature women's section

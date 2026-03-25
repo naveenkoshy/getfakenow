@@ -1,0 +1,60 @@
+{
+  "query": "SELECT id, name, slug FROM categories ORDER BY id; SELECT id, name, slug, categoryId, price FROM products WHERE active = 1 ORDER BY categoryId, id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM categories ORDER BY id; SELECT id, name, slug, categoryId, price FROM products WHERE active = 1 ORDER BY categoryId, id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30002",
+      "name": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30003",
+      "name": "Accessories",
+      "slug": "accessories"
+    }
+  ],
+  "messages": [
+    "id\tname\tslug\tcategoryId\tprice",
+    "30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\t3500",
+    "30002\tTill You Make It Tee\ttill-you-make-it-tee\t30001\t3500",
+    "30003\tConfidence Tee\tconfidence-tee\t30001\t3800",
+    "30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\t6500",
+    "30005\tEssential Joggers\tessential-joggers\t30001\t5500",
+    "30006\tClassic Pique Polo\tclassic-pique-polo\t30001\t4500",
+    "60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\t3500",
+    "60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\t3500",
+    "60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\t3500",
+    "70001\tYou Fake Bro?\tyou-fake-bro\t30001\t4900",
+    "70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\t30001\t4900",
+    "70003\tFake Like My Office\tfake-like-my-office\t30001\t4900",
+    "70004\tThe Real Fake\tthe-real-fake\t30001\t4900",
+    "70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\t30001\t5400",
+    "70006\tLife is Fake (Plus)\tlife-is-fake-plus\t30001\t5400",
+    "70007\tFake Office (Plus)\tfake-office-plus\t30001\t5400",
+    "70008\tThe Real Fake (Plus)\tthe-real-fake-plus\t30001\t5400",
+    "80001\tSweat Pants\tsweat-pants\t30001\t7900",
+    "80002\tWindbreaker\twindbreaker\t30001\t12900",
+    "80003\tPolo Tee\tpolo-tee\t30001\t5900",
+    "80004\tMandarin Collar\tmandarin-collar\t30001\t5900",
+    "80005\tV-Neck Tee\tv-neck-tee\t30001\t4500",
+    "30007\tWhite Oxford Shirt\twhite-oxford-shirt\t30002\t7500",
+    "30008\tLight Blue Oxford\tlight-blue-oxford\t30002\t7500",
+    "30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t30002\t6800",
+    "60005\tHeritage Chambray\theritage-chambray\t30002\t7500",
+    "60006\tIndigo Chambray\tindigo-chambray\t30002\t7500",
+    "80006\tDress Shirt\tdress-shirt\t30002\t8900",
+    "80007\tDress Slacks\tdress-slacks\t30002\t9900",
+    "30010\tFake Script Cap\tfake-script-cap\t30003\t2800",
+    "80008\tDress Socks\tdress-socks\t30003\t1900",
+    "80009\tPocket Square\tpocket-square\t30003\t2900",
+    "80010\tSilk Tie\tsilk-tie\t30003\t5900"
+  ],
+  "stdout": "id\tname\tslug\n30001\tCasual\tcasual\n30002\tProfessional\tprofessional\n30003\tAccessories\taccessories\nid\tname\tslug\tcategoryId\tprice\n30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\t3500\n30002\tTill You Make It Tee\ttill-you-make-it-tee\t30001\t3500\n30003\tConfidence Tee\tconfidence-tee\t30001\t3800\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\t6500\n30005\tEssential Joggers\tessential-joggers\t30001\t5500\n30006\tClassic Pique Polo\tclassic-pique-polo\t30001\t4500\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\t3500\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\t3500\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\t3500\n70001\tYou Fake Bro?\tyou-fake-bro\t30001\t4900\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\t30001\t4900\n70003\tFake Like My Office\tfake-like-my-office\t30001\t4900\n70004\tThe Real Fake\tthe-real-fake\t30001\t4900\n70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\t30001\t5400\n70006\tLife is Fake (Plus)\tlife-is-fake-plus\t30001\t5400\n70007\tFake Office (Plus)\tfake-office-plus\t30001\t5400\n70008\tThe Real Fake (Plus)\tthe-real-fake-plus\t30001\t5400\n80001\tSweat Pants\tsweat-pants\t30001\t7900\n80002\tWindbreaker\twindbreaker\t30001\t12900\n80003\tPolo Tee\tpolo-tee\t30001\t5900\n80004\tMandarin Collar\tmandarin-collar\t30001\t5900\n80005\tV-Neck Tee\tv-neck-tee\t30001\t4500\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\t30002\t7500\n30008\tLight Blue Oxford\tlight-blue-oxford\t30002\t7500\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t30002\t6800\n60005\tHeritage Chambray\theritage-chambray\t30002\t7500\n60006\tIndigo Chambray\tindigo-chambray\t30002\t7500\n80006\tDress Shirt\tdress-shirt\t30002\t8900\n80007\tDress Slacks\tdress-slacks\t30002\t9900\n30010\tFake Script Cap\tfake-script-cap\t30003\t2800\n80008\tDress Socks\tdress-socks\t30003\t1900\n80009\tPocket Square\tpocket-square\t30003\t2900\n80010\tSilk Tie\tsilk-tie\t30003\t5900\n",
+  "stderr": "",
+  "execution_time_ms": 1758
+}

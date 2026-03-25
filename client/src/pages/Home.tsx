@@ -83,6 +83,45 @@ export default function Home() {
     },
   ];
 
+  // Women's — slugs match database exactly
+  const women = [
+    {
+      slug: 'the-alibi',
+      name: 'The Alibi',
+      image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cropped-tee-jmtLpHHmj9XLs3acr8md6X.webp',
+      price: 39,
+      color: 'Black',
+    },
+    {
+      slug: 'the-confession',
+      name: 'The Confession',
+      image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-oversized-hoodie-Hvdc3H8dA9BWPJGFVcAKhZ.webp',
+      price: 75,
+      color: 'Heather Gray',
+    },
+    {
+      slug: 'the-getaway',
+      name: 'The Getaway',
+      image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cargo-pants-SXuL8wEr33MHtvQc7JS8EB.webp',
+      price: 89,
+      color: 'Olive',
+    },
+    {
+      slug: 'the-closer',
+      name: 'The Closer',
+      image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-blazer-bqdJb3Y4GoLTrB9wi8MivC.webp',
+      price: 159,
+      color: 'Black',
+    },
+    {
+      slug: 'the-statement',
+      name: 'The Statement',
+      image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-graphic-tee-dEPYA9bthw8hS5HoSqgvYj.webp',
+      price: 45,
+      color: 'White',
+    },
+  ];
+
   // Business — slugs match database exactly
   const business = [
     {
@@ -167,6 +206,9 @@ export default function Home() {
             <a href="#casual" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">
               CASUAL
             </a>
+            <a href="#women" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">
+              WOMEN
+            </a>
             <a href="#business" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">
               BUSINESS
             </a>
@@ -210,6 +252,7 @@ export default function Home() {
           <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-3">
             <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Shop All</Link>
             <a href="#casual" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Casual</a>
+            <a href="#women" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Women</a>
             <a href="#business" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Business</a>
             <Link href="/about" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>About</Link>
             <Link href="/account" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Account</Link>
@@ -300,8 +343,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Women's Line ── */}
+      <section id="women" className="py-20 md:py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.3em] text-red-600 mb-2">HER COLLECTION</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900">
+                Women
+              </h2>
+              <p className="mt-2 text-gray-500 text-sm">Same attitude. Different angles. Every piece has a name.</p>
+            </div>
+            <Link href="/shop?category=women" className="hidden sm:flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors">
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+            {women.map((item) => (
+              <ProductCard key={item.slug} product={item} badge="NEW" />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Business Line ── */}
-      <section id="business" className="py-20 md:py-24 px-6">
+      <section id="business" className="py-20 md:py-24 px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -400,6 +467,7 @@ export default function Home() {
               <ul className="space-y-2.5">
                 <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">All Products</Link></li>
                 <li><Link href="/shop?category=casual" className="text-sm text-gray-400 hover:text-white transition-colors">Casual</Link></li>
+                <li><Link href="/shop?category=women" className="text-sm text-gray-400 hover:text-white transition-colors">Women</Link></li>
                 <li><Link href="/shop?category=professional" className="text-sm text-gray-400 hover:text-white transition-colors">Business</Link></li>
               </ul>
             </div>
