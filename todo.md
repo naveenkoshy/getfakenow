@@ -128,3 +128,7 @@
 - [x] Add hero background image to homepage
 - [x] Build About page with brand story
 - [x] Fix "Continue Shopping" links to point to /shop instead of /products
+
+## Copy Updates
+- [x] Update size promise section on About page with new brand copy
+- [x] Update size promise section on Homepage with new brand copy

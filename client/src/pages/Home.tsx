@@ -234,7 +234,7 @@ export default function Home() {
             You Fake Bro?
           </h1>
           <p className="mt-6 text-lg text-gray-300 font-light leading-relaxed max-w-xl mx-auto">
-            Premium apparel for people who get the joke. Tees, casual, business. S to 10XL. No exceptions.
+            Premium apparel for people who get the joke. Tees, casual, business. Zero fine print.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/shop" className="inline-flex items-center justify-center bg-red-600 text-white px-10 py-3.5 text-sm font-semibold tracking-wider hover:bg-red-700 transition-all duration-200 shadow-lg shadow-red-600/30">
@@ -327,8 +327,8 @@ export default function Home() {
       {/* ── Size Promise Banner ── */}
       <section className="bg-red-600 py-16 px-6">
         <div className="max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight">S to 10XL. Every product.</h2>
-          <p className="mt-4 text-red-100 text-lg font-light">Same quality. Same price. No separate section. No surcharge. Just clothes that fit.</p>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight">Zero Fine Print.</h2>
+          <p className="mt-4 text-red-100 text-lg font-light">We put 'Fake' on the label so you'd never have to question what's real. Every product. Every size. One price. One quality.</p>
           <Link href="/shop" className="inline-flex items-center justify-center mt-8 bg-white text-red-600 px-10 py-3.5 text-sm font-semibold tracking-wider hover:bg-gray-100 transition-all duration-200">
             SHOP ALL SIZES
           </Link>

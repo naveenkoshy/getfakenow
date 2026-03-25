@@ -126,7 +126,7 @@ export default function About() {
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-3">Size Equality</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                Every product runs S to 10XL. Same quality. Same price. No separate "plus" section. No surcharge. Just clothes that fit real bodies.
+                We put 'Fake' on the label so you'd never have to question what's real. Every product. Every size. One price. One quality. Zero fine print.
               </p>
             </div>
             <div>
@@ -147,10 +147,10 @@ export default function About() {
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xs font-semibold tracking-[0.3em] text-red-600 mb-4">THE PROMISE</p>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 mb-6">
-            S to 10XL. Always.
+            Zero Fine Print.
           </h2>
           <p className="text-gray-500 leading-relaxed max-w-xl mx-auto">
-            When we say "for everyone," we mean it. Every single product in our catalog is available from Small to 10XL. No exceptions, no excuses, no extra charge. Because looking good shouldn't come with a size restriction.
+            We put 'Fake' on the label so you'd never have to question what's real. Every product. Every size. S to 10XL. One price. One quality. Zero fine print.
           </p>
         </div>
       </section>
