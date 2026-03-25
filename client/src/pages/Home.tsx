@@ -1,66 +1,68 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { ShoppingCart, User, Search, Heart, Truck, RotateCcw, Lock, MessageCircle } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { Footer } from '@/components/Footer';
+import { ShoppingCart, Search, User, Truck, RotateCcw, Lock, MessageCircle, ChevronRight, Star } from 'lucide-react';
 
 export default function Home() {
-  const { items } = useCart();
-  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
-  const [hoveredCollection, setHoveredCollection] = useState<number | null>(null);
+  const [email, setEmail] = useState('');
 
-  const trendingProducts = [
-    { id: 1, name: 'Classic Tee', price: '$89', emoji: '👕', rating: '4.8' },
-    { id: 2, name: 'Luxury Hoodie', price: '$189', emoji: '🧥', rating: '4.9' },
-    { id: 3, name: 'Tailored Pants', price: '$159', emoji: '👖', rating: '4.7' },
-    { id: 4, name: 'Wool Jacket', price: '$249', emoji: '🧥', rating: '4.8' },
+  const heroImage = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/hero-premium-tees-maapuGGpxpF5wbDcfYtczW.webp';
+  const teeWhiteImage = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-classic-white-QbBtFNNtmqxHSmKfxpQ4fa.webp';
+  const teeRedImage = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-classic-red-arDHGr2B5CxyqnPM7VomRh.webp';
+  const teeOversizedImage = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-oversized-white-cqgVYbwujCNcMDi984hvLk.webp';
+  const plusSizeImage = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/plus-size-tee-collection-ZSama35j7Nu54yy6jKe5JT.webp';
+
+  const tees = [
+    { id: 1, name: 'You Fake Bro?', color: 'White', price: 49, rating: 4.9, reviews: 342, image: teeWhiteImage },
+    { id: 2, name: 'Life is Fake, Just Make It', color: 'Red', price: 49, rating: 4.8, reviews: 289, image: teeRedImage },
+    { id: 3, name: 'Fake Like My Office', color: 'Cream', price: 49, rating: 4.9, reviews: 267, image: teeOversizedImage },
+    { id: 4, name: 'The Real Fake', color: 'Black', price: 49, rating: 4.7, reviews: 198, image: teeWhiteImage },
   ];
 
-  const collections = [
-    { name: 'Essentials', description: 'The basics, elevated' },
-    { name: 'Bold', description: 'Make a statement' },
-    { name: 'Comfort', description: 'All-day wearability' },
-    { name: 'Professional', description: 'Work with edge' },
+  const plusSizeTees = [
+    { id: 5, name: 'You Fake Bro? (Plus)', color: 'White', size: 'XL-4XL', price: 54, rating: 4.9, reviews: 156 },
+    { id: 6, name: 'Life is Fake (Plus)', color: 'Red', size: 'XL-4XL', price: 54, rating: 4.8, reviews: 142 },
+    { id: 7, name: 'Fake Office (Plus)', color: 'Cream', size: 'XL-4XL', price: 54, rating: 4.9, reviews: 128 },
+    { id: 8, name: 'The Real Fake (Plus)', color: 'Black', size: 'XL-4XL', price: 54, rating: 4.8, reviews: 94 },
   ];
 
   const testimonials = [
-    { text: 'Best quality I\'ve found. Worth every penny.', author: 'Sarah M.', rating: 5, verified: true },
-    { text: 'The attention to detail is incredible. Highly recommend.', author: 'James T.', rating: 5, verified: true },
-    { text: 'Finally found a brand that gets it. Timeless pieces.', author: 'Alex R.', rating: 5, verified: true },
+    { name: 'Jordan M.', text: 'Finally a brand that gets the joke. Quality is legit though.', verified: true },
+    { name: 'Casey L.', text: 'Wearing my "Fake Like My Office" tee to actual meetings. Love it.', verified: true },
+    { name: 'Alex R.', text: 'The irony is real. The tees are realer.', verified: true },
   ];
 
-  const trustBadges = [
-    { icon: Truck, title: 'Fast Shipping', description: 'Free over $100' },
-    { icon: RotateCcw, title: 'Easy Returns', description: '30-day guarantee' },
-    { icon: Lock, title: 'Secure Checkout', description: 'SSL encrypted' },
-    { icon: MessageCircle, title: '24/7 Support', description: 'We\'re here to help' },
+  const guides = [
+    { title: 'How to Fake It (Properly)', description: 'Style guide for wearing Fake by Freetown with confidence.' },
+    { title: 'The Fake Manifesto', description: 'Why authenticity through irony is the only real thing left.' },
+    { title: 'Sizing Guide: Find Your Fake', description: 'Perfect fit for every body. Because fake should fit right.' },
   ];
 
   return (
-    <div style={{ background: '#ffffff', color: '#1a1a1a', minHeight: '100vh' }}>
+    <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
-      <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '3px', textTransform: 'uppercase', fontFamily: "'Space Mono', monospace", color: '#e63946' }}>FAKE</div>
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/">
+            <a className="text-2xl font-bold text-red-600 hover:text-red-700 transition">FAKE</a>
           </Link>
           
-          <nav style={{ display: 'flex', gap: '40px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>
-            <Link href="/shop" style={{ textDecoration: 'none', color: '#1a1a1a', transition: 'color 0.3s ease' }}>Shop</Link>
-            <a href="#" style={{ textDecoration: 'none', color: '#1a1a1a', transition: 'color 0.3s ease', cursor: 'pointer' }}>About</a>
-            <a href="#" style={{ textDecoration: 'none', color: '#1a1a1a', transition: 'color 0.3s ease', cursor: 'pointer' }}>Contact</a>
+          <nav className="hidden md:flex gap-8">
+            <Link href="/shop">
+              <a className="text-sm font-medium text-gray-900 hover:text-red-600 transition">SHOP</a>
+            </Link>
+            <a href="#" className="text-sm font-medium text-gray-900 hover:text-red-600 transition">ABOUT</a>
+            <a href="#" className="text-sm font-medium text-gray-900 hover:text-red-600 transition">CONTACT</a>
           </nav>
 
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a1a1a', fontSize: '18px' }}>
+          <div className="flex items-center gap-6">
+            <button className="text-gray-900 hover:text-red-600 transition">
               <Search size={20} />
             </button>
-            <Link href="/cart" style={{ textDecoration: 'none', color: '#1a1a1a', position: 'relative', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button className="relative text-gray-900 hover:text-red-600 transition">
               <ShoppingCart size={20} />
-              {cartCount > 0 && <span style={{ fontSize: '12px', fontWeight: 700, background: '#e63946', color: '#fff', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>}
-            </Link>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a1a1a', fontSize: '18px' }}>
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+            </button>
+            <button className="text-gray-900 hover:text-red-600 transition">
               <User size={20} />
             </button>
           </div>
@@ -68,50 +70,132 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section style={{ marginTop: '70px', padding: '80px 20px', background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(230, 57, 70, 0.05) 0%, transparent 70%)', borderRadius: '50%' }}></div>
-        <div style={{ position: 'absolute', bottom: '-30%', left: '-5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(230, 57, 70, 0.03) 0%, transparent 70%)', borderRadius: '50%' }}></div>
+      <section className="relative h-screen overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Hero" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/25"></div>
+        </div>
         
-        <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: '64px', fontWeight: 800, letterSpacing: '-1px', marginBottom: '20px', color: '#1a1a1a', lineHeight: 1.1 }}>LIVE YOUR TRUTH</h1>
-          <p style={{ fontSize: '18px', color: '#e63946', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '16px' }}>Curated lifestyle for the modern you</p>
-          <p style={{ fontSize: '16px', color: '#666666', marginBottom: '40px', lineHeight: 1.8 }}>Timeless pieces that transcend trends. Quality that speaks for itself. A lifestyle that's authentically yours.</p>
-          
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '40px' }}>
-            <Link href="/shop">
-              <button style={{ padding: '14px 40px', background: '#e63946', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease' }}>Shop Now</button>
-            </Link>
-            <button style={{ padding: '14px 40px', background: 'transparent', color: '#1a1a1a', border: '2px solid #1a1a1a', borderRadius: '4px', fontSize: '14px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease' }}>Explore Collections</button>
-          </div>
-
-          <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', alignItems: 'center', fontSize: '13px', color: '#666666' }}>
-            <span>⭐ 4.8/5 • 12K+ Reviews</span>
-            <span>Free shipping over $100 • 30-day returns</span>
+        <div className="relative h-full flex items-center justify-center text-center">
+          <div className="max-w-3xl mx-auto px-4">
+            <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+              You Fake Bro?
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90 mb-4 font-light">
+              Life is fake. Just make it.
+            </p>
+            <p className="text-lg text-white/80 mb-12 font-light max-w-2xl mx-auto">
+              Premium tees for people who get the irony. Authenticity through rebellion.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/shop">
+                <a className="px-8 py-4 bg-red-600 text-white font-semibold hover:bg-red-700 transition transform hover:scale-105 inline-block">
+                  SHOP TEES
+                </a>
+              </Link>
+              <button className="px-8 py-4 border-2 border-white text-white font-semibold hover:bg-white hover:text-red-600 transition">
+                PLUS SIZE COLLECTION
+              </button>
+            </div>
           </div>
         </div>
-
-        <div style={{ marginTop: '60px', animation: 'bounce 2s infinite', textAlign: 'center', color: '#e63946', fontSize: '24px' }}>↓</div>
       </section>
 
-      {/* Trending Now */}
-      <section style={{ padding: '80px 20px', background: '#ffffff' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '50px', textAlign: 'center', color: '#1a1a1a' }}>TRENDING NOW</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-            {trendingProducts.map((product) => (
-              <div key={product.id} 
-                onMouseEnter={() => setHoveredProduct(product.id)}
-                onMouseLeave={() => setHoveredProduct(null)}
-                style={{ background: '#f9f9f9', borderRadius: '8px', padding: '20px', transition: 'all 0.3s ease', transform: hoveredProduct === product.id ? 'translateY(-8px)' : 'translateY(0)', boxShadow: hoveredProduct === product.id ? '0 12px 24px rgba(230, 57, 70, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.05)', border: hoveredProduct === product.id ? '1px solid #e63946' : '1px solid #e0e0e0' }}>
-                <div style={{ fontSize: '64px', textAlign: 'center', marginBottom: '16px' }}>{product.emoji}</div>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1a1a1a' }}>{product.name}</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '14px', color: '#e63946', fontWeight: 600 }}>⭐ {product.rating}</span>
-                  <span style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a1a' }}>{product.price}</span>
+      {/* Trust Indicators */}
+      <section className="bg-gray-50 py-8 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-8 text-center">
+            <div className="flex items-center gap-2">
+              <Star size={18} className="text-yellow-400 fill-yellow-400" />
+              <span className="text-sm font-medium">4.8/5 • 1K+ Reviews</span>
+            </div>
+            <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
+            <span className="text-sm font-medium">Free shipping over $75</span>
+            <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
+            <span className="text-sm font-medium">30-day returns (no questions)</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Tees Collection */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">The Core Collection</h2>
+            <p className="text-gray-600 text-lg">Premium tees with attitude. 100% cotton. Zero BS.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {tees.map((tee) => (
+              <div key={tee.id} className="group cursor-pointer">
+                <div className="relative bg-gray-100 aspect-square mb-4 overflow-hidden rounded-lg">
+                  <img src={tee.image} alt={tee.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+                  <button className="absolute bottom-4 left-4 right-4 py-3 bg-red-600 text-white font-semibold opacity-0 group-hover:opacity-100 transition transform translate-y-2 group-hover:translate-y-0">
+                    ADD TO CART
+                  </button>
                 </div>
-                <button style={{ width: '100%', padding: '12px', background: hoveredProduct === product.id ? '#e63946' : '#f0f0f0', color: hoveredProduct === product.id ? '#fff' : '#1a1a1a', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease' }}>
-                  {hoveredProduct === product.id ? 'Add to Cart' : 'Quick View'}
+                <h3 className="text-lg font-semibold mb-1">{tee.name}</h3>
+                <p className="text-sm text-gray-600 mb-2">{tee.color}</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-600">({tee.reviews})</span>
+                </div>
+                <p className="text-xl font-bold text-red-600">${tee.price}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Plus Size Section */}
+      <section className="py-20 bg-red-50 border-t-4 border-red-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">Fake For Everyone</h2>
+              <p className="text-lg text-gray-700 mb-4">
+                Premium tees in XL-4XL. Same quality. Same attitude. Same price.
+              </p>
+              <p className="text-gray-600 mb-8">
+                Because being fake should fit perfectly, no matter your size. We believe in inclusive irony.
+              </p>
+              <Link href="/shop?size=plus">
+                <a className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold hover:bg-red-700 transition">
+                  SHOP PLUS SIZE <ChevronRight size={20} />
+                </a>
+              </Link>
+            </div>
+            <div className="relative h-96 rounded-lg overflow-hidden">
+              <img src={plusSizeImage} alt="Plus Size Collection" className="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plusSizeTees.map((tee) => (
+              <div key={tee.id} className="group cursor-pointer bg-white p-6 rounded-lg hover:shadow-lg transition">
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full mb-3">
+                    PLUS SIZE
+                  </span>
+                  <h3 className="text-lg font-semibold mb-1">{tee.name}</h3>
+                  <p className="text-sm text-gray-600 mb-2">{tee.color} • {tee.size}</p>
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-600">({tee.reviews})</span>
+                </div>
+                <p className="text-xl font-bold text-red-600 mb-4">${tee.price}</p>
+                <button className="w-full py-2 bg-red-600 text-white font-semibold hover:bg-red-700 transition">
+                  ADD TO CART
                 </button>
               </div>
             ))}
@@ -119,90 +203,88 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Collections */}
-      <section style={{ padding: '80px 20px', background: '#f9f9f9' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '50px', textAlign: 'center', color: '#1a1a1a' }}>COLLECTIONS</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
-            {collections.map((collection, idx) => (
-              <div key={idx}
-                onMouseEnter={() => setHoveredCollection(idx)}
-                onMouseLeave={() => setHoveredCollection(null)}
-                style={{ background: '#ffffff', borderRadius: '8px', padding: '40px 24px', textAlign: 'center', border: hoveredCollection === idx ? '2px solid #e63946' : '1px solid #e0e0e0', transition: 'all 0.3s ease', cursor: 'pointer' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: '#1a1a1a' }}>{collection.name}</h3>
-                <p style={{ fontSize: '13px', color: '#999999', marginBottom: '16px' }}>{collection.description}</p>
-                <a href="/shop" style={{ fontSize: '12px', fontWeight: 700, color: '#e63946', textDecoration: 'none', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Explore →</a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Trust Badges */}
-      <section style={{ padding: '80px 20px', background: '#ffffff' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
-            {trustBadges.map((badge, idx) => {
-              const Icon = badge.icon;
-              return (
-                <div key={idx} style={{ textAlign: 'center', padding: '24px' }}>
-                  <div style={{ fontSize: '40px', marginBottom: '16px', color: '#e63946' }}>
-                    <Icon size={40} />
-                  </div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1a1a1a' }}>{badge.title}</h3>
-                  <p style={{ fontSize: '13px', color: '#999999' }}>{badge.description}</p>
-                </div>
-              );
-            })}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <Truck size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Fast Shipping</h3>
+              <p className="text-gray-600">Free over $75</p>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <RotateCcw size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Easy Returns</h3>
+              <p className="text-gray-600">30 days, no questions</p>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <Lock size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Secure Checkout</h3>
+              <p className="text-gray-600">SSL encrypted</p>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <MessageCircle size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Real Support</h3>
+              <p className="text-gray-600">Humans, not bots</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section style={{ padding: '80px 20px', background: '#f9f9f9' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '50px', textAlign: 'center', color: '#1a1a1a' }}>CUSTOMER LOVE</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+      {/* Customer Testimonials */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">People Get It</h2>
+            <p className="text-gray-600 text-lg">Real reviews from real fakers</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, idx) => (
-              <div key={idx} style={{ background: '#ffffff', borderRadius: '8px', padding: '32px', border: '1px solid #e0e0e0' }}>
-                <div style={{ display: 'flex', marginBottom: '16px', color: '#e63946' }}>
-                  {[...Array(testimonial.rating)].map((_, i) => <span key={i}>⭐</span>)}
+              <div key={idx} className="bg-white p-8 rounded-lg border border-gray-200">
+                <div className="flex mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="text-yellow-400 fill-yellow-400" />
+                  ))}
                 </div>
-                <p style={{ fontSize: '14px', color: '#666666', marginBottom: '16px', lineHeight: 1.8 }}>"{testimonial.text}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <p style={{ fontSize: '13px', fontWeight: 700, color: '#1a1a1a' }}>{testimonial.author}</p>
-                  {testimonial.verified && <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>✓ Verified</span>}
+                <p className="text-gray-700 mb-6 italic">"{testimonial.text}"</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-semibold">{testimonial.name}</p>
+                  {testimonial.verified && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">✓ Verified</span>}
                 </div>
               </div>
             ))}
           </div>
-
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
-            <button style={{ padding: '12px 32px', background: 'transparent', color: '#e63946', border: '2px solid #e63946', borderRadius: '4px', fontSize: '12px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease' }}>Load More Reviews</button>
-          </div>
         </div>
       </section>
 
-      {/* Editorial Content */}
-      <section style={{ padding: '80px 20px', background: '#ffffff' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '50px', textAlign: 'center', color: '#1a1a1a' }}>STYLE GUIDES & INSPIRATION</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
-            {[
-              { title: '5 Ways to Style the Classic Tee', description: 'Discover how to make our signature tee work for every occasion.' },
-              { title: 'Sustainable Fashion 101', description: 'Learn about our commitment to ethical sourcing and sustainability.' },
-              { title: 'Seasonal Essentials 2026', description: 'Your curated guide to building a timeless wardrobe for the year ahead.' },
-            ].map((guide, idx) => (
-              <div key={idx} style={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e0e0e0', transition: 'all 0.3s ease', cursor: 'pointer' }}>
-                <div style={{ background: '#f0f0f0', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>📖</div>
-                <div style={{ padding: '24px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', color: '#1a1a1a' }}>{guide.title}</h3>
-                  <p style={{ fontSize: '13px', color: '#999999', marginBottom: '16px', lineHeight: 1.6 }}>{guide.description}</p>
-                  <a href="#" style={{ fontSize: '12px', fontWeight: 700, color: '#e63946', textDecoration: 'none', letterSpacing: '0.5px' }}>Read More →</a>
+      {/* Guides & Manifesto */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">The Fake Philosophy</h2>
+            <p className="text-gray-600 text-lg">Learn how to embrace the irony</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {guides.map((guide, idx) => (
+              <div key={idx} className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition border border-gray-200">
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
+                  <span className="text-2xl">💭</span>
                 </div>
+                <h3 className="text-xl font-semibold mb-3">{guide.title}</h3>
+                <p className="text-gray-600 mb-6">{guide.description}</p>
+                <button className="text-red-600 font-semibold flex items-center gap-2 hover:gap-3 transition">
+                  Read More <ChevronRight size={18} />
+                </button>
               </div>
             ))}
           </div>
@@ -210,27 +292,86 @@ export default function Home() {
       </section>
 
       {/* Newsletter */}
-      <section style={{ padding: '80px 20px', background: '#e63946', color: '#ffffff' }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '16px' }}>JOIN THE COMMUNITY</h2>
-          <p style={{ fontSize: '14px', marginBottom: '32px', opacity: 0.95 }}>Get exclusive previews, early access to new collections, and curated style insights.</p>
+      <section className="py-20 bg-red-600">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Stay Fake</h2>
+          <p className="text-white/90 text-lg mb-8">Get new drops, exclusive deals, and the occasional fake wisdom.</p>
           
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            <input type="email" placeholder="Enter your email" style={{ flex: 1, padding: '14px 16px', borderRadius: '4px', border: 'none', fontSize: '14px', background: 'rgba(255, 255, 255, 0.9)' }} />
-            <button style={{ padding: '14px 32px', background: '#ffffff', color: '#e63946', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease' }}>Subscribe</button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 px-6 py-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button className="px-8 py-4 bg-white text-red-600 font-semibold hover:bg-gray-100 transition rounded-lg">
+              SUBSCRIBE
+            </button>
           </div>
-          <p style={{ fontSize: '11px', opacity: 0.8 }}>We respect your privacy. Unsubscribe anytime.</p>
         </div>
       </section>
 
-      <Footer />
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            {/* Brand Column */}
+            <div>
+              <h3 className="text-white text-lg font-bold mb-4">FAKE</h3>
+              <p className="text-sm text-gray-400 mb-6">Premium tees for people who get the irony. Life is fake. Just make it.</p>
+              <div className="flex gap-4">
+                <a href="#" className="text-gray-400 hover:text-white transition text-sm">Instagram</a>
+                <a href="#" className="text-gray-400 hover:text-white transition text-sm">Twitter</a>
+              </div>
+            </div>
 
-      <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
+            {/* Shop Column */}
+            <div>
+              <h4 className="text-white font-semibold mb-6">Shop</h4>
+              <ul className="space-y-3">
+                <li><Link href="/shop"><a className="text-gray-400 hover:text-white transition text-sm">All Tees</a></Link></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Plus Size</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">New Drops</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Sale</a></li>
+              </ul>
+            </div>
+
+            {/* Account Column */}
+            <div>
+              <h4 className="text-white font-semibold mb-6">Account</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">My Account</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Orders</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Wishlist</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Rewards</a></li>
+              </ul>
+            </div>
+
+            {/* Support Column */}
+            <div>
+              <h4 className="text-white font-semibold mb-6">Support</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Shipping Info</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Returns</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Privacy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition text-sm">Terms</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Footer Bottom */}
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-sm text-gray-400">© 2026 Fake by Freetown. Life is fake. Just make it.</p>
+              <div className="flex gap-6 mt-4 md:mt-0">
+                <span className="text-sm text-gray-400">Secure Payments</span>
+                <span className="text-sm text-gray-400">SSL Encrypted</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
