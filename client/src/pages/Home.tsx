@@ -260,7 +260,7 @@ export default function Home() {
             <div>
               <h3 className="text-white font-semibold mb-4">Shop</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/shop"><a className="hover:text-white transition">All Tees</a></Link></li>
+                <li><Link href="/shop" className="hover:text-white transition">All Tees</Link></li>
                 <li><a href="#" className="hover:text-white transition">Plus Size</a></li>
                 <li><a href="#" className="hover:text-white transition">New Drops</a></li>
                 <li><a href="#" className="hover:text-white transition">Sale</a></li>
