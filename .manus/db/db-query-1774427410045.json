@@ -1,0 +1,208 @@
+{
+  "query": "SELECT id, name, slug, imageUrl FROM products ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, imageUrl FROM products ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "slug": "white-oxford-shirt",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "slug": "heritage-chambray",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "slug": "indigo-chambray",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp"
+    },
+    {
+      "id": "70005",
+      "name": "You Fake Bro? (Plus)",
+      "slug": "you-fake-bro-plus",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp"
+    },
+    {
+      "id": "70006",
+      "name": "Life is Fake (Plus)",
+      "slug": "life-is-fake-plus",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp"
+    },
+    {
+      "id": "70007",
+      "name": "Fake Office (Plus)",
+      "slug": "fake-office-plus",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp"
+    },
+    {
+      "id": "70008",
+      "name": "The Real Fake (Plus)",
+      "slug": "the-real-fake-plus",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp"
+    },
+    {
+      "id": "80001",
+      "name": "Sweat Pants",
+      "slug": "sweat-pants",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-sweatpants_c787a2c8.webp"
+    },
+    {
+      "id": "80002",
+      "name": "Windbreaker",
+      "slug": "windbreaker",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp"
+    },
+    {
+      "id": "80003",
+      "name": "Polo Tee",
+      "slug": "polo-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-collared-tee_d410e957.webp"
+    },
+    {
+      "id": "80004",
+      "name": "Mandarin Collar",
+      "slug": "mandarin-collar",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-mandarin-collar_506f8413.webp"
+    },
+    {
+      "id": "80005",
+      "name": "V-Neck Tee",
+      "slug": "v-neck-tee",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-vneck-tee_d48241cf.webp"
+    },
+    {
+      "id": "80006",
+      "name": "Dress Shirt",
+      "slug": "dress-shirt",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-white-shirt_f6b91108.webp"
+    },
+    {
+      "id": "80007",
+      "name": "Dress Slacks",
+      "slug": "dress-slacks",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-slacks_52b41afc.webp"
+    },
+    {
+      "id": "80008",
+      "name": "Dress Socks",
+      "slug": "dress-socks",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-socks_7265dacd.webp"
+    },
+    {
+      "id": "80009",
+      "name": "Pocket Square",
+      "slug": "pocket-square",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-handkerchief_e7c08327.webp"
+    },
+    {
+      "id": "80010",
+      "name": "Silk Tie",
+      "slug": "silk-tie",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-tie_aac2d38b.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\timageUrl\n30001\tFake It Classic Tee\tfake-it-classic-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg\n30002\tTill You Make It Tee\ttill-you-make-it-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg\n30003\tConfidence Tee\tconfidence-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg\n30004\tFake Signature Hoodie\tfake-signature-hoodie\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg\n30005\tEssential Joggers\tessential-joggers\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg\n30006\tClassic Pique Polo\tclassic-pique-polo\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg\n30008\tLight Blue Oxford\tlight-blue-oxford\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg\n30010\tFake Script Cap\tfake-script-cap\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg\n60005\tHeritage Chambray\theritage-chambray\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg\n60006\tIndigo Chambray\tindigo-chambray\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg\n70001\tYou Fake Bro?\tyou-fake-bro\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp\n70003\tFake Like My Office\tfake-like-my-office\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp\n70004\tThe Real Fake\tthe-real-fake\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp\n70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp\n70006\tLife is Fake (Plus)\tlife-is-fake-plus\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp\n70007\tFake Office (Plus)\tfake-office-plus\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp\n70008\tThe Real Fake (Plus)\tthe-real-fake-plus\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp\n80001\tSweat Pants\tsweat-pants\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-sweatpants_c787a2c8.webp\n80002\tWindbreaker\twindbreaker\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp\n80003\tPolo Tee\tpolo-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-collared-tee_d410e957.webp\n80004\tMandarin Collar\tmandarin-collar\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-mandarin-collar_506f8413.webp\n80005\tV-Neck Tee\tv-neck-tee\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-vneck-tee_d48241cf.webp\n80006\tDress Shirt\tdress-shirt\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-white-shirt_f6b91108.webp\n80007\tDress Slacks\tdress-slacks\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-slacks_52b41afc.webp\n80008\tDress Socks\tdress-socks\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-socks_7265dacd.webp\n80009\tPocket Square\tpocket-square\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-handkerchief_e7c08327.webp\n80010\tSilk Tie\tsilk-tie\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-tie_aac2d38b.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1593
+}

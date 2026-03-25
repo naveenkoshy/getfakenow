@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, slug, imageUrl FROM products WHERE slug = 'windbreaker';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, imageUrl FROM products WHERE slug = 'windbreaker';",
+  "rows": [
+    {
+      "id": "80002",
+      "name": "Windbreaker",
+      "slug": "windbreaker",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\timageUrl\n80002\tWindbreaker\twindbreaker\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1522
+}

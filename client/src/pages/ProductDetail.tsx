@@ -10,10 +10,7 @@ import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { updateMetaTags, injectStructuredData, generateProductSchema, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
-const SIZE_CHART = {
-  standard: ['S', 'M', 'L', 'XL'],
-  plusSize: ['XL', '2XL', '3XL', '4XL'],
-};
+const ALL_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL', '7XL', '8XL', '9XL', '10XL'];
 
 const COLOR_MAP: Record<string, string> = {
   white: '#ffffff',
@@ -128,10 +125,7 @@ export default function ProductDetail() {
     toast.success(`${product.name} added to cart`);
   };
 
-  // Determine if this is a plus-size product
-  const isPlusSize = product?.name?.toLowerCase().includes('plus') ||
-    product?.category?.name?.toLowerCase().includes('plus');
-  const availableSizes = isPlusSize ? SIZE_CHART.plusSize : SIZE_CHART.standard;
+  const availableSizes = ALL_SIZES;
 
   // Loading state
   if (isLoading) {
@@ -161,14 +155,15 @@ export default function ProductDetail() {
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black tracking-wider text-red-600 hover:text-red-700 transition-colors">
-            FAKE
+          <Link href="/" className="flex items-baseline gap-1 hover:opacity-80 transition-opacity">
+            <span className="text-xl font-black tracking-wider text-red-600">FAKE</span>
+            <span className="text-sm text-gray-500" style={{ fontFamily: "'Dancing Script', cursive" }}>by Freetown</span>
           </Link>
           <nav className="hidden md:flex items-center gap-10">
             <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">SHOP</Link>
-            <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">PLUS SIZE</Link>
+            <Link href="/shop?category=casual" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">CASUAL</Link>
+            <Link href="/shop?category=business" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">BUSINESS</Link>
             <a href="/#about" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">ABOUT</a>
-            <a href="/#contact" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">CONTACT</a>
           </nav>
           <div className="flex items-center gap-5">
             <button className="text-gray-500 hover:text-red-600 transition-colors" aria-label="Search">
@@ -189,7 +184,8 @@ export default function ProductDetail() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-3">
             <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
-            <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Plus Size</Link>
+            <Link href="/shop?category=casual" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Casual</Link>
+            <Link href="/shop?category=business" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Business</Link>
             <Link href="/account" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Account</Link>
           </div>
         )}
@@ -232,9 +228,9 @@ export default function ProductDetail() {
               <Heart size={18} />
             </button>
             {/* Badge */}
-            {isPlusSize && (
+            {product.featured && (
               <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold tracking-wider px-3 py-1.5 rounded">
-                PLUS SIZE
+                FEATURED
               </span>
             )}
           </div>
@@ -364,6 +360,12 @@ export default function ProductDetail() {
                           { size: '2XL', chest: '44-48', length: '31', shoulder: '21' },
                           { size: '3XL', chest: '48-52', length: '32', shoulder: '22' },
                           { size: '4XL', chest: '52-56', length: '33', shoulder: '23' },
+                          { size: '5XL', chest: '56-60', length: '34', shoulder: '24' },
+                          { size: '6XL', chest: '60-64', length: '35', shoulder: '25' },
+                          { size: '7XL', chest: '64-68', length: '36', shoulder: '26' },
+                          { size: '8XL', chest: '68-72', length: '37', shoulder: '27' },
+                          { size: '9XL', chest: '72-76', length: '38', shoulder: '28' },
+                          { size: '10XL', chest: '76-80', length: '39', shoulder: '29' },
                         ].map((row) => (
                           <tr key={row.size} className="border-b border-gray-100 last:border-0">
                             <td className="py-2 font-medium">{row.size}</td>
@@ -526,17 +528,20 @@ export default function ProductDetail() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-14 pb-14 border-b border-gray-800">
             <div className="col-span-2 md:col-span-1">
-              <span className="text-lg font-black text-white tracking-wider">FAKE</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-lg font-black text-white tracking-wider">FAKE</span>
+                <span className="text-sm text-gray-400" style={{ fontFamily: "'Dancing Script', cursive" }}>by Freetown</span>
+              </div>
               <p className="mt-3 text-sm text-gray-500 leading-relaxed">
-                Premium tees with attitude.<br />Fake by Freetown.
+                Premium lifestyle apparel.<br />S to 10XL. No exceptions.
               </p>
             </div>
             <div>
               <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-5">Shop</h3>
               <ul className="space-y-2.5">
-                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">All Tees</Link></li>
-                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">Plus Size</Link></li>
-                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">New Drops</Link></li>
+                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">All Products</Link></li>
+                <li><Link href="/shop?category=casual" className="text-sm text-gray-400 hover:text-white transition-colors">Casual</Link></li>
+                <li><Link href="/shop?category=business" className="text-sm text-gray-400 hover:text-white transition-colors">Business</Link></li>
               </ul>
             </div>
             <div>

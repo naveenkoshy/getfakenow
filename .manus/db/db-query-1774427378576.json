@@ -1,0 +1,18 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, p.imageUrl, pi.imageUrl as variant_image, pi.color FROM products p LEFT JOIN productImages pi ON p.id = pi.productId WHERE p.slug = 'windbreaker';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, p.imageUrl, pi.imageUrl as variant_image, pi.color FROM products p LEFT JOIN productImages pi ON p.id = pi.productId WHERE p.slug = 'windbreaker';",
+  "rows": [
+    {
+      "id": "80002",
+      "name": "Windbreaker",
+      "slug": "windbreaker",
+      "imageUrl": "NULL",
+      "variant_image": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp",
+      "color": "red"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\timageUrl\tvariant_image\tcolor\n80002\tWindbreaker\twindbreaker\tNULL\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp\tred\n",
+  "stderr": "",
+  "execution_time_ms": 1505
+}

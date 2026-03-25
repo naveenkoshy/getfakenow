@@ -26,6 +26,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import ReturnsPolicy from "./pages/ReturnsPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import About from "./pages/About";
 import { AdminRoute } from "./components/AdminRoute";
 
 function Router() {
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/shipping-policy" component={ShippingPolicy} />
       <Route path="/returns-policy" component={ReturnsPolicy} />
+      <Route path="/about" component={About} />
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

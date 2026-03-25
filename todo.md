@@ -94,3 +94,37 @@
 - [x] Breadcrumb navigation
 - [x] SEO meta tags and structured data
 - [x] Mobile responsive design
+
+## Logo Update
+- [ ] Update header logo to "Fake by Freetown" with "by Freetown" in cursive
+- [ ] Apply same logo treatment across all pages (Home, Shop, ProductDetail)
+
+## Size & Logo Updates
+- [ ] Add Dancing Script cursive font for logo
+- [ ] Update header logo to "Fake" + "by Freetown" in cursive across all pages
+- [ ] Remove separate Plus Size section from homepage
+- [ ] Merge all sizes into single range: S to 10XL
+- [ ] Update product detail page size selector to S-10XL
+- [ ] Remove "PLUS SIZE" nav link from header
+- [ ] Remove plus-size product variants from database
+
+## Product Catalog Expansion
+- [ ] Generate product images for casual items (sweat pants, windbreakers, collared tees, mandarin collar, v-neck)
+- [ ] Generate product images for business items (white shirts, slacks, socks, handkerchiefs, ties)
+- [ ] Insert all new products into database
+- [ ] Update homepage to showcase all categories
+- [ ] Create Business section on homepage
+- [ ] Update product detail page for new product types
+- [ ] Update size selector to S-10XL on all products
+- [ ] Remove separate Plus Size section and nav link
+- [ ] Update header logo to "Fake by Freetown" with cursive
+
+## Cart & Checkout Redesign
+- [x] Restyle Cart page to match red/white brand theme (remove generic shadcn look)
+- [x] Restyle Checkout page to match brand theme
+- [x] Fix currency from USD to MYR in Stripe checkout
+- [x] Fix homepage product slugs to match database slugs
+- [x] Ensure cart badge count updates in header across all pages
+- [x] Add hero background image to homepage
+- [x] Build About page with brand story
+- [x] Fix "Continue Shopping" links to point to /shop instead of /products

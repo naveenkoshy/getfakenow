@@ -1,0 +1,171 @@
+{
+  "query": "SELECT id, name, slug, categoryId, price FROM products ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, categoryId, price FROM products ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "categoryId": "30001",
+      "price": "3500"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "categoryId": "30001",
+      "price": "3500"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "categoryId": "30001",
+      "price": "3800"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "categoryId": "30001",
+      "price": "6500"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "categoryId": "30001",
+      "price": "5500"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "categoryId": "30001",
+      "price": "4500"
+    },
+    {
+      "id": "30007",
+      "name": "White Oxford Shirt",
+      "slug": "white-oxford-shirt",
+      "categoryId": "30002",
+      "price": "7500"
+    },
+    {
+      "id": "30008",
+      "name": "Light Blue Oxford",
+      "slug": "light-blue-oxford",
+      "categoryId": "30002",
+      "price": "7500"
+    },
+    {
+      "id": "30009",
+      "name": "Classic Chambray Work Shirt",
+      "slug": "classic-chambray-work-shirt",
+      "categoryId": "30002",
+      "price": "6800"
+    },
+    {
+      "id": "30010",
+      "name": "Fake Script Cap",
+      "slug": "fake-script-cap",
+      "categoryId": "30003",
+      "price": "2800"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "categoryId": "30001",
+      "price": "3500"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "categoryId": "30001",
+      "price": "3500"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "categoryId": "30001",
+      "price": "3500"
+    },
+    {
+      "id": "60005",
+      "name": "Heritage Chambray",
+      "slug": "heritage-chambray",
+      "categoryId": "30002",
+      "price": "7500"
+    },
+    {
+      "id": "60006",
+      "name": "Indigo Chambray",
+      "slug": "indigo-chambray",
+      "categoryId": "30002",
+      "price": "7500"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "categoryId": "30001",
+      "price": "4900"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "categoryId": "30001",
+      "price": "4900"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "categoryId": "30001",
+      "price": "4900"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "categoryId": "30001",
+      "price": "4900"
+    },
+    {
+      "id": "70005",
+      "name": "You Fake Bro? (Plus)",
+      "slug": "you-fake-bro-plus",
+      "categoryId": "30001",
+      "price": "5400"
+    },
+    {
+      "id": "70006",
+      "name": "Life is Fake (Plus)",
+      "slug": "life-is-fake-plus",
+      "categoryId": "30001",
+      "price": "5400"
+    },
+    {
+      "id": "70007",
+      "name": "Fake Office (Plus)",
+      "slug": "fake-office-plus",
+      "categoryId": "30001",
+      "price": "5400"
+    },
+    {
+      "id": "70008",
+      "name": "The Real Fake (Plus)",
+      "slug": "the-real-fake-plus",
+      "categoryId": "30001",
+      "price": "5400"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategoryId\tprice\n30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\t3500\n30002\tTill You Make It Tee\ttill-you-make-it-tee\t30001\t3500\n30003\tConfidence Tee\tconfidence-tee\t30001\t3800\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\t6500\n30005\tEssential Joggers\tessential-joggers\t30001\t5500\n30006\tClassic Pique Polo\tclassic-pique-polo\t30001\t4500\n30007\tWhite Oxford Shirt\twhite-oxford-shirt\t30002\t7500\n30008\tLight Blue Oxford\tlight-blue-oxford\t30002\t7500\n30009\tClassic Chambray Work Shirt\tclassic-chambray-work-shirt\t30002\t6800\n30010\tFake Script Cap\tfake-script-cap\t30003\t2800\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\t3500\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\t3500\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\t3500\n60005\tHeritage Chambray\theritage-chambray\t30002\t7500\n60006\tIndigo Chambray\tindigo-chambray\t30002\t7500\n70001\tYou Fake Bro?\tyou-fake-bro\t30001\t4900\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\t30001\t4900\n70003\tFake Like My Office\tfake-like-my-office\t30001\t4900\n70004\tThe Real Fake\tthe-real-fake\t30001\t4900\n70005\tYou Fake Bro? (Plus)\tyou-fake-bro-plus\t30001\t5400\n70006\tLife is Fake (Plus)\tlife-is-fake-plus\t30001\t5400\n70007\tFake Office (Plus)\tfake-office-plus\t30001\t5400\n70008\tThe Real Fake (Plus)\tthe-real-fake-plus\t30001\t5400\n",
+  "stderr": "",
+  "execution_time_ms": 1479
+}

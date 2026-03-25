@@ -29,7 +29,7 @@ export async function createCheckoutSession(params: {
 }) {
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = params.items.map(item => ({
     price_data: {
-      currency: 'usd',
+      currency: 'myr',
       product_data: {
         name: item.name,
         description: item.description,
