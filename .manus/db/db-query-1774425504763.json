@@ -1,0 +1,46 @@
+{
+  "query": "SELECT * FROM categories; DESCRIBE productImages;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT * FROM categories; DESCRIBE productImages;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Casual",
+      "slug": "casual",
+      "description": "Everyday essentials with attitude",
+      "imageUrl": "NULL",
+      "createdAt": "2025-12-12 03:48:02",
+      "updatedAt": "2025-12-12 03:48:02"
+    },
+    {
+      "id": "30002",
+      "name": "Professional",
+      "slug": "professional",
+      "description": "Refined workwear for the modern professional",
+      "imageUrl": "NULL",
+      "createdAt": "2025-12-12 03:48:02",
+      "updatedAt": "2025-12-12 03:48:02"
+    },
+    {
+      "id": "30003",
+      "name": "Accessories",
+      "slug": "accessories",
+      "description": "Complete your look",
+      "imageUrl": "NULL",
+      "createdAt": "2025-12-12 03:48:02",
+      "updatedAt": "2025-12-12 03:48:02"
+    }
+  ],
+  "messages": [
+    "Field\tType\tNull\tKey\tDefault\tExtra",
+    "id\tint\tNO\tPRI\tNULL\tauto_increment",
+    "productId\tint\tNO\t\tNULL\t",
+    "imageUrl\ttext\tNO\t\tNULL\t",
+    "fileKey\ttext\tNO\t\tNULL\t",
+    "sortOrder\tint\tNO\t\t0\t",
+    "createdAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t",
+    "color\tvarchar(20)\tYES\t\tNULL\t"
+  ],
+  "stdout": "id\tname\tslug\tdescription\timageUrl\tcreatedAt\tupdatedAt\n30001\tCasual\tcasual\tEveryday essentials with attitude\tNULL\t2025-12-12 03:48:02\t2025-12-12 03:48:02\n30002\tProfessional\tprofessional\tRefined workwear for the modern professional\tNULL\t2025-12-12 03:48:02\t2025-12-12 03:48:02\n30003\tAccessories\taccessories\tComplete your look\tNULL\t2025-12-12 03:48:02\t2025-12-12 03:48:02\nField\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\tauto_increment\nproductId\tint\tNO\t\tNULL\t\nimageUrl\ttext\tNO\t\tNULL\t\nfileKey\ttext\tNO\t\tNULL\t\nsortOrder\tint\tNO\t\t0\t\ncreatedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\ncolor\tvarchar(20)\tYES\t\tNULL\t\n",
+  "stderr": "",
+  "execution_time_ms": 1706
+}

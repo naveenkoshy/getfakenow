@@ -1,0 +1,150 @@
+{
+  "query": "SELECT pi.id, pi.productId, pi.imageUrl, pi.color, p.name FROM productImages pi JOIN products p ON pi.productId = p.id LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT pi.id, pi.productId, pi.imageUrl, pi.color, p.name FROM productImages pi JOIN products p ON pi.productId = p.id LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "productId": "60001",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee-black.jpg",
+      "color": "black",
+      "name": "It's all Fake Tee"
+    },
+    {
+      "id": "2",
+      "productId": "60002",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee-navy.jpg",
+      "color": "navy",
+      "name": "Fake is not Hate Tee"
+    },
+    {
+      "id": "3",
+      "productId": "60003",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee-red.jpg",
+      "color": "red",
+      "name": "Live Life. Stay Fake. Tee"
+    },
+    {
+      "id": "4",
+      "productId": "30001",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg",
+      "color": "black",
+      "name": "Fake It Classic Tee"
+    },
+    {
+      "id": "5",
+      "productId": "30002",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee-white.jpg",
+      "color": "white",
+      "name": "Till You Make It Tee"
+    },
+    {
+      "id": "6",
+      "productId": "30003",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee-navy.jpg",
+      "color": "navy",
+      "name": "Confidence Tee"
+    },
+    {
+      "id": "7",
+      "productId": "30007",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt-white.jpg",
+      "color": "white",
+      "name": "White Oxford Shirt"
+    },
+    {
+      "id": "8",
+      "productId": "30008",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford-white.jpg",
+      "color": "white",
+      "name": "Light Blue Oxford"
+    },
+    {
+      "id": "9",
+      "productId": "60005",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray-navy.jpg",
+      "color": "navy",
+      "name": "Heritage Chambray"
+    },
+    {
+      "id": "10",
+      "productId": "60006",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray-navy.jpg",
+      "color": "navy",
+      "name": "Indigo Chambray"
+    },
+    {
+      "id": "30001",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg",
+      "color": "Black",
+      "name": "Fake Signature Hoodie"
+    },
+    {
+      "id": "30002",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-white.jpg",
+      "color": "White",
+      "name": "Fake Signature Hoodie"
+    },
+    {
+      "id": "30003",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-navy.jpg",
+      "color": "Navy",
+      "name": "Fake Signature Hoodie"
+    },
+    {
+      "id": "30004",
+      "productId": "30004",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg",
+      "color": "Red",
+      "name": "Fake Signature Hoodie"
+    },
+    {
+      "id": "30005",
+      "productId": "30006",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-black.jpg",
+      "color": "Black",
+      "name": "Classic Pique Polo"
+    },
+    {
+      "id": "30006",
+      "productId": "30006",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-white.jpg",
+      "color": "White",
+      "name": "Classic Pique Polo"
+    },
+    {
+      "id": "30007",
+      "productId": "30006",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-navy.jpg",
+      "color": "Navy",
+      "name": "Classic Pique Polo"
+    },
+    {
+      "id": "30008",
+      "productId": "30006",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-red.jpg",
+      "color": "Red",
+      "name": "Classic Pique Polo"
+    },
+    {
+      "id": "30009",
+      "productId": "30005",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-black.jpg",
+      "color": "Black",
+      "name": "Essential Joggers"
+    },
+    {
+      "id": "30010",
+      "productId": "30005",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-white.jpg",
+      "color": "White",
+      "name": "Essential Joggers"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\timageUrl\tcolor\tname\n1\t60001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee-black.jpg\tblack\tIt's all Fake Tee\n2\t60002\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee-navy.jpg\tnavy\tFake is not Hate Tee\n3\t60003\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee-red.jpg\tred\tLive Life. Stay Fake. Tee\n4\t30001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg\tblack\tFake It Classic Tee\n5\t30002\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee-white.jpg\twhite\tTill You Make It Tee\n6\t30003\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee-navy.jpg\tnavy\tConfidence Tee\n7\t30007\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt-white.jpg\twhite\tWhite Oxford Shirt\n8\t30008\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford-white.jpg\twhite\tLight Blue Oxford\n9\t60005\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray-navy.jpg\tnavy\tHeritage Chambray\n10\t60006\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray-navy.jpg\tnavy\tIndigo Chambray\n30001\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg\tBlack\tFake Signature Hoodie\n30002\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-white.jpg\tWhite\tFake Signature Hoodie\n30003\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-navy.jpg\tNavy\tFake Signature Hoodie\n30004\t30004\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg\tRed\tFake Signature Hoodie\n30005\t30006\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-black.jpg\tBlack\tClassic Pique Polo\n30006\t30006\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-white.jpg\tWhite\tClassic Pique Polo\n30007\t30006\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-navy.jpg\tNavy\tClassic Pique Polo\n30008\t30006\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-red.jpg\tRed\tClassic Pique Polo\n30009\t30005\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-black.jpg\tBlack\tEssential Joggers\n30010\t30005\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-white.jpg\tWhite\tEssential Joggers\n",
+  "stderr": "",
+  "execution_time_ms": 1633
+}

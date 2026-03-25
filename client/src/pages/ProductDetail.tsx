@@ -1,41 +1,66 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { Minus, Plus, ShoppingCart, User } from "lucide-react";
+import {
+  ShoppingCart, Search, User, Minus, Plus, Star, ArrowLeft,
+  Truck, RotateCcw, Shield, ChevronDown, ChevronUp, Menu, X, Heart
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { updateMetaTags, injectStructuredData, generateProductSchema, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
+const SIZE_CHART = {
+  standard: ['S', 'M', 'L', 'XL'],
+  plusSize: ['XL', '2XL', '3XL', '4XL'],
+};
+
+const COLOR_MAP: Record<string, string> = {
+  white: '#ffffff',
+  black: '#111111',
+  red: '#dc2626',
+  cream: '#f5f0e8',
+  navy: '#1e3a5f',
+  gray: '#6b7280',
+};
+
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
-  const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L' | 'XL' | 'XXL' | ''>('');
-  const [selectedColor, setSelectedColor] = useState<'black' | 'white' | 'navy' | 'red' | ''>('black');
+  const { itemCount, addItem, isLoading: cartLoading } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const { data: product, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug! });
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+  const [showCareInfo, setShowCareInfo] = useState(false);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const { data: product, isLoading } = trpc.products.getBySlug.useQuery(
+    { slug: slug! },
+    { enabled: !!slug }
+  );
   const { data: relatedProducts } = trpc.products.getRelated.useQuery(
     { productId: product?.id!, limit: 4 },
     { enabled: !!product?.id }
   );
 
-  // SEO: Update meta tags and inject structured data when product loads
+  // Set default color when product loads
+  useEffect(() => {
+    if (product?.images && product.images.length > 0) {
+      setSelectedColor(product.images[0].color?.toLowerCase() || 'black');
+    }
+  }, [product]);
+
+  // SEO
   useEffect(() => {
     if (!product) return;
-
-    // Generate cool copywriter-style description
-    const seoDescription = `${product.name}. ${product.description?.split('.')[0] || 'Quality apparel from Fake by Freetown'}. Get yours now.`;
-
+    const seoDesc = `${product.name} - ${product.description?.split('.')[0] || 'Premium tee from Fake by Freetown'}`;
     updateMetaTags({
-      title: product.name,
-      description: seoDescription,
+      title: `${product.name} | Fake by Freetown`,
+      description: seoDesc,
       image: product.imageUrl || undefined,
       url: `https://getfakenow.com/product/${product.slug}`,
       type: 'product',
@@ -45,12 +70,10 @@ export default function ProductDetail() {
       brand: 'Fake by Freetown',
       sku: product.id.toString(),
     });
-
-    // Inject product structured data
     const productSchema = generateProductSchema({
       name: product.name,
-      description: product.description || 'Quality apparel from Fake by Freetown',
-      image: product.imageUrl || 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
+      description: product.description || 'Premium tee from Fake by Freetown',
+      image: product.imageUrl || '',
       price: product.price / 100,
       currency: 'MYR',
       availability: product.stockQuantity > 0 ? 'in stock' : 'out of stock',
@@ -59,49 +82,39 @@ export default function ProductDetail() {
       url: `https://getfakenow.com/product/${product.slug}`,
     });
     injectStructuredData(productSchema, 'product-schema');
-
-    // Inject breadcrumb structured data
     const breadcrumbSchema = generateBreadcrumbSchema([
       { name: 'Home', url: 'https://getfakenow.com' },
       { name: 'Shop', url: 'https://getfakenow.com/shop' },
       { name: product.name, url: `https://getfakenow.com/product/${product.slug}` },
     ]);
     injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
-
-    // Cleanup function to remove structured data when component unmounts
     return () => {
       removeStructuredData('product-schema');
       removeStructuredData('breadcrumb-schema');
     };
   }, [product]);
-  
-  // Get the image URL based on selected color
+
   const getDisplayImage = () => {
     if (!product) return '';
     if (!selectedColor) return product.imageUrl || '';
-    
-    // Find image matching selected color (case-insensitive)
-    const variantImage = product.images?.find(img => 
-      img.color?.toLowerCase() === selectedColor.toLowerCase()
+    const variantImage = product.images?.find(
+      (img: any) => img.color?.toLowerCase() === selectedColor.toLowerCase()
     );
     return variantImage?.imageUrl || product.imageUrl || '';
   };
-  const { itemCount, addItem, isLoading: cartLoading } = useCart();
 
-  const formatPrice = (cents: number) => `RM${(cents / 100).toFixed(2)}`;
-  
+  const formatPrice = (cents: number) => `RM ${(cents / 100).toFixed(2)}`;
+
   const handleAddToCart = () => {
     if (!product) return;
-    
     if (!selectedSize) {
-      toast.error("Please select a size");
+      toast.error('Pick a size first');
       return;
     }
     if (!selectedColor) {
-      toast.error("Please select a color");
+      toast.error('Pick a color first');
       return;
     }
-    
     addItem({
       productId: product.id,
       name: product.name,
@@ -109,248 +122,457 @@ export default function ProductDetail() {
       imageUrl: getDisplayImage(),
       slug: product.slug,
       quantity,
-      size: selectedSize as any,
-      color: selectedColor as any,
+      size: selectedSize,
+      color: selectedColor,
     });
-    
-    toast.success("Added to cart!");
+    toast.success(`${product.name} added to cart`);
   };
-  
+
+  // Determine if this is a plus-size product
+  const isPlusSize = product?.name?.toLowerCase().includes('plus') ||
+    product?.category?.name?.toLowerCase().includes('plus');
+  const availableSizes = isPlusSize ? SIZE_CHART.plusSize : SIZE_CHART.standard;
+
+  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-3 border-red-600 border-t-transparent rounded-full" />
       </div>
     );
   }
 
+  // Not found
   if (!product) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Product not found</h2>
-          <Button asChild>
-            <Link href="/products">Back to Shop</Link>
-          </Button>
-        </div>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-6">
+        <h2 className="text-2xl font-bold text-gray-900">Product not found</h2>
+        <p className="text-gray-500">This item may have been removed or doesn't exist.</p>
+        <Link href="/shop" className="bg-red-600 text-white px-8 py-3 text-sm font-semibold tracking-wider hover:bg-red-700 transition-colors">
+          BACK TO SHOP
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-white sticky top-0 z-50">
-        <div className="container">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-4xl text-primary">Fake</span>
-                <span className="text-sm text-muted-foreground font-light">by Freetown</span>
-              </div>
+    <div className="min-h-screen bg-white text-gray-900">
+
+      {/* ── Header ── */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="text-xl font-black tracking-wider text-red-600 hover:text-red-700 transition-colors">
+            FAKE
+          </Link>
+          <nav className="hidden md:flex items-center gap-10">
+            <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">SHOP</Link>
+            <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">PLUS SIZE</Link>
+            <a href="/#about" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">ABOUT</a>
+            <a href="/#contact" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">CONTACT</a>
+          </nav>
+          <div className="flex items-center gap-5">
+            <button className="text-gray-500 hover:text-red-600 transition-colors" aria-label="Search">
+              <Search size={18} strokeWidth={2} />
+            </button>
+            <Link href="/cart" className="relative text-gray-500 hover:text-red-600 transition-colors">
+              <ShoppingCart size={18} strokeWidth={2} />
+              <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{itemCount}</span>
             </Link>
-            <div className="flex items-center gap-4">
-              {isAuthenticated ? (
-                <>
-                  <Link href="/cart">
-                    <Button variant="ghost" size="icon" className="relative">
-                      <ShoppingCart className="h-5 w-5" />
-                      {itemCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {itemCount}
-                        </span>
-                      )}
-                    </Button>
-                  </Link>
-                  <Link href="/account">
-                    <Button variant="ghost" size="icon">
-                      <User className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                </>
+            <Link href="/account" className="text-gray-500 hover:text-red-600 transition-colors hidden sm:block">
+              <User size={18} strokeWidth={2} />
+            </Link>
+            <button className="md:hidden text-gray-500" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-3">
+            <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
+            <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Plus Size</Link>
+            <Link href="/account" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Account</Link>
+          </div>
+        )}
+      </header>
+
+      {/* ── Breadcrumb ── */}
+      <nav className="max-w-7xl mx-auto px-6 py-4">
+        <ol className="flex items-center gap-2 text-sm text-gray-400">
+          <li><Link href="/" className="hover:text-red-600 transition-colors">Home</Link></li>
+          <li>/</li>
+          <li><Link href="/shop" className="hover:text-red-600 transition-colors">Shop</Link></li>
+          <li>/</li>
+          <li className="text-gray-900 font-medium truncate max-w-[200px]">{product.name}</li>
+        </ol>
+      </nav>
+
+      {/* ── Product Section ── */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+
+          {/* Left: Product Image */}
+          <div className="relative">
+            <div className="aspect-[3/4] bg-gray-50 rounded-lg overflow-hidden">
+              {getDisplayImage() ? (
+                <img
+                  src={getDisplayImage()}
+                  alt={`${product.name} in ${selectedColor}`}
+                  className={`w-full h-full object-cover object-top transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={() => setImageLoaded(true)}
+                  key={selectedColor}
+                />
               ) : (
-                <Button asChild size="sm">
-                  <a href={getLoginUrl()}>Sign In</a>
-                </Button>
+                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                  No image available
+                </div>
+              )}
+            </div>
+            {/* Wishlist button */}
+            <button className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-red-50 hover:text-red-600 transition-all" aria-label="Add to wishlist">
+              <Heart size={18} />
+            </button>
+            {/* Badge */}
+            {isPlusSize && (
+              <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold tracking-wider px-3 py-1.5 rounded">
+                PLUS SIZE
+              </span>
+            )}
+          </div>
+
+          {/* Right: Product Info */}
+          <div className="flex flex-col">
+
+            {/* Category */}
+            {product.category && (
+              <span className="text-xs font-semibold tracking-widest text-red-600 uppercase mb-2">
+                {product.category.name}
+              </span>
+            )}
+
+            {/* Name */}
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 leading-tight">
+              {product.name}
+            </h1>
+
+            {/* Price */}
+            <p className="mt-3 text-2xl font-bold text-gray-900">
+              {formatPrice(product.price)}
+            </p>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mt-3">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} className={i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'} />
+                ))}
+              </div>
+              <span className="text-sm text-gray-400">4.8 (342 reviews)</span>
+            </div>
+
+            {/* Description */}
+            <p className="mt-6 text-gray-500 leading-relaxed">
+              {product.description || `Premium heavyweight cotton tee with "${product.name}" print. Pre-shrunk fabric, relaxed fit, ribbed crew neck. Designed in Freetown. Made to last.`}
+            </p>
+
+            {/* Divider */}
+            <div className="border-t border-gray-100 my-6" />
+
+            {/* Color Selection */}
+            {product.images && product.images.length > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-semibold text-gray-900">
+                    Color: <span className="font-normal text-gray-500 capitalize">{selectedColor}</span>
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  {product.images.map((img: any) => {
+                    const colorName = img.color?.toLowerCase() || 'black';
+                    const hex = COLOR_MAP[colorName] || colorName;
+                    const isSelected = selectedColor === colorName;
+                    return (
+                      <button
+                        key={img.id}
+                        onClick={() => {
+                          setSelectedColor(colorName);
+                          setImageLoaded(false);
+                        }}
+                        className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${
+                          isSelected
+                            ? 'border-red-600 ring-2 ring-red-600/30 ring-offset-2'
+                            : 'border-gray-200 hover:border-gray-400'
+                        } ${colorName === 'white' ? 'shadow-inner' : ''}`}
+                        style={{ backgroundColor: hex }}
+                        title={colorName.charAt(0).toUpperCase() + colorName.slice(1)}
+                        aria-label={`Select ${colorName} color`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Size Selection */}
+            {product.stockQuantity > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-semibold text-gray-900">
+                    Size: <span className="font-normal text-gray-500">{selectedSize || 'Select'}</span>
+                  </span>
+                  <button
+                    onClick={() => setShowSizeGuide(!showSizeGuide)}
+                    className="text-xs font-medium text-red-600 hover:text-red-700 underline underline-offset-2 transition-colors"
+                  >
+                    Size Guide
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`min-w-[48px] h-12 px-4 border-2 text-sm font-semibold tracking-wide transition-all duration-200 rounded ${
+                        selectedSize === size
+                          ? 'border-red-600 bg-red-600 text-white'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-900'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Size Guide Dropdown */}
+                {showSizeGuide && (
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Size Guide (inches)</h4>
+                    <table className="w-full text-xs text-gray-600">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-2 font-semibold text-gray-900">Size</th>
+                          <th className="text-center py-2 font-semibold text-gray-900">Chest</th>
+                          <th className="text-center py-2 font-semibold text-gray-900">Length</th>
+                          <th className="text-center py-2 font-semibold text-gray-900">Shoulder</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { size: 'S', chest: '36-38', length: '27', shoulder: '17' },
+                          { size: 'M', chest: '38-40', length: '28', shoulder: '18' },
+                          { size: 'L', chest: '40-42', length: '29', shoulder: '19' },
+                          { size: 'XL', chest: '42-44', length: '30', shoulder: '20' },
+                          { size: '2XL', chest: '44-48', length: '31', shoulder: '21' },
+                          { size: '3XL', chest: '48-52', length: '32', shoulder: '22' },
+                          { size: '4XL', chest: '52-56', length: '33', shoulder: '23' },
+                        ].map((row) => (
+                          <tr key={row.size} className="border-b border-gray-100 last:border-0">
+                            <td className="py-2 font-medium">{row.size}</td>
+                            <td className="py-2 text-center">{row.chest}</td>
+                            <td className="py-2 text-center">{row.length}</td>
+                            <td className="py-2 text-center">{row.shoulder}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Quantity + Add to Cart */}
+            {product.stockQuantity > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-semibold text-gray-900">Qty:</span>
+                  <div className="flex items-center border-2 border-gray-200 rounded">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      disabled={quantity <= 1}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-colors"
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="w-12 text-center font-semibold text-sm">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
+                      disabled={quantity >= product.stockQuantity}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 disabled:opacity-30 transition-colors"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <span className="text-xs text-gray-400">{product.stockQuantity} in stock</span>
+                </div>
+
+                <button
+                  onClick={handleAddToCart}
+                  disabled={cartLoading}
+                  className="w-full bg-red-600 text-white py-4 text-sm font-bold tracking-widest hover:bg-red-700 transition-all duration-200 shadow-lg shadow-red-600/20 hover:shadow-red-600/30 flex items-center justify-center gap-3 rounded disabled:opacity-50"
+                >
+                  <ShoppingCart size={18} />
+                  {cartLoading ? 'ADDING...' : 'ADD TO CART'}
+                </button>
+              </div>
+            ) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <p className="font-semibold text-gray-900">Sold Out</p>
+                <p className="text-sm text-gray-500 mt-1">This item is currently unavailable. Check back soon.</p>
+              </div>
+            )}
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100">
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <Truck size={18} className="text-red-600" />
+                <span className="text-xs text-gray-500">Free shipping<br />over RM75</span>
+              </div>
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <RotateCcw size={18} className="text-red-600" />
+                <span className="text-xs text-gray-500">30-day<br />returns</span>
+              </div>
+              <div className="flex flex-col items-center text-center gap-1.5">
+                <Shield size={18} className="text-red-600" />
+                <span className="text-xs text-gray-500">Secure<br />checkout</span>
+              </div>
+            </div>
+
+            {/* Care Instructions Accordion */}
+            <div className="mt-6 border-t border-gray-100">
+              <button
+                onClick={() => setShowCareInfo(!showCareInfo)}
+                className="w-full flex items-center justify-between py-4 text-sm font-semibold text-gray-900 hover:text-red-600 transition-colors"
+              >
+                Product Details & Care
+                {showCareInfo ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+              {showCareInfo && (
+                <div className="pb-4 text-sm text-gray-500 space-y-3">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Material</h4>
+                    <p>100% premium combed cotton, 220 GSM heavyweight</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Fit</h4>
+                    <p>Relaxed fit, pre-shrunk, ribbed crew neck, double-stitched hems</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Care</h4>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Machine wash cold, inside out</li>
+                      <li>Tumble dry low or hang dry</li>
+                      <li>Do not bleach</li>
+                      <li>Iron on reverse side only</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Print</h4>
+                    <p>DTG (Direct to Garment) printing. Won't crack, peel, or fade.</p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <div className="container py-8">
-        <Button variant="ghost" onClick={() => setLocation("/products")} className="mb-6">
-          ← Back to Shop
-        </Button>
-
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-            {getDisplayImage() ? (
-              <img
-                src={getDisplayImage()}
-                alt={`${product.name} in ${selectedColor || 'default'} color - ${product.description?.split('.')[0] || 'Fake by Freetown apparel'}`}
-                className="w-full h-full object-cover transition-opacity duration-300"
-                key={selectedColor} // Force re-render on color change
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                No image available
-              </div>
-            )}
-          </div>
-
-          {/* Product Info */}
-          <div>
-            {product.category && (
-              <p className="text-sm text-muted-foreground mb-2">{product.category.name}</p>
-            )}
-            <h1 className="text-4xl font-bold tracking-tight mb-4">{product.name}</h1>
-            <p className="text-3xl font-semibold text-primary mb-6">
-              {formatPrice(product.price)}
-            </p>
-
-            <div className="prose prose-sm mb-8">
-              <p className="text-muted-foreground leading-relaxed">{product.description}</p>
-            </div>
-
-            {product.stockQuantity > 0 ? (
-              <div className="space-y-6">
-                {/* Color Selection - Only show available colors */}
-                {product.images && product.images.length > 0 && (
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Color:</label>
-                    <div className="flex gap-3">
-                      {product.images.map((img: any) => {
-                        const colorName = img.color?.toLowerCase() || 'black';
-                        const colorHex = colorName === 'navy' ? '#1e3a8a' : colorName;
-                        return (
-                          <button
-                            key={img.id}
-                            onClick={() => setSelectedColor(colorName)}
-                            className={`w-12 h-12 rounded-full border-2 transition-all ${
-                              selectedColor === colorName ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-gray-300 hover:border-gray-400'
-                            }`}
-                            style={{
-                              backgroundColor: colorHex,
-                            }}
-                            title={img.color?.charAt(0).toUpperCase() + img.color?.slice(1)}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Size Selection */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Size:</label>
-                  <Select value={selectedSize} onValueChange={(value) => setSelectedSize(value as 'S' | 'M' | 'L' | 'XL' | 'XXL')}>
-                    <SelectTrigger className="w-full md:w-48">
-                      <SelectValue placeholder="Select size" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="S">S</SelectItem>
-                      <SelectItem value="M">M</SelectItem>
-                      <SelectItem value="L">L</SelectItem>
-                      <SelectItem value="XL">XL</SelectItem>
-                      <SelectItem value="XXL">XXL</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium">Quantity:</span>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      disabled={quantity <= 1}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <span className="w-12 text-center font-medium">{quantity}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
-                      disabled={quantity >= product.stockQuantity}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {product.stockQuantity} available
-                  </span>
-                </div>
-
-                <Button
-                  size="lg"
-                  className="w-full md:w-auto"
-                  onClick={handleAddToCart}
-                  disabled={cartLoading}
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  {cartLoading ? "Adding..." : "Add to Cart"}
-                </Button>
-              </div>
-            ) : (
-              <Card className="p-4 bg-red-50 border-red-200">
-                <p className="text-red-600 font-medium">Out of Stock</p>
-                <p className="text-sm text-red-600 mt-1">This item is currently unavailable</p>
-              </Card>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Related Products Section */}
+      {/* ── You Might Also Like ── */}
       {relatedProducts && relatedProducts.length > 0 && (
-        <div className="container py-16">
-          <h2 className="text-3xl font-bold tracking-tight mb-8">You May Also Like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((relatedProduct) => (
-              <Link key={relatedProduct.id} href={`/product/${relatedProduct.slug}`}>
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
-                  <div className="aspect-square bg-gray-100 overflow-hidden">
-                    {relatedProduct.imageUrl ? (
-                      <img
-                        src={relatedProduct.imageUrl}
-                        alt={relatedProduct.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                        No image
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                      {relatedProduct.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                      {relatedProduct.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold">
-                        RM{(relatedProduct.price / 100).toFixed(2)}
-                      </span>
-                      {relatedProduct.stockQuantity > 0 ? (
-                        <span className="text-xs text-green-600 font-medium">In Stock</span>
+        <section className="py-16 px-6 bg-gray-50 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-gray-900 mb-10">
+              You Might Also Like
+            </h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {relatedProducts.map((rp: any) => (
+                <Link key={rp.id} href={`/product/${rp.slug}`} className="group">
+                  <div className="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+                    <div className="aspect-[3/4] bg-gray-50 overflow-hidden">
+                      {rp.imageUrl ? (
+                        <img
+                          src={rp.imageUrl}
+                          alt={rp.name}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
                       ) : (
-                        <span className="text-xs text-red-600 font-medium">Out of Stock</span>
+                        <div className="w-full h-full flex items-center justify-center text-gray-300">
+                          No image
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 text-sm leading-tight group-hover:text-red-600 transition-colors">
+                        {rp.name}
+                      </h3>
+                      <p className="mt-2 text-base font-bold text-gray-900">
+                        RM {(rp.price / 100).toFixed(2)}
+                      </p>
+                      {rp.stockQuantity > 0 ? (
+                        <span className="text-xs text-green-600 font-medium mt-1 block">In Stock</span>
+                      ) : (
+                        <span className="text-xs text-red-500 font-medium mt-1 block">Sold Out</span>
                       )}
                     </div>
                   </div>
-                </Card>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
-      <Footer />
+      {/* ── Footer ── */}
+      <footer className="bg-gray-950 text-gray-400 pt-20 pb-10 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-14 pb-14 border-b border-gray-800">
+            <div className="col-span-2 md:col-span-1">
+              <span className="text-lg font-black text-white tracking-wider">FAKE</span>
+              <p className="mt-3 text-sm text-gray-500 leading-relaxed">
+                Premium tees with attitude.<br />Fake by Freetown.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-5">Shop</h3>
+              <ul className="space-y-2.5">
+                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">All Tees</Link></li>
+                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">Plus Size</Link></li>
+                <li><Link href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">New Drops</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-5">Account</h3>
+              <ul className="space-y-2.5">
+                <li><Link href="/account" className="text-sm text-gray-400 hover:text-white transition-colors">My Account</Link></li>
+                <li><Link href="/orders" className="text-sm text-gray-400 hover:text-white transition-colors">Orders</Link></li>
+                <li><Link href="/cart" className="text-sm text-gray-400 hover:text-white transition-colors">Cart</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-5">Help</h3>
+              <ul className="space-y-2.5">
+                <li><Link href="/shipping-policy" className="text-sm text-gray-400 hover:text-white transition-colors">Shipping</Link></li>
+                <li><Link href="/returns-policy" className="text-sm text-gray-400 hover:text-white transition-colors">Returns</Link></li>
+                <li><a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase mb-5">Legal</h3>
+              <ul className="space-y-2.5">
+                <li><Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="/terms-of-service" className="text-sm text-gray-400 hover:text-white transition-colors">Terms</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between pt-8 gap-4">
+            <p className="text-xs text-gray-600">&copy; 2026 Fake by Freetown. All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <a href="#" className="text-xs text-gray-500 hover:text-white transition-colors">Instagram</a>
+              <a href="#" className="text-xs text-gray-500 hover:text-white transition-colors">Twitter</a>
+              <a href="#" className="text-xs text-gray-500 hover:text-white transition-colors">TikTok</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

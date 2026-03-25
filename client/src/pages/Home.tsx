@@ -9,6 +9,7 @@ export default function Home() {
   const tees = [
     {
       id: 1,
+      slug: 'you-fake-bro',
       name: 'You Fake Bro?',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp',
       price: 49,
@@ -18,6 +19,7 @@ export default function Home() {
     },
     {
       id: 2,
+      slug: 'life-is-fake-just-make-it',
       name: 'Life is Fake, Just Make It',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp',
       price: 49,
@@ -27,6 +29,7 @@ export default function Home() {
     },
     {
       id: 3,
+      slug: 'fake-like-my-office',
       name: 'Fake Like My Office',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp',
       price: 49,
@@ -36,6 +39,7 @@ export default function Home() {
     },
     {
       id: 4,
+      slug: 'the-real-fake',
       name: 'The Real Fake',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp',
       price: 49,
@@ -48,6 +52,7 @@ export default function Home() {
   const plusSizeTees = [
     {
       id: 5,
+      slug: 'you-fake-bro-plus',
       name: 'You Fake Bro?',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp',
       price: 54,
@@ -58,6 +63,7 @@ export default function Home() {
     },
     {
       id: 6,
+      slug: 'life-is-fake-plus',
       name: 'Life is Fake',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp',
       price: 54,
@@ -68,6 +74,7 @@ export default function Home() {
     },
     {
       id: 7,
+      slug: 'fake-office-plus',
       name: 'Fake Office',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp',
       price: 54,
@@ -78,6 +85,7 @@ export default function Home() {
     },
     {
       id: 8,
+      slug: 'the-real-fake-plus',
       name: 'The Real Fake',
       image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp',
       price: 54,
@@ -195,7 +203,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {tees.map((tee) => (
-              <div key={tee.id} className="group bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+              <Link key={tee.id} href={`/product/${tee.slug}`} className="group block bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300">
                 <div className="aspect-[3/4] bg-gray-50 overflow-hidden">
                   <img
                     src={tee.image}
@@ -205,7 +213,7 @@ export default function Home() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight">{tee.name}</h3>
+                  <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight group-hover:text-red-600 transition-colors">{tee.name}</h3>
                   <p className="text-xs text-gray-400 mt-1">{tee.color}</p>
                   <div className="flex items-center gap-1.5 mt-2">
                     <div className="flex">
@@ -218,11 +226,11 @@ export default function Home() {
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-lg font-bold text-gray-900">${tee.price}</span>
                   </div>
-                  <button className="w-full mt-3 bg-gray-900 text-white py-2.5 text-xs font-semibold tracking-wider hover:bg-red-600 transition-colors duration-200 rounded">
-                    ADD TO CART
-                  </button>
+                  <span className="block w-full mt-3 bg-gray-900 text-white py-2.5 text-xs font-semibold tracking-wider text-center group-hover:bg-red-600 transition-colors duration-200 rounded">
+                    VIEW DETAILS
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -251,7 +259,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {plusSizeTees.map((tee) => (
-              <div key={tee.id} className="group bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+              <Link key={tee.id} href={`/product/${tee.slug}`} className="group block bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
                 <div className="aspect-[3/4] bg-gray-50 overflow-hidden">
                   <img
                     src={tee.image}
@@ -262,7 +270,7 @@ export default function Home() {
                 </div>
                 <div className="p-4">
                   <span className="inline-block bg-red-600 text-white text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-sm mb-2">PLUS SIZE</span>
-                  <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight">{tee.name}</h3>
+                  <h3 className="font-semibold text-gray-900 text-sm md:text-base leading-tight group-hover:text-red-600 transition-colors">{tee.name}</h3>
                   <p className="text-xs text-gray-400 mt-1">{tee.color} &middot; {tee.size}</p>
                   <div className="flex items-center gap-1.5 mt-2">
                     <div className="flex">
@@ -275,11 +283,11 @@ export default function Home() {
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-lg font-bold text-gray-900">${tee.price}</span>
                   </div>
-                  <button className="w-full mt-3 bg-gray-900 text-white py-2.5 text-xs font-semibold tracking-wider hover:bg-red-600 transition-colors duration-200 rounded">
-                    ADD TO CART
-                  </button>
+                  <span className="block w-full mt-3 bg-gray-900 text-white py-2.5 text-xs font-semibold tracking-wider text-center group-hover:bg-red-600 transition-colors duration-200 rounded">
+                    VIEW DETAILS
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
