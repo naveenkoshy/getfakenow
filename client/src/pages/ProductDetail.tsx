@@ -10,7 +10,8 @@ import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { updateMetaTags, injectStructuredData, generateProductSchema, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
 
-const ALL_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL', '7XL', '8XL', '9XL', '10XL'];
+const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL', '7XL', '8XL', '9XL', '10XL'];
+const WOMEN_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
 
 const COLOR_MAP: Record<string, string> = {
   white: '#ffffff',
@@ -125,7 +126,8 @@ export default function ProductDetail() {
     toast.success(`${product.name} added to cart`);
   };
 
-  const availableSizes = ALL_SIZES;
+  const isWomens = product?.category?.name?.toLowerCase() === 'women';
+  const availableSizes = isWomens ? WOMEN_SIZES : DEFAULT_SIZES;
 
   // Loading state
   if (isLoading) {

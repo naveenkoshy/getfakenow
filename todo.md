@@ -291,3 +291,8 @@
 - [x] Improve meta titles and descriptions for product pages
 - [x] Add canonical URLs and Open Graph tags
 - [x] Review breadcrumb markup for SEO
+
+## Women's Size Range Update
+- [x] Update women's products to include XXS and XS sizes
+- [x] Cap women's sizes at 4XL instead of 10XL
+- [x] Update frontend size display logic to show correct range per product/category

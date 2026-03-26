@@ -179,7 +179,7 @@ export default function Home() {
     },
   ];
 
-  const ProductCard = ({ product, badge }: { product: typeof tees[0]; badge?: string }) => (
+  const ProductCard = ({ product, badge, sizeRange = 'S — 10XL' }: { product: typeof tees[0]; badge?: string; sizeRange?: string }) => (
     <Link href={`/product/${product.slug}`} className="group block bg-white border border-gray-100 overflow-hidden hover:border-gray-300 hover:shadow-md transition-all duration-300">
       <div className="aspect-[3/4] bg-gray-50 overflow-hidden relative">
         <img
@@ -197,7 +197,7 @@ export default function Home() {
         <p className="text-xs text-gray-400 mt-1">{product.color}</p>
         <div className="flex items-center justify-between mt-3">
           <span className="text-base font-bold text-gray-900">RM {product.price}</span>
-          <span className="text-[10px] text-gray-400">S — 10XL</span>
+          <span className="text-[10px] text-gray-400">{sizeRange}</span>
         </div>
       </div>
     </Link>
@@ -444,7 +444,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {women.map((item) => (
-              <ProductCard key={item.slug} product={item} badge="NEW" />
+              <ProductCard key={item.slug} product={item} badge="NEW" sizeRange="XXS — 4XL" />
             ))}
           </div>
         </div>

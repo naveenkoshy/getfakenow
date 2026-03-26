@@ -265,7 +265,7 @@ export default function Shop() {
                   <p className="mt-1 text-sm font-semibold text-gray-900">
                     RM {(product.price / 100).toFixed(0)}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-gray-400 tracking-wider">S — 10XL</p>
+                  <p className="mt-0.5 text-[10px] text-gray-400 tracking-wider">{categories.find(c => c.id === product.categoryId)?.name?.toLowerCase() === 'women' ? 'XXS — 4XL' : 'S — 10XL'}</p>
                 </div>
               </Link>
             ))}

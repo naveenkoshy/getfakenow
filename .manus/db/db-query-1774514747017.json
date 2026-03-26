@@ -1,0 +1,110 @@
+{
+  "query": "SELECT id, name, categoryId FROM products WHERE categoryId = 30004",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, categoryId FROM products WHERE categoryId = 30004",
+  "rows": [
+    {
+      "id": "90001",
+      "name": "The Alibi",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90002",
+      "name": "The Confession",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90003",
+      "name": "The Understudy",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90004",
+      "name": "The Getaway",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90005",
+      "name": "The Closer",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90006",
+      "name": "The Encore",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90007",
+      "name": "The Rundown",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90008",
+      "name": "The Statement",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90009",
+      "name": "The Exit",
+      "categoryId": "30004"
+    },
+    {
+      "id": "90010",
+      "name": "The Corner Office",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150021",
+      "name": "The Silhouette",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150022",
+      "name": "The Pencil",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150023",
+      "name": "The Wrap Skirt",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150024",
+      "name": "The Pleat",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150025",
+      "name": "The Highrise",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150026",
+      "name": "The Oversized",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150027",
+      "name": "The Mandarin Blouse",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150028",
+      "name": "The Linen",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150029",
+      "name": "The Wrap Blouse",
+      "categoryId": "30004"
+    },
+    {
+      "id": "150030",
+      "name": "The Crop Blouse",
+      "categoryId": "30004"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcategoryId\n90001\tThe Alibi\t30004\n90002\tThe Confession\t30004\n90003\tThe Understudy\t30004\n90004\tThe Getaway\t30004\n90005\tThe Closer\t30004\n90006\tThe Encore\t30004\n90007\tThe Rundown\t30004\n90008\tThe Statement\t30004\n90009\tThe Exit\t30004\n90010\tThe Corner Office\t30004\n150021\tThe Silhouette\t30004\n150022\tThe Pencil\t30004\n150023\tThe Wrap Skirt\t30004\n150024\tThe Pleat\t30004\n150025\tThe Highrise\t30004\n150026\tThe Oversized\t30004\n150027\tThe Mandarin Blouse\t30004\n150028\tThe Linen\t30004\n150029\tThe Wrap Blouse\t30004\n150030\tThe Crop Blouse\t30004\n",
+  "stderr": "",
+  "execution_time_ms": 1498
+}
