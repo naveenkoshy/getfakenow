@@ -25,6 +25,7 @@ import ReturnsPolicy from "./pages/ReturnsPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
+import VerifyEmail from "./pages/VerifyEmail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -71,6 +72,7 @@ function Router() {
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/profile" component={Profile} />
+      <Route path="/verify-email" component={VerifyEmail} />
 
       {/* Admin — Seller Center */}
       <Route path="/admin">

@@ -9,6 +9,7 @@ import { ShoppingCart, User, Package } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/Logo";
+import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 
 export default function Account() {
   const [, setLocation] = useLocation();
@@ -62,6 +63,7 @@ export default function Account() {
       </header>
 
       <div className="container py-8">
+        <EmailVerificationBanner variant="inline" />
         <h1 className="text-4xl font-bold tracking-tight mb-8">My Account</h1>
 
         <div className="grid md:grid-cols-3 gap-6">

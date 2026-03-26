@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
+import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
@@ -107,6 +108,9 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
+
+      {/* ── Email Verification Banner ── */}
+      <EmailVerificationBanner variant="sticky" />
 
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">

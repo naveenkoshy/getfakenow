@@ -3,17 +3,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Search, Users, Loader2, Shield, User, Mail, Calendar, ShoppingBag, Download } from "lucide-react";
+import { Search, Users, Loader2, Shield, User, Mail, Calendar, ShoppingBag, Download, UserX, AlertTriangle } from "lucide-react";
 
 export default function AdminCustomers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [anonymizeTarget, setAnonymizeTarget] = useState<{ id: number; name: string; email: string } | null>(null);
 
   const filters = useMemo(() => ({
     search: search || undefined,
@@ -27,8 +38,20 @@ export default function AdminCustomers() {
     { id: selectedId! }, { enabled: !!selectedId }
   );
   const utils = trpc.useUtils();
+
   const updateRole = trpc.admin.customers.updateRole.useMutation({
     onSuccess: () => { toast.success("Role updated"); refetch(); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const anonymizeMutation = trpc.admin.customers.anonymize.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setAnonymizeTarget(null);
+      setSelectedId(null);
+      refetch();
+      utils.admin.customers.getById.invalidate();
+    },
     onError: (e) => toast.error(e.message),
   });
 
@@ -148,6 +171,7 @@ export default function AdminCustomers() {
         </Card>
       </div>
 
+      {/* Customer Detail Dialog */}
       <Dialog open={!!selectedId} onOpenChange={(open) => !open && setSelectedId(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Customer Details</DialogTitle></DialogHeader>
@@ -200,10 +224,101 @@ export default function AdminCustomers() {
                   </div>
                 </div>
               )}
+
+              {/* Anonymize Customer Button */}
+              {customerDetail.role !== "admin" && (
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-red-800">Data Privacy</h4>
+                        <p className="text-xs text-red-600 mt-1">
+                          Anonymize this customer's personal data for PDPA/GDPR compliance. This action is irreversible.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-3 border-red-300 text-red-700 hover:bg-red-100 hover:text-red-800"
+                          onClick={() => setAnonymizeTarget({
+                            id: customerDetail.id,
+                            name: customerDetail.name || "Unknown",
+                            email: customerDetail.email,
+                          })}
+                        >
+                          <UserX className="h-4 w-4 mr-1.5" />
+                          Anonymize Customer
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {/* Anonymize Confirmation Dialog */}
+      <AlertDialog open={!!anonymizeTarget} onOpenChange={(open) => !open && setAnonymizeTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              Anonymize Customer Data
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  You are about to permanently anonymize all personal data for:
+                </p>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="font-semibold text-gray-900">{anonymizeTarget?.name}</p>
+                  <p className="text-sm text-gray-500">{anonymizeTarget?.email}</p>
+                </div>
+                <p className="font-semibold text-red-600">
+                  This action is irreversible. The following data will be permanently deleted:
+                </p>
+                <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                  <li>Name, email, phone number</li>
+                  <li>Shipping addresses on all orders</li>
+                  <li>Password and authentication tokens</li>
+                  <li>Marketing consent and preferences</li>
+                  <li>UTM tracking and referral data</li>
+                </ul>
+                <p className="text-sm text-gray-500">
+                  Order records will be retained for accounting purposes with anonymized details.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={anonymizeMutation.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={anonymizeMutation.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (anonymizeTarget) {
+                  anonymizeMutation.mutate({ id: anonymizeTarget.id });
+                }
+              }}
+            >
+              {anonymizeMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Anonymizing...
+                </>
+              ) : (
+                <>
+                  <UserX className="h-4 w-4 mr-2" />
+                  Anonymize Permanently
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }

@@ -343,3 +343,19 @@
 - [x] Write tests for rate limiting
 - [x] Write tests for inventory concurrency locking
 - [x] Write tests for email verification enforcement
+
+## Frontend: Email Verification Banner
+- [x] Create EmailVerificationBanner component with dismissible alert and resend button
+- [x] Integrate banner into account/profile page
+- [x] Integrate banner into checkout page (sticky variant)
+- [x] Add verify-email route to handle token verification from email link
+
+## Frontend: Return Request UI
+- [x] Add "Request Return" button on customer order detail page for delivered orders
+- [x] Build return reason textarea with validation (min 10 chars)
+- [x] Show return request status on order detail page (return_requested + returned)
+
+## Frontend: Admin Anonymize Customer
+- [x] Add "Anonymize Customer" button on admin customer detail page
+- [x] Build confirmation dialog with warning about irreversible action
+- [x] Call admin.customers.anonymize procedure and handle success/error

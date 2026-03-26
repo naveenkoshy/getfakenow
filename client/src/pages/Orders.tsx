@@ -42,9 +42,18 @@ export default function Orders() {
         return "bg-yellow-100 text-yellow-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
+      case "return_requested":
+        return "bg-orange-100 text-orange-800";
+      case "returned":
+        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const formatStatus = (status: string) => {
+    if (status === 'return_requested') return 'Return Requested';
+    return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   if (!isAuthenticated) {
@@ -113,7 +122,7 @@ export default function Orders() {
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-bold text-lg">Order {order.orderNumber}</h3>
                         <Badge className={getStatusColor(order.status)}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {formatStatus(order.status)}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
