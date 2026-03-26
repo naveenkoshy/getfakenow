@@ -1,0 +1,37 @@
+{
+  "query": "SELECT * FROM productImages WHERE productId = 30001 LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT * FROM productImages WHERE productId = 30001 LIMIT 5",
+  "rows": [
+    {
+      "id": "4",
+      "productId": "30001",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg",
+      "fileKey": "products/N_-UMlVn8AL9NsivVoSxF.png",
+      "sortOrder": "0",
+      "createdAt": "2025-12-12 09:46:52",
+      "color": "black"
+    },
+    {
+      "id": "90001",
+      "productId": "30001",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg",
+      "fileKey": "30001-white",
+      "sortOrder": "1",
+      "createdAt": "2026-03-26 06:32:51",
+      "color": "white"
+    },
+    {
+      "id": "90002",
+      "productId": "30001",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg",
+      "fileKey": "30001-navy",
+      "sortOrder": "2",
+      "createdAt": "2026-03-26 06:32:51",
+      "color": "navy"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\timageUrl\tfileKey\tsortOrder\tcreatedAt\tcolor\n4\t30001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg\tproducts/N_-UMlVn8AL9NsivVoSxF.png\t0\t2025-12-12 09:46:52\tblack\n90001\t30001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg\t30001-white\t1\t2026-03-26 06:32:51\twhite\n90002\t30001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg\t30001-navy\t2\t2026-03-26 06:32:51\tnavy\n",
+  "stderr": "",
+  "execution_time_ms": 1650
+}

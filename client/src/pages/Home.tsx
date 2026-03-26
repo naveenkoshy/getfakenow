@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { ShoppingCart, Search, User, Truck, RotateCcw, Lock, MessageCircle, Star, ArrowRight, Menu, X } from 'lucide-react';
+import { ProductCarousel } from '@/components/ProductCarousel';
 import { useCart } from '@/contexts/CartContext';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { updateMetaTags, injectStructuredData, generateOrganizationSchema, generateWebSiteSchema, removeStructuredData } from '@/lib/seo';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -11,6 +13,22 @@ export default function Home() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const { itemCount } = useCart();
   const { isAuthenticated } = useAuth();
+
+  // SEO for homepage
+  useEffect(() => {
+    updateMetaTags({
+      title: 'Fake by Freetown | Authentically Fake Streetwear',
+      description: "We put 'Fake' on the label so you'd never have to question what's real. Premium streetwear and business apparel. S to 10XL. One price. One quality. Zero fine print.",
+      url: 'https://getfakenow.com',
+      type: 'website',
+    });
+    injectStructuredData(generateOrganizationSchema(), 'org-schema');
+    injectStructuredData(generateWebSiteSchema(), 'website-schema');
+    return () => {
+      removeStructuredData('org-schema');
+      removeStructuredData('website-schema');
+    };
+  }, []);
 
   // Printed Tees — slugs match database exactly
   const tees = [
@@ -318,11 +336,12 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Scrollable row for first 10 — ironic classics */}
-          <div className="mb-8">
+          {/* Ironic Classics carousel */}
+          <div className="mb-10">
             <p className="text-xs font-semibold tracking-widest text-gray-500 mb-4">THE IRONIC CLASSICS</p>
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
-              {[
+            <ProductCarousel
+              badge="NEW"
+              products={[
                 { slug: 'trust-me-im-fake', name: "Trust Me, I'm Fake", image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp', price: 49 },
                 { slug: 'authentically-fake-since-2026', name: 'Authentically Fake Since 2026', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp', price: 49 },
                 { slug: 'my-other-shirt-is-also-fake', name: 'My Other Shirt Is Also Fake', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp', price: 49 },
@@ -333,26 +352,16 @@ export default function Home() {
                 { slug: 'not-real-not-sorry', name: 'Not Real. Not Sorry.', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp', price: 49 },
                 { slug: 'traces-of-authenticity', name: 'Traces of Authenticity', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp', price: 49 },
                 { slug: 'read-the-label', name: 'Read the Label', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp', price: 49 },
-              ].map((tee) => (
-                <Link key={tee.slug} href={`/product/${tee.slug}`} className="group flex-shrink-0 w-[200px] md:w-[220px] snap-start">
-                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden relative">
-                    <img src={tee.image} alt={tee.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold tracking-wider px-2 py-0.5">NEW</span>
-                  </div>
-                  <div className="pt-3">
-                    <h3 className="font-semibold text-white text-sm leading-tight group-hover:text-red-500 transition-colors truncate">{tee.name}</h3>
-                    <span className="text-sm font-bold text-gray-300 mt-1 block">RM {tee.price}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              ]}
+            />
           </div>
 
-          {/* Scrollable row for next 10 — Gen Z */}
+          {/* Chronically Online carousel */}
           <div>
-            <p className="text-xs font-semibold tracking-widest text-gray-500 mb-4">THE GEN Z COLLECTION</p>
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
-              {[
+            <p className="text-xs font-semibold tracking-widest text-gray-500 mb-4">CHRONICALLY ONLINE</p>
+            <ProductCarousel
+              badge="NEW"
+              products={[
                 { slug: 'no-cap-all-fake', name: 'No Cap, All Fake', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp', price: 49 },
                 { slug: 'situationship-shirt', name: 'Situationship Shirt', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp', price: 49 },
                 { slug: 'delulu-is-the-solulu', name: 'Delulu Is the Solulu', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp', price: 49 },
@@ -363,19 +372,8 @@ export default function Home() {
                 { slug: 'giving-absolutely-nothing', name: 'Giving Absolutely Nothing', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp', price: 49 },
                 { slug: 'rent-free-full-price', name: 'Rent Free, Full Price', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp', price: 49 },
                 { slug: 'understood-the-assignment', name: 'Understood the Assignment', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp', price: 49 },
-              ].map((tee) => (
-                <Link key={tee.slug} href={`/product/${tee.slug}`} className="group flex-shrink-0 w-[200px] md:w-[220px] snap-start">
-                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden relative">
-                    <img src={tee.image} alt={tee.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold tracking-wider px-2 py-0.5">NEW</span>
-                  </div>
-                  <div className="pt-3">
-                    <h3 className="font-semibold text-white text-sm leading-tight group-hover:text-red-500 transition-colors truncate">{tee.name}</h3>
-                    <span className="text-sm font-bold text-gray-300 mt-1 block">RM {tee.price}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              ]}
+            />
           </div>
         </div>
       </section>

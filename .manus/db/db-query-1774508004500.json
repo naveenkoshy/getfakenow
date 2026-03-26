@@ -1,0 +1,424 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, c.name as category_name FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, c.name as category_name FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.id",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "category_name": "Casual"
+    },
+    {
+      "id": "30007",
+      "name": "The Boardroom",
+      "slug": "white-oxford-shirt",
+      "category_name": "Professional"
+    },
+    {
+      "id": "30008",
+      "name": "The Redirect",
+      "slug": "light-blue-oxford",
+      "category_name": "Professional"
+    },
+    {
+      "id": "30009",
+      "name": "The Workhorse",
+      "slug": "classic-chambray-work-shirt",
+      "category_name": "Professional"
+    },
+    {
+      "id": "30010",
+      "name": "The Headliner",
+      "slug": "fake-script-cap",
+      "category_name": "Accessories"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "60005",
+      "name": "The Heritage",
+      "slug": "heritage-chambray",
+      "category_name": "Professional"
+    },
+    {
+      "id": "60006",
+      "name": "The Blueprint",
+      "slug": "indigo-chambray",
+      "category_name": "Professional"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "category_name": "Casual"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "category_name": "Casual"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "category_name": "Casual"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80001",
+      "name": "The Downtime",
+      "slug": "sweat-pants",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80002",
+      "name": "The Forecast",
+      "slug": "windbreaker",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80003",
+      "name": "The Introduction",
+      "slug": "polo-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80004",
+      "name": "The Diplomat",
+      "slug": "mandarin-collar",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80005",
+      "name": "The Understatement",
+      "slug": "v-neck-tee",
+      "category_name": "Casual"
+    },
+    {
+      "id": "80006",
+      "name": "The Standard",
+      "slug": "dress-shirt",
+      "category_name": "Professional"
+    },
+    {
+      "id": "80007",
+      "name": "The Foundation",
+      "slug": "dress-slacks",
+      "category_name": "Professional"
+    },
+    {
+      "id": "80008",
+      "name": "The Detail",
+      "slug": "dress-socks",
+      "category_name": "Accessories"
+    },
+    {
+      "id": "80009",
+      "name": "The Punctuation",
+      "slug": "pocket-square",
+      "category_name": "Accessories"
+    },
+    {
+      "id": "80010",
+      "name": "The Closing Argument",
+      "slug": "silk-tie",
+      "category_name": "Accessories"
+    },
+    {
+      "id": "90001",
+      "name": "The Alibi",
+      "slug": "the-alibi",
+      "category_name": "Women"
+    },
+    {
+      "id": "90002",
+      "name": "The Confession",
+      "slug": "the-confession",
+      "category_name": "Women"
+    },
+    {
+      "id": "90003",
+      "name": "The Understudy",
+      "slug": "the-understudy",
+      "category_name": "Women"
+    },
+    {
+      "id": "90004",
+      "name": "The Getaway",
+      "slug": "the-getaway",
+      "category_name": "Women"
+    },
+    {
+      "id": "90005",
+      "name": "The Closer",
+      "slug": "the-closer",
+      "category_name": "Women"
+    },
+    {
+      "id": "90006",
+      "name": "The Encore",
+      "slug": "the-encore",
+      "category_name": "Women"
+    },
+    {
+      "id": "90007",
+      "name": "The Rundown",
+      "slug": "the-rundown",
+      "category_name": "Women"
+    },
+    {
+      "id": "90008",
+      "name": "The Statement",
+      "slug": "the-statement",
+      "category_name": "Women"
+    },
+    {
+      "id": "90009",
+      "name": "The Exit",
+      "slug": "the-exit",
+      "category_name": "Women"
+    },
+    {
+      "id": "90010",
+      "name": "The Corner Office",
+      "slug": "the-corner-office",
+      "category_name": "Women"
+    },
+    {
+      "id": "150001",
+      "name": "Trust Me, I'm Fake",
+      "slug": "trust-me-im-fake",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150002",
+      "name": "Authentically Fake Since 2026",
+      "slug": "authentically-fake-since-2026",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150003",
+      "name": "My Other Shirt Is Also Fake",
+      "slug": "my-other-shirt-is-also-fake",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150004",
+      "name": "Fake News, Real Drip",
+      "slug": "fake-news-real-drip",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150005",
+      "name": "The Fake Life Had Better Fabric",
+      "slug": "fake-life-better-fabric",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150006",
+      "name": "100% Genuine Fake",
+      "slug": "100-percent-genuine-fake",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150007",
+      "name": "Fake It Till You Make It (I Made It)",
+      "slug": "fake-it-till-you-make-it",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150008",
+      "name": "Not Real. Not Sorry.",
+      "slug": "not-real-not-sorry",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150009",
+      "name": "Traces of Authenticity",
+      "slug": "traces-of-authenticity",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150010",
+      "name": "Read the Label",
+      "slug": "read-the-label",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150011",
+      "name": "No Cap, All Fake",
+      "slug": "no-cap-all-fake",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150012",
+      "name": "Situationship Shirt",
+      "slug": "situationship-shirt",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150013",
+      "name": "Delulu Is the Solulu",
+      "slug": "delulu-is-the-solulu",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150014",
+      "name": "Fake Personality, Real Fit",
+      "slug": "fake-personality-real-fit",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150015",
+      "name": "Giving Fake (And I'm Okay With That)",
+      "slug": "giving-fake-okay-with-that",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150016",
+      "name": "Main Character Energy",
+      "slug": "main-character-energy",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150017",
+      "name": "POV: Fake Shirt On Purpose",
+      "slug": "pov-fake-shirt-on-purpose",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150018",
+      "name": "Giving Absolutely Nothing",
+      "slug": "giving-absolutely-nothing",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150019",
+      "name": "Rent Free, Full Price",
+      "slug": "rent-free-full-price",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150020",
+      "name": "Understood the Assignment",
+      "slug": "understood-the-assignment",
+      "category_name": "Casual"
+    },
+    {
+      "id": "150021",
+      "name": "The Silhouette",
+      "slug": "the-silhouette",
+      "category_name": "Women"
+    },
+    {
+      "id": "150022",
+      "name": "The Pencil",
+      "slug": "the-pencil-skirt",
+      "category_name": "Women"
+    },
+    {
+      "id": "150023",
+      "name": "The Wrap Skirt",
+      "slug": "the-wrap-skirt",
+      "category_name": "Women"
+    },
+    {
+      "id": "150024",
+      "name": "The Pleat",
+      "slug": "the-pleat",
+      "category_name": "Women"
+    },
+    {
+      "id": "150025",
+      "name": "The Highrise",
+      "slug": "the-highrise",
+      "category_name": "Women"
+    },
+    {
+      "id": "150026",
+      "name": "The Oversized",
+      "slug": "the-oversized-blouse",
+      "category_name": "Women"
+    },
+    {
+      "id": "150027",
+      "name": "The Mandarin Blouse",
+      "slug": "the-mandarin-blouse",
+      "category_name": "Women"
+    },
+    {
+      "id": "150028",
+      "name": "The Linen",
+      "slug": "the-linen-blouse",
+      "category_name": "Women"
+    },
+    {
+      "id": "150029",
+      "name": "The Wrap Blouse",
+      "slug": "the-wrap-blouse",
+      "category_name": "Women"
+    },
+    {
+      "id": "150030",
+      "name": "The Crop Blouse",
+      "slug": "the-crop-blouse",
+      "category_name": "Women"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategory_name\n30001\tFake It Classic Tee\tfake-it-classic-tee\tCasual\n30002\tTill You Make It Tee\ttill-you-make-it-tee\tCasual\n30003\tConfidence Tee\tconfidence-tee\tCasual\n30004\tFake Signature Hoodie\tfake-signature-hoodie\tCasual\n30005\tEssential Joggers\tessential-joggers\tCasual\n30006\tClassic Pique Polo\tclassic-pique-polo\tCasual\n30007\tThe Boardroom\twhite-oxford-shirt\tProfessional\n30008\tThe Redirect\tlight-blue-oxford\tProfessional\n30009\tThe Workhorse\tclassic-chambray-work-shirt\tProfessional\n30010\tThe Headliner\tfake-script-cap\tAccessories\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\tCasual\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\tCasual\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\tCasual\n60005\tThe Heritage\theritage-chambray\tProfessional\n60006\tThe Blueprint\tindigo-chambray\tProfessional\n70001\tYou Fake Bro?\tyou-fake-bro\tCasual\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\tCasual\n70003\tFake Like My Office\tfake-like-my-office\tCasual\n70004\tThe Real Fake\tthe-real-fake\tCasual\n80001\tThe Downtime\tsweat-pants\tCasual\n80002\tThe Forecast\twindbreaker\tCasual\n80003\tThe Introduction\tpolo-tee\tCasual\n80004\tThe Diplomat\tmandarin-collar\tCasual\n80005\tThe Understatement\tv-neck-tee\tCasual\n80006\tThe Standard\tdress-shirt\tProfessional\n80007\tThe Foundation\tdress-slacks\tProfessional\n80008\tThe Detail\tdress-socks\tAccessories\n80009\tThe Punctuation\tpocket-square\tAccessories\n80010\tThe Closing Argument\tsilk-tie\tAccessories\n90001\tThe Alibi\tthe-alibi\tWomen\n90002\tThe Confession\tthe-confession\tWomen\n90003\tThe Understudy\tthe-understudy\tWomen\n90004\tThe Getaway\tthe-getaway\tWomen\n90005\tThe Closer\tthe-closer\tWomen\n90006\tThe Encore\tthe-encore\tWomen\n90007\tThe Rundown\tthe-rundown\tWomen\n90008\tThe Statement\tthe-statement\tWomen\n90009\tThe Exit\tthe-exit\tWomen\n90010\tThe Corner Office\tthe-corner-office\tWomen\n150001\tTrust Me, I'm Fake\ttrust-me-im-fake\tCasual\n150002\tAuthentically Fake Since 2026\tauthentically-fake-since-2026\tCasual\n150003\tMy Other Shirt Is Also Fake\tmy-other-shirt-is-also-fake\tCasual\n150004\tFake News, Real Drip\tfake-news-real-drip\tCasual\n150005\tThe Fake Life Had Better Fabric\tfake-life-better-fabric\tCasual\n150006\t100% Genuine Fake\t100-percent-genuine-fake\tCasual\n150007\tFake It Till You Make It (I Made It)\tfake-it-till-you-make-it\tCasual\n150008\tNot Real. Not Sorry.\tnot-real-not-sorry\tCasual\n150009\tTraces of Authenticity\ttraces-of-authenticity\tCasual\n150010\tRead the Label\tread-the-label\tCasual\n150011\tNo Cap, All Fake\tno-cap-all-fake\tCasual\n150012\tSituationship Shirt\tsituationship-shirt\tCasual\n150013\tDelulu Is the Solulu\tdelulu-is-the-solulu\tCasual\n150014\tFake Personality, Real Fit\tfake-personality-real-fit\tCasual\n150015\tGiving Fake (And I'm Okay With That)\tgiving-fake-okay-with-that\tCasual\n150016\tMain Character Energy\tmain-character-energy\tCasual\n150017\tPOV: Fake Shirt On Purpose\tpov-fake-shirt-on-purpose\tCasual\n150018\tGiving Absolutely Nothing\tgiving-absolutely-nothing\tCasual\n150019\tRent Free, Full Price\trent-free-full-price\tCasual\n150020\tUnderstood the Assignment\tunderstood-the-assignment\tCasual\n150021\tThe Silhouette\tthe-silhouette\tWomen\n150022\tThe Pencil\tthe-pencil-skirt\tWomen\n150023\tThe Wrap Skirt\tthe-wrap-skirt\tWomen\n150024\tThe Pleat\tthe-pleat\tWomen\n150025\tThe Highrise\tthe-highrise\tWomen\n150026\tThe Oversized\tthe-oversized-blouse\tWomen\n150027\tThe Mandarin Blouse\tthe-mandarin-blouse\tWomen\n150028\tThe Linen\tthe-linen-blouse\tWomen\n150029\tThe Wrap Blouse\tthe-wrap-blouse\tWomen\n150030\tThe Crop Blouse\tthe-crop-blouse\tWomen\n",
+  "stderr": "",
+  "execution_time_ms": 1726
+}

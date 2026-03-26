@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearch, useLocation } from 'wouter';
 import { ShoppingCart, Search, User, ArrowRight, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useCart } from '@/contexts/CartContext';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from '@/lib/seo';
 
 export default function Shop() {
   const search = useSearch();
@@ -72,6 +73,19 @@ export default function Shop() {
   };
 
   // Page title based on category
+  // SEO for shop page
+  useEffect(() => {
+    const title = activeCategory ? `${activeCategory.name} | Fake by Freetown` : 'Shop All | Fake by Freetown';
+    const desc = activeCategory
+      ? `Browse our ${activeCategory.name.toLowerCase()} collection. Premium apparel from Fake by Freetown. S to 10XL. One price. One quality.`
+      : 'Shop the full Fake by Freetown collection. Streetwear, casual, women\'s, and business apparel. S to 10XL. One price. One quality. Zero fine print.';
+    updateMetaTags({ title, description: desc, url: `https://getfakenow.com/shop${activeCategory ? `?category=${activeCategory.slug}` : ''}`, type: 'website' });
+    const breadcrumbs = [{ name: 'Home', url: 'https://getfakenow.com' }, { name: 'Shop', url: 'https://getfakenow.com/shop' }];
+    if (activeCategory) breadcrumbs.push({ name: activeCategory.name, url: `https://getfakenow.com/shop?category=${activeCategory.slug}` });
+    injectStructuredData(generateBreadcrumbSchema(breadcrumbs), 'shop-breadcrumb');
+    return () => { removeStructuredData('shop-breadcrumb'); };
+  }, [activeCategory]);
+
   const pageTitle = activeCategory ? activeCategory.name : 'All Products';
   const pageSubtitle = activeCategory
     ? `Browse our ${activeCategory.name.toLowerCase()} collection`

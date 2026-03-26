@@ -1,0 +1,74 @@
+{
+  "query": "SELECT productId, color FROM productImages WHERE productId IN (30004, 30005, 30006, 30010)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT productId, color FROM productImages WHERE productId IN (30004, 30005, 30006, 30010)",
+  "rows": [
+    {
+      "productId": "30004",
+      "color": "Black"
+    },
+    {
+      "productId": "30004",
+      "color": "White"
+    },
+    {
+      "productId": "30004",
+      "color": "Navy"
+    },
+    {
+      "productId": "30004",
+      "color": "Red"
+    },
+    {
+      "productId": "30006",
+      "color": "Black"
+    },
+    {
+      "productId": "30006",
+      "color": "White"
+    },
+    {
+      "productId": "30006",
+      "color": "Navy"
+    },
+    {
+      "productId": "30006",
+      "color": "Red"
+    },
+    {
+      "productId": "30005",
+      "color": "Black"
+    },
+    {
+      "productId": "30005",
+      "color": "White"
+    },
+    {
+      "productId": "30005",
+      "color": "Navy"
+    },
+    {
+      "productId": "30005",
+      "color": "Red"
+    },
+    {
+      "productId": "30010",
+      "color": "Black"
+    },
+    {
+      "productId": "30010",
+      "color": "White"
+    },
+    {
+      "productId": "30010",
+      "color": "Navy"
+    },
+    {
+      "productId": "30010",
+      "color": "Red"
+    }
+  ],
+  "messages": [],
+  "stdout": "productId\tcolor\n30004\tBlack\n30004\tWhite\n30004\tNavy\n30004\tRed\n30006\tBlack\n30006\tWhite\n30006\tNavy\n30006\tRed\n30005\tBlack\n30005\tWhite\n30005\tNavy\n30005\tRed\n30010\tBlack\n30010\tWhite\n30010\tNavy\n30010\tRed\n",
+  "stderr": "",
+  "execution_time_ms": 1529
+}

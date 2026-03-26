@@ -271,3 +271,23 @@
 ## Headline Drop Marketing Banner
 - [x] Create "Headline Drop" marketing banner in admin for new collection announcement
 - [x] Generate banner image and insert into bannerSlides database
+
+## Carousel Slider Redesign
+- [x] Replace browser scrollbar on New Arrivals carousels with subtle, intuitive slider (arrows + dots or drag)
+- [x] Rename "THE GEN Z COLLECTION" to "CHRONICALLY ONLINE"
+
+## Color-Specific Product Images
+- [x] Generate white variant images for all 69 products (138 total)
+- [x] Generate navy variant images for all 69 products
+- [x] Upload all 138 color variant images to S3 CDN
+- [x] Update productImages table with distinct color-specific image URLs
+
+## Product Page SEO Improvements
+- [x] Review and enhance structured data (JSON-LD) on product detail pages
+- [x] Add SEO meta tags to Home page (Organization + WebSite structured data)
+- [x] Add SEO meta tags to Shop page (breadcrumbs, dynamic title/description per category)
+- [x] Update canonical URLs to getfakenow.com across index.html
+- [x] Add descriptive alt text to all product images
+- [x] Improve meta titles and descriptions for product pages
+- [x] Add canonical URLs and Open Graph tags
+- [x] Review breadcrumb markup for SEO

@@ -1,0 +1,25 @@
+{
+  "query": "SELECT productId, color, imageUrl FROM productImages WHERE productId = 30001 ORDER BY sortOrder",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT productId, color, imageUrl FROM productImages WHERE productId = 30001 ORDER BY sortOrder",
+  "rows": [
+    {
+      "productId": "30001",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg"
+    },
+    {
+      "productId": "30001",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp"
+    },
+    {
+      "productId": "30001",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "productId\tcolor\timageUrl\n30001\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg\n30001\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp\n30001\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1549
+}

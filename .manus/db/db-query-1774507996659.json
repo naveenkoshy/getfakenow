@@ -1,0 +1,493 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, c.name as category_name, p.imageUrl FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, c.name as category_name, p.imageUrl FROM products p LEFT JOIN categories c ON p.categoryId = c.id ORDER BY p.id",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg"
+    },
+    {
+      "id": "30003",
+      "name": "Confidence Tee",
+      "slug": "confidence-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg"
+    },
+    {
+      "id": "30005",
+      "name": "Essential Joggers",
+      "slug": "essential-joggers",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg"
+    },
+    {
+      "id": "30006",
+      "name": "Classic Pique Polo",
+      "slug": "classic-pique-polo",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg"
+    },
+    {
+      "id": "30007",
+      "name": "The Boardroom",
+      "slug": "white-oxford-shirt",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg"
+    },
+    {
+      "id": "30008",
+      "name": "The Redirect",
+      "slug": "light-blue-oxford",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg"
+    },
+    {
+      "id": "30009",
+      "name": "The Workhorse",
+      "slug": "classic-chambray-work-shirt",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg"
+    },
+    {
+      "id": "30010",
+      "name": "The Headliner",
+      "slug": "fake-script-cap",
+      "category_name": "Accessories",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg"
+    },
+    {
+      "id": "60005",
+      "name": "The Heritage",
+      "slug": "heritage-chambray",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg"
+    },
+    {
+      "id": "60006",
+      "name": "The Blueprint",
+      "slug": "indigo-chambray",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp"
+    },
+    {
+      "id": "80001",
+      "name": "The Downtime",
+      "slug": "sweat-pants",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-sweatpants_c787a2c8.webp"
+    },
+    {
+      "id": "80002",
+      "name": "The Forecast",
+      "slug": "windbreaker",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp"
+    },
+    {
+      "id": "80003",
+      "name": "The Introduction",
+      "slug": "polo-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-collared-tee_d410e957.webp"
+    },
+    {
+      "id": "80004",
+      "name": "The Diplomat",
+      "slug": "mandarin-collar",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-mandarin-collar_506f8413.webp"
+    },
+    {
+      "id": "80005",
+      "name": "The Understatement",
+      "slug": "v-neck-tee",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-vneck-tee_d48241cf.webp"
+    },
+    {
+      "id": "80006",
+      "name": "The Standard",
+      "slug": "dress-shirt",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-white-shirt_f6b91108.webp"
+    },
+    {
+      "id": "80007",
+      "name": "The Foundation",
+      "slug": "dress-slacks",
+      "category_name": "Professional",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-slacks_52b41afc.webp"
+    },
+    {
+      "id": "80008",
+      "name": "The Detail",
+      "slug": "dress-socks",
+      "category_name": "Accessories",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-socks_7265dacd.webp"
+    },
+    {
+      "id": "80009",
+      "name": "The Punctuation",
+      "slug": "pocket-square",
+      "category_name": "Accessories",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-handkerchief_e7c08327.webp"
+    },
+    {
+      "id": "80010",
+      "name": "The Closing Argument",
+      "slug": "silk-tie",
+      "category_name": "Accessories",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-tie_aac2d38b.webp"
+    },
+    {
+      "id": "90001",
+      "name": "The Alibi",
+      "slug": "the-alibi",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cropped-tee-jmtLpHHmj9XLs3acr8md6X.webp"
+    },
+    {
+      "id": "90002",
+      "name": "The Confession",
+      "slug": "the-confession",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-oversized-hoodie-Hvdc3H8dA9BWPJGFVcAKhZ.webp"
+    },
+    {
+      "id": "90003",
+      "name": "The Understudy",
+      "slug": "the-understudy",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-fitted-tank-4fP7K58hpUTMmejsMyUCJ6.webp"
+    },
+    {
+      "id": "90004",
+      "name": "The Getaway",
+      "slug": "the-getaway",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cargo-pants-SXuL8wEr33MHtvQc7JS8EB.webp"
+    },
+    {
+      "id": "90005",
+      "name": "The Closer",
+      "slug": "the-closer",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-blazer-bqdJb3Y4GoLTrB9wi8MivC.webp"
+    },
+    {
+      "id": "90006",
+      "name": "The Encore",
+      "slug": "the-encore",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-wrap-dress-SRv3GmavmfAcmgLGNWQ4C2.webp"
+    },
+    {
+      "id": "90007",
+      "name": "The Rundown",
+      "slug": "the-rundown",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-joggers-bT4Dj4xibXd7sTMScswMc4.webp"
+    },
+    {
+      "id": "90008",
+      "name": "The Statement",
+      "slug": "the-statement",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-graphic-tee-dEPYA9bthw8hS5HoSqgvYj.webp"
+    },
+    {
+      "id": "90009",
+      "name": "The Exit",
+      "slug": "the-exit",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-bomber-jacket-6TwemuEGsiwGzD4jCzTydw.webp"
+    },
+    {
+      "id": "90010",
+      "name": "The Corner Office",
+      "slug": "the-corner-office",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-wide-leg-trousers-ao6RNbH26BrsRWtfGnCrA5.webp"
+    },
+    {
+      "id": "150001",
+      "name": "Trust Me, I'm Fake",
+      "slug": "trust-me-im-fake",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp"
+    },
+    {
+      "id": "150002",
+      "name": "Authentically Fake Since 2026",
+      "slug": "authentically-fake-since-2026",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp"
+    },
+    {
+      "id": "150003",
+      "name": "My Other Shirt Is Also Fake",
+      "slug": "my-other-shirt-is-also-fake",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp"
+    },
+    {
+      "id": "150004",
+      "name": "Fake News, Real Drip",
+      "slug": "fake-news-real-drip",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-news-real-drip_14f4606e.webp"
+    },
+    {
+      "id": "150005",
+      "name": "The Fake Life Had Better Fabric",
+      "slug": "fake-life-better-fabric",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-life-better-fabric_b2c5ccb2.webp"
+    },
+    {
+      "id": "150006",
+      "name": "100% Genuine Fake",
+      "slug": "100-percent-genuine-fake",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/100-percent-genuine-fake_85ae2bdf.webp"
+    },
+    {
+      "id": "150007",
+      "name": "Fake It Till You Make It (I Made It)",
+      "slug": "fake-it-till-you-make-it",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-till-you-make-it_67f82441.webp"
+    },
+    {
+      "id": "150008",
+      "name": "Not Real. Not Sorry.",
+      "slug": "not-real-not-sorry",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp"
+    },
+    {
+      "id": "150009",
+      "name": "Traces of Authenticity",
+      "slug": "traces-of-authenticity",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp"
+    },
+    {
+      "id": "150010",
+      "name": "Read the Label",
+      "slug": "read-the-label",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp"
+    },
+    {
+      "id": "150011",
+      "name": "No Cap, All Fake",
+      "slug": "no-cap-all-fake",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp"
+    },
+    {
+      "id": "150012",
+      "name": "Situationship Shirt",
+      "slug": "situationship-shirt",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp"
+    },
+    {
+      "id": "150013",
+      "name": "Delulu Is the Solulu",
+      "slug": "delulu-is-the-solulu",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp"
+    },
+    {
+      "id": "150014",
+      "name": "Fake Personality, Real Fit",
+      "slug": "fake-personality-real-fit",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-personality-real-fit_c4a72913.webp"
+    },
+    {
+      "id": "150015",
+      "name": "Giving Fake (And I'm Okay With That)",
+      "slug": "giving-fake-okay-with-that",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-fake-okay-with-that_dbc3444c.webp"
+    },
+    {
+      "id": "150016",
+      "name": "Main Character Energy",
+      "slug": "main-character-energy",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp"
+    },
+    {
+      "id": "150017",
+      "name": "POV: Fake Shirt On Purpose",
+      "slug": "pov-fake-shirt-on-purpose",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp"
+    },
+    {
+      "id": "150018",
+      "name": "Giving Absolutely Nothing",
+      "slug": "giving-absolutely-nothing",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp"
+    },
+    {
+      "id": "150019",
+      "name": "Rent Free, Full Price",
+      "slug": "rent-free-full-price",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp"
+    },
+    {
+      "id": "150020",
+      "name": "Understood the Assignment",
+      "slug": "understood-the-assignment",
+      "category_name": "Casual",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp"
+    },
+    {
+      "id": "150021",
+      "name": "The Silhouette",
+      "slug": "the-silhouette",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-silhouette_0134c1ea.webp"
+    },
+    {
+      "id": "150022",
+      "name": "The Pencil",
+      "slug": "the-pencil-skirt",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-pencil_04308f68.webp"
+    },
+    {
+      "id": "150023",
+      "name": "The Wrap Skirt",
+      "slug": "the-wrap-skirt",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-wrap_12d9a335.webp"
+    },
+    {
+      "id": "150024",
+      "name": "The Pleat",
+      "slug": "the-pleat",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-pleat_e5c05b46.webp"
+    },
+    {
+      "id": "150025",
+      "name": "The Highrise",
+      "slug": "the-highrise",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-highrise_cba2fa50.webp"
+    },
+    {
+      "id": "150026",
+      "name": "The Oversized",
+      "slug": "the-oversized-blouse",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-oversized_5c365311.webp"
+    },
+    {
+      "id": "150027",
+      "name": "The Mandarin Blouse",
+      "slug": "the-mandarin-blouse",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-mandarin-blouse_61182322.webp"
+    },
+    {
+      "id": "150028",
+      "name": "The Linen",
+      "slug": "the-linen-blouse",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-linen_4055dc80.webp"
+    },
+    {
+      "id": "150029",
+      "name": "The Wrap Blouse",
+      "slug": "the-wrap-blouse",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-wrap-blouse_93f994b2.webp"
+    },
+    {
+      "id": "150030",
+      "name": "The Crop Blouse",
+      "slug": "the-crop-blouse",
+      "category_name": "Women",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-crop-blouse_d0e5400e.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategory_name\timageUrl\n30001\tFake It Classic Tee\tfake-it-classic-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee.jpg\n30002\tTill You Make It Tee\ttill-you-make-it-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg\n30003\tConfidence Tee\tconfidence-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg\n30004\tFake Signature Hoodie\tfake-signature-hoodie\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie.jpg\n30005\tEssential Joggers\tessential-joggers\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers.jpg\n30006\tClassic Pique Polo\tclassic-pique-polo\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo.jpg\n30007\tThe Boardroom\twhite-oxford-shirt\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg\n30008\tThe Redirect\tlight-blue-oxford\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/light-blue-oxford.jpg\n30009\tThe Workhorse\tclassic-chambray-work-shirt\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-chambray-work-shirt.jpg\n30010\tThe Headliner\tfake-script-cap\tAccessories\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-script-cap.jpg\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/it-s-all-fake-tee.jpg\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-is-not-hate-tee.jpg\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/live-life-stay-fake-tee.jpg\n60005\tThe Heritage\theritage-chambray\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/heritage-chambray.jpg\n60006\tThe Blueprint\tindigo-chambray\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/indigo-chambray.jpg\n70001\tYou Fake Bro?\tyou-fake-bro\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-you-fake-bro-print-eet8LUrP4HA6J8dQWKbYtA.webp\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-life-is-fake-print-PpsibRwckFzqB7529S9JNs.webp\n70003\tFake Like My Office\tfake-like-my-office\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-fake-office-print-KVhFVyCPGuKRJjGSeQaR4t.webp\n70004\tThe Real Fake\tthe-real-fake\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/tee-real-fake-print-RxkjSKEpm5isveF8ULVFZc.webp\n80001\tThe Downtime\tsweat-pants\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-sweatpants_c787a2c8.webp\n80002\tThe Forecast\twindbreaker\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-windbreaker_e6630298.webp\n80003\tThe Introduction\tpolo-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-collared-tee_d410e957.webp\n80004\tThe Diplomat\tmandarin-collar\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-mandarin-collar_506f8413.webp\n80005\tThe Understatement\tv-neck-tee\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-vneck-tee_d48241cf.webp\n80006\tThe Standard\tdress-shirt\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-white-shirt_f6b91108.webp\n80007\tThe Foundation\tdress-slacks\tProfessional\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-slacks_52b41afc.webp\n80008\tThe Detail\tdress-socks\tAccessories\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-socks_7265dacd.webp\n80009\tThe Punctuation\tpocket-square\tAccessories\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-handkerchief_e7c08327.webp\n80010\tThe Closing Argument\tsilk-tie\tAccessories\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/product-tie_aac2d38b.webp\n90001\tThe Alibi\tthe-alibi\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cropped-tee-jmtLpHHmj9XLs3acr8md6X.webp\n90002\tThe Confession\tthe-confession\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-oversized-hoodie-Hvdc3H8dA9BWPJGFVcAKhZ.webp\n90003\tThe Understudy\tthe-understudy\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-fitted-tank-4fP7K58hpUTMmejsMyUCJ6.webp\n90004\tThe Getaway\tthe-getaway\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-cargo-pants-SXuL8wEr33MHtvQc7JS8EB.webp\n90005\tThe Closer\tthe-closer\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-blazer-bqdJb3Y4GoLTrB9wi8MivC.webp\n90006\tThe Encore\tthe-encore\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-wrap-dress-SRv3GmavmfAcmgLGNWQ4C2.webp\n90007\tThe Rundown\tthe-rundown\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-joggers-bT4Dj4xibXd7sTMScswMc4.webp\n90008\tThe Statement\tthe-statement\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-graphic-tee-dEPYA9bthw8hS5HoSqgvYj.webp\n90009\tThe Exit\tthe-exit\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-bomber-jacket-6TwemuEGsiwGzD4jCzTydw.webp\n90010\tThe Corner Office\tthe-corner-office\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/women-wide-leg-trousers-ao6RNbH26BrsRWtfGnCrA5.webp\n150001\tTrust Me, I'm Fake\ttrust-me-im-fake\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp\n150002\tAuthentically Fake Since 2026\tauthentically-fake-since-2026\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp\n150003\tMy Other Shirt Is Also Fake\tmy-other-shirt-is-also-fake\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp\n150004\tFake News, Real Drip\tfake-news-real-drip\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-news-real-drip_14f4606e.webp\n150005\tThe Fake Life Had Better Fabric\tfake-life-better-fabric\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-life-better-fabric_b2c5ccb2.webp\n150006\t100% Genuine Fake\t100-percent-genuine-fake\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/100-percent-genuine-fake_85ae2bdf.webp\n150007\tFake It Till You Make It (I Made It)\tfake-it-till-you-make-it\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-till-you-make-it_67f82441.webp\n150008\tNot Real. Not Sorry.\tnot-real-not-sorry\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp\n150009\tTraces of Authenticity\ttraces-of-authenticity\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp\n150010\tRead the Label\tread-the-label\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp\n150011\tNo Cap, All Fake\tno-cap-all-fake\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp\n150012\tSituationship Shirt\tsituationship-shirt\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp\n150013\tDelulu Is the Solulu\tdelulu-is-the-solulu\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp\n150014\tFake Personality, Real Fit\tfake-personality-real-fit\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-personality-real-fit_c4a72913.webp\n150015\tGiving Fake (And I'm Okay With That)\tgiving-fake-okay-with-that\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-fake-okay-with-that_dbc3444c.webp\n150016\tMain Character Energy\tmain-character-energy\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp\n150017\tPOV: Fake Shirt On Purpose\tpov-fake-shirt-on-purpose\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp\n150018\tGiving Absolutely Nothing\tgiving-absolutely-nothing\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp\n150019\tRent Free, Full Price\trent-free-full-price\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp\n150020\tUnderstood the Assignment\tunderstood-the-assignment\tCasual\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp\n150021\tThe Silhouette\tthe-silhouette\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-silhouette_0134c1ea.webp\n150022\tThe Pencil\tthe-pencil-skirt\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-pencil_04308f68.webp\n150023\tThe Wrap Skirt\tthe-wrap-skirt\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-wrap_12d9a335.webp\n150024\tThe Pleat\tthe-pleat\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-pleat_e5c05b46.webp\n150025\tThe Highrise\tthe-highrise\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-highrise_cba2fa50.webp\n150026\tThe Oversized\tthe-oversized-blouse\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-oversized_5c365311.webp\n150027\tThe Mandarin Blouse\tthe-mandarin-blouse\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-mandarin-blouse_61182322.webp\n150028\tThe Linen\tthe-linen-blouse\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-linen_4055dc80.webp\n150029\tThe Wrap Blouse\tthe-wrap-blouse\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-wrap-blouse_93f994b2.webp\n150030\tThe Crop Blouse\tthe-crop-blouse\tWomen\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/the-crop-blouse_d0e5400e.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1699
+}
