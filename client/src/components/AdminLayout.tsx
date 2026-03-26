@@ -28,6 +28,7 @@ import {
   Activity,
   Store,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -169,9 +170,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                   <Store className="h-4 w-4 text-white" />
                 </div>
-                <div>
-                  <span className="brand-cursive text-xl text-red-600">Fake</span>
-                  <span className="text-[10px] text-gray-400 ml-1 font-medium tracking-wider uppercase">Seller Center</span>
+                <div className="flex items-center gap-1.5">
+                  <Logo size="sm" variant="dark" />
+                  <span className="text-[10px] text-gray-400 font-medium tracking-wider uppercase border-l border-gray-200 pl-1.5">Seller Center</span>
                 </div>
               </div>
             </Link>

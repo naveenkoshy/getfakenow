@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useState } from "react";
 import { AuthModal } from "./AuthModal";
+import { Logo } from "./Logo";
 
 export function Footer() {
   const { isAuthenticated } = useAuth();
@@ -14,9 +15,8 @@ export function Footer() {
         <div className="container">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="brand-cursive text-3xl text-primary">Fake</span>
-                <span className="text-xs text-gray-400">by Freetown</span>
+              <div className="mb-4">
+                <Logo size="md" variant="light" linkTo="/" />
               </div>
               <p className="text-sm text-gray-400">
                 Elevated apparel for every occasion

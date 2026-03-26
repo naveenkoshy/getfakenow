@@ -1,0 +1,58 @@
+{
+  "query": "SELECT color, COUNT(*) as cnt FROM productImages GROUP BY color ORDER BY color",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT color, COUNT(*) as cnt FROM productImages GROUP BY color ORDER BY color",
+  "rows": [
+    {
+      "color": "Black",
+      "cnt": "4"
+    },
+    {
+      "color": "Navy",
+      "cnt": "4"
+    },
+    {
+      "color": "Red",
+      "cnt": "4"
+    },
+    {
+      "color": "White",
+      "cnt": "4"
+    },
+    {
+      "color": "black",
+      "cnt": "65"
+    },
+    {
+      "color": "charcoal",
+      "cnt": "1"
+    },
+    {
+      "color": "cream",
+      "cnt": "1"
+    },
+    {
+      "color": "gray",
+      "cnt": "1"
+    },
+    {
+      "color": "label",
+      "cnt": "66"
+    },
+    {
+      "color": "navy",
+      "cnt": "65"
+    },
+    {
+      "color": "red",
+      "cnt": "4"
+    },
+    {
+      "color": "white",
+      "cnt": "65"
+    }
+  ],
+  "messages": [],
+  "stdout": "color\tcnt\nBlack\t4\nNavy\t4\nRed\t4\nWhite\t4\nblack\t65\ncharcoal\t1\ncream\t1\ngray\t1\nlabel\t66\nnavy\t65\nred\t4\nwhite\t65\n",
+  "stderr": "",
+  "execution_time_ms": 1595
+}

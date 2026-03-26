@@ -1,0 +1,34 @@
+{
+  "query": "SELECT pi.productId, p.name, pi.color, pi.imageUrl FROM productImages pi JOIN products p ON pi.productId = p.id WHERE pi.productId = 30001 ORDER BY pi.color",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT pi.productId, p.name, pi.color, pi.imageUrl FROM productImages pi JOIN products p ON pi.productId = p.id WHERE pi.productId = 30001 ORDER BY pi.color",
+  "rows": [
+    {
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg"
+    },
+    {
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30001_ec4b1f48.png"
+    },
+    {
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp"
+    },
+    {
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "productId\tname\tcolor\timageUrl\n30001\tFake It Classic Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg\n30001\tFake It Classic Tee\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30001_ec4b1f48.png\n30001\tFake It Classic Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp\n30001\tFake It Classic Tee\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1635
+}

@@ -309,3 +309,17 @@
 - [x] Add collection badge to product detail page (HEADLINE/ESSENTIAL/PROFESSIONAL/WOMEN/ACCESSORIES)
 - [x] Add clickable label image thumbnail on product detail page
 - [x] Filter label images out of color selector (only show black/white/navy)
+
+## Logo & Image Consistency Fixes
+- [x] Fix logo rendering to be consistent across all pages — created shared Logo component
+- [x] Replaced all 13 logo instances: Account, Orders, OrderConfirmation, Casual, Professional, Products, PrivacyPolicy, ReturnsPolicy, ShippingPolicy, TermsOfService, Admin, AdminLayout, Profile, Footer
+- [x] Fix logo on mobile breakpoints (all pages now use same shared component)
+- [x] Review product image consistency across color variants (ensure same composition/style)
+
+## Product Image Consistency Fix (v2)
+- [x] Audit all 69 products for image inconsistency across black/white/navy variants
+- [x] Regenerate 69 white variant images by AI-editing black originals (maintaining composition)
+- [x] Regenerate 69 navy variant images by AI-editing black originals (maintaining composition)
+- [x] Upload all 138 recolored images to S3 CDN
+- [x] Update all 138 database records with new CDN URLs
+- [x] Verify consistency on product pages (Trust Me I'm Fake, The Alibi)

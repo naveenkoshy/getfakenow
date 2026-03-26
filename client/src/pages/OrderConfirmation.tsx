@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { Logo } from "@/components/Logo";
 
 export default function OrderConfirmation() {
   const [location] = useLocation();
@@ -14,12 +15,7 @@ export default function OrderConfirmation() {
       <header className="border-b border-border bg-white">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-4xl text-primary">Fake</span>
-                <span className="text-sm text-muted-foreground font-light">by Freetown</span>
-              </div>
-            </Link>
+            <Logo size="md" variant="dark" linkTo="/" />
           </div>
         </div>
       </header>

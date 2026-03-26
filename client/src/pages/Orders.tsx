@@ -7,6 +7,7 @@ import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { ShoppingCart, User, Package, Eye } from "lucide-react";
 import { Link } from "wouter";
+import { Logo } from "@/components/Logo";
 import { CustomerOrderDetailModal } from "@/components/CustomerOrderDetailModal";
 import { useState } from "react";
 
@@ -64,12 +65,7 @@ export default function Orders() {
       <header className="border-b border-border bg-white sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-4xl text-primary">Fake</span>
-                <span className="text-sm text-muted-foreground font-light">by Freetown</span>
-              </div>
-            </Link>
+            <Logo size="md" variant="dark" linkTo="/" />
             <div className="flex items-center gap-4">
               <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">

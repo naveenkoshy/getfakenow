@@ -1,0 +1,46 @@
+{
+  "query": "SELECT DISTINCT color FROM productImages LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT DISTINCT color FROM productImages LIMIT 20",
+  "rows": [
+    {
+      "color": "Red"
+    },
+    {
+      "color": "navy"
+    },
+    {
+      "color": "White"
+    },
+    {
+      "color": "white"
+    },
+    {
+      "color": "Navy"
+    },
+    {
+      "color": "Black"
+    },
+    {
+      "color": "black"
+    },
+    {
+      "color": "red"
+    },
+    {
+      "color": "cream"
+    },
+    {
+      "color": "gray"
+    },
+    {
+      "color": "charcoal"
+    },
+    {
+      "color": "label"
+    }
+  ],
+  "messages": [],
+  "stdout": "color\nRed\nnavy\nWhite\nwhite\nNavy\nBlack\nblack\nred\ncream\ngray\ncharcoal\nlabel\n",
+  "stderr": "",
+  "execution_time_ms": 1552
+}

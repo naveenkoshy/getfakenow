@@ -1,0 +1,70 @@
+{
+  "query": "SELECT DISTINCT productId FROM productImages ORDER BY productId LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT DISTINCT productId FROM productImages ORDER BY productId LIMIT 20",
+  "rows": [
+    {
+      "productId": "30001"
+    },
+    {
+      "productId": "30002"
+    },
+    {
+      "productId": "30003"
+    },
+    {
+      "productId": "30004"
+    },
+    {
+      "productId": "30005"
+    },
+    {
+      "productId": "30006"
+    },
+    {
+      "productId": "30007"
+    },
+    {
+      "productId": "30008"
+    },
+    {
+      "productId": "30009"
+    },
+    {
+      "productId": "30010"
+    },
+    {
+      "productId": "60001"
+    },
+    {
+      "productId": "60002"
+    },
+    {
+      "productId": "60003"
+    },
+    {
+      "productId": "60005"
+    },
+    {
+      "productId": "60006"
+    },
+    {
+      "productId": "70001"
+    },
+    {
+      "productId": "70002"
+    },
+    {
+      "productId": "70003"
+    },
+    {
+      "productId": "70004"
+    },
+    {
+      "productId": "80001"
+    }
+  ],
+  "messages": [],
+  "stdout": "productId\n30001\n30002\n30003\n30004\n30005\n30006\n30007\n30008\n30009\n30010\n60001\n60002\n60003\n60005\n60006\n70001\n70002\n70003\n70004\n80001\n",
+  "stderr": "",
+  "execution_time_ms": 1540
+}

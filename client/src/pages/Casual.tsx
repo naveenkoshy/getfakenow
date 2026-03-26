@@ -8,6 +8,7 @@ import { Search, ShoppingCart, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from "@/lib/seo";
+import { Logo } from "@/components/Logo";
 
 export default function Casual() {
   const { isAuthenticated } = useAuth();
@@ -54,12 +55,7 @@ export default function Casual() {
       <header className="border-b border-border bg-white sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-4xl text-primary">Fake</span>
-                <span className="text-sm text-muted-foreground font-light">by Freetown</span>
-              </div>
-            </Link>
+            <Logo size="md" variant="dark" linkTo="/" />
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">

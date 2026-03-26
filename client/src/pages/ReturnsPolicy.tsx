@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Logo } from "@/components/Logo";
 
 export default function ReturnsPolicy() {
   return (
@@ -6,12 +7,7 @@ export default function ReturnsPolicy() {
       <header className="border-b border-border bg-white sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-4xl text-primary">Fake</span>
-                <span className="text-sm text-muted-foreground font-light">by Freetown</span>
-              </div>
-            </Link>
+            <Logo size="md" variant="dark" linkTo="/" />
           </div>
         </div>
       </header>

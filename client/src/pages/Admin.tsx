@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Package, ShoppingBag, Home } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -70,9 +71,9 @@ export default function Admin() {
       <header className="border-b border-border bg-white sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <span className="brand-cursive text-4xl text-primary">Fake</span>
-              <span className="text-sm text-muted-foreground font-light">Admin Panel</span>
+            <div className="flex items-center gap-3">
+              <Logo size="md" variant="dark" />
+              <span className="text-sm text-muted-foreground font-light border-l border-border pl-3">Admin Panel</span>
             </div>
             <div className="flex items-center gap-4">
               <Button variant="ghost" asChild>

@@ -1,0 +1,250 @@
+{
+  "query": "SELECT pi.id, pi.productId, p.name, pi.color, pi.imageUrl, pi.fileKey FROM productImages pi JOIN products p ON pi.productId = p.id ORDER BY pi.productId, pi.color LIMIT 30",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT pi.id, pi.productId, p.name, pi.color, pi.imageUrl, pi.fileKey FROM productImages pi JOIN products p ON pi.productId = p.id ORDER BY pi.productId, pi.color LIMIT 30",
+  "rows": [
+    {
+      "id": "4",
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg",
+      "fileKey": "products/N_-UMlVn8AL9NsivVoSxF.png"
+    },
+    {
+      "id": "120005",
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30001_ec4b1f48.png",
+      "fileKey": "label-essential-30001"
+    },
+    {
+      "id": "90002",
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp",
+      "fileKey": "30001-navy"
+    },
+    {
+      "id": "90001",
+      "productId": "30001",
+      "name": "Fake It Classic Tee",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp",
+      "fileKey": "30001-white"
+    },
+    {
+      "id": "90003",
+      "productId": "30002",
+      "name": "Till You Make It Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg",
+      "fileKey": "30002-black"
+    },
+    {
+      "id": "120006",
+      "productId": "30002",
+      "name": "Till You Make It Tee",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30002_6030c30b.png",
+      "fileKey": "label-essential-30002"
+    },
+    {
+      "id": "90004",
+      "productId": "30002",
+      "name": "Till You Make It Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/till-you-make-it-tee-navy_6a4e7a41.webp",
+      "fileKey": "30002-navy"
+    },
+    {
+      "id": "5",
+      "productId": "30002",
+      "name": "Till You Make It Tee",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/till-you-make-it-tee-white_68d3ff5a.webp",
+      "fileKey": "products/mnB5KTGrdQN6CD_YYngmo.png"
+    },
+    {
+      "id": "90005",
+      "productId": "30003",
+      "name": "Confidence Tee",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg",
+      "fileKey": "30003-black"
+    },
+    {
+      "id": "120007",
+      "productId": "30003",
+      "name": "Confidence Tee",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30003_c61583e7.png",
+      "fileKey": "label-essential-30003"
+    },
+    {
+      "id": "6",
+      "productId": "30003",
+      "name": "Confidence Tee",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/confidence-tee-navy_8094345c.webp",
+      "fileKey": "products/WixAtW8s8xyMtDLoOflXk.png"
+    },
+    {
+      "id": "90006",
+      "productId": "30003",
+      "name": "Confidence Tee",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/confidence-tee-white_2ac6f53a.webp",
+      "fileKey": "30003-white"
+    },
+    {
+      "id": "30001",
+      "productId": "30004",
+      "name": "Fake Signature Hoodie",
+      "color": "Black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg",
+      "fileKey": "products/fake-signature-hoodie/hoodie-black.png"
+    },
+    {
+      "id": "30003",
+      "productId": "30004",
+      "name": "Fake Signature Hoodie",
+      "color": "Navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-signature-hoodie-navy_e16c9155.webp",
+      "fileKey": "products/fake-signature-hoodie/hoodie-navy.png"
+    },
+    {
+      "id": "30004",
+      "productId": "30004",
+      "name": "Fake Signature Hoodie",
+      "color": "Red",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg",
+      "fileKey": "products/fake-signature-hoodie/hoodie-red.png"
+    },
+    {
+      "id": "30002",
+      "productId": "30004",
+      "name": "Fake Signature Hoodie",
+      "color": "White",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-signature-hoodie-white_eb4f0eb9.webp",
+      "fileKey": "products/fake-signature-hoodie/hoodie-white.png"
+    },
+    {
+      "id": "120008",
+      "productId": "30004",
+      "name": "Fake Signature Hoodie",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30004_884ea9de.png",
+      "fileKey": "label-essential-30004"
+    },
+    {
+      "id": "30009",
+      "productId": "30005",
+      "name": "Essential Joggers",
+      "color": "Black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-black.jpg",
+      "fileKey": "products/essential-joggers/joggers-black.png"
+    },
+    {
+      "id": "30011",
+      "productId": "30005",
+      "name": "Essential Joggers",
+      "color": "Navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/essential-joggers-navy_876d3ee4.webp",
+      "fileKey": "products/essential-joggers/joggers-navy.png"
+    },
+    {
+      "id": "30012",
+      "productId": "30005",
+      "name": "Essential Joggers",
+      "color": "Red",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-red.jpg",
+      "fileKey": "products/essential-joggers/joggers-red.png"
+    },
+    {
+      "id": "30010",
+      "productId": "30005",
+      "name": "Essential Joggers",
+      "color": "White",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/essential-joggers-white_bbc1e753.webp",
+      "fileKey": "products/essential-joggers/joggers-white.png"
+    },
+    {
+      "id": "30005",
+      "productId": "30006",
+      "name": "Classic Pique Polo",
+      "color": "Black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-black.jpg",
+      "fileKey": "products/classic-pique-polo/polo-black.png"
+    },
+    {
+      "id": "30007",
+      "productId": "30006",
+      "name": "Classic Pique Polo",
+      "color": "Navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/classic-pique-polo-navy_1fb5161c.webp",
+      "fileKey": "products/classic-pique-polo/polo-navy.png"
+    },
+    {
+      "id": "30008",
+      "productId": "30006",
+      "name": "Classic Pique Polo",
+      "color": "Red",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-red.jpg",
+      "fileKey": "products/classic-pique-polo/polo-red.png"
+    },
+    {
+      "id": "30006",
+      "productId": "30006",
+      "name": "Classic Pique Polo",
+      "color": "White",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/classic-pique-polo-white_04fe5529.webp",
+      "fileKey": "products/classic-pique-polo/polo-white.png"
+    },
+    {
+      "id": "120009",
+      "productId": "30006",
+      "name": "Classic Pique Polo",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30006_146cba7d.png",
+      "fileKey": "label-essential-30006"
+    },
+    {
+      "id": "90007",
+      "productId": "30007",
+      "name": "The Boardroom",
+      "color": "black",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg",
+      "fileKey": "30007-black"
+    },
+    {
+      "id": "120040",
+      "productId": "30007",
+      "name": "The Boardroom",
+      "color": "label",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-professional-30007_8c44a758.png",
+      "fileKey": "label-professional-30007"
+    },
+    {
+      "id": "90008",
+      "productId": "30007",
+      "name": "The Boardroom",
+      "color": "navy",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/white-oxford-shirt-navy_b5ea8fae.webp",
+      "fileKey": "30007-navy"
+    },
+    {
+      "id": "7",
+      "productId": "30007",
+      "name": "The Boardroom",
+      "color": "white",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/white-oxford-shirt-white_d35b0e46.webp",
+      "fileKey": "products/-UPthWscnsgkMGOtlSLxB.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\tname\tcolor\timageUrl\tfileKey\n4\t30001\tFake It Classic Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-it-classic-tee-black.jpg\tproducts/N_-UMlVn8AL9NsivVoSxF.png\n120005\t30001\tFake It Classic Tee\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30001_ec4b1f48.png\tlabel-essential-30001\n90002\t30001\tFake It Classic Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-navy_8aa8d8bc.webp\t30001-navy\n90001\t30001\tFake It Classic Tee\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-classic-tee-white_ab8cad29.webp\t30001-white\n90003\t30002\tTill You Make It Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/till-you-make-it-tee.jpg\t30002-black\n120006\t30002\tTill You Make It Tee\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30002_6030c30b.png\tlabel-essential-30002\n90004\t30002\tTill You Make It Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/till-you-make-it-tee-navy_6a4e7a41.webp\t30002-navy\n5\t30002\tTill You Make It Tee\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/till-you-make-it-tee-white_68d3ff5a.webp\tproducts/mnB5KTGrdQN6CD_YYngmo.png\n90005\t30003\tConfidence Tee\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/confidence-tee.jpg\t30003-black\n120007\t30003\tConfidence Tee\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30003_c61583e7.png\tlabel-essential-30003\n6\t30003\tConfidence Tee\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/confidence-tee-navy_8094345c.webp\tproducts/WixAtW8s8xyMtDLoOflXk.png\n90006\t30003\tConfidence Tee\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/confidence-tee-white_2ac6f53a.webp\t30003-white\n30001\t30004\tFake Signature Hoodie\tBlack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-black.jpg\tproducts/fake-signature-hoodie/hoodie-black.png\n30003\t30004\tFake Signature Hoodie\tNavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-signature-hoodie-navy_e16c9155.webp\tproducts/fake-signature-hoodie/hoodie-navy.png\n30004\t30004\tFake Signature Hoodie\tRed\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/fake-signature-hoodie-red.jpg\tproducts/fake-signature-hoodie/hoodie-red.png\n30002\t30004\tFake Signature Hoodie\tWhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-signature-hoodie-white_eb4f0eb9.webp\tproducts/fake-signature-hoodie/hoodie-white.png\n120008\t30004\tFake Signature Hoodie\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30004_884ea9de.png\tlabel-essential-30004\n30009\t30005\tEssential Joggers\tBlack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-black.jpg\tproducts/essential-joggers/joggers-black.png\n30011\t30005\tEssential Joggers\tNavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/essential-joggers-navy_876d3ee4.webp\tproducts/essential-joggers/joggers-navy.png\n30012\t30005\tEssential Joggers\tRed\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/essential-joggers-red.jpg\tproducts/essential-joggers/joggers-red.png\n30010\t30005\tEssential Joggers\tWhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/essential-joggers-white_bbc1e753.webp\tproducts/essential-joggers/joggers-white.png\n30005\t30006\tClassic Pique Polo\tBlack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-black.jpg\tproducts/classic-pique-polo/polo-black.png\n30007\t30006\tClassic Pique Polo\tNavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/classic-pique-polo-navy_1fb5161c.webp\tproducts/classic-pique-polo/polo-navy.png\n30008\t30006\tClassic Pique Polo\tRed\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/classic-pique-polo-red.jpg\tproducts/classic-pique-polo/polo-red.png\n30006\t30006\tClassic Pique Polo\tWhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/classic-pique-polo-white_04fe5529.webp\tproducts/classic-pique-polo/polo-white.png\n120009\t30006\tClassic Pique Polo\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-essential-30006_146cba7d.png\tlabel-essential-30006\n90007\t30007\tThe Boardroom\tblack\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/products/white-oxford-shirt.jpg\t30007-black\n120040\t30007\tThe Boardroom\tlabel\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/label-professional-30007_8c44a758.png\tlabel-professional-30007\n90008\t30007\tThe Boardroom\tnavy\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/white-oxford-shirt-navy_b5ea8fae.webp\t30007-navy\n7\t30007\tThe Boardroom\twhite\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/white-oxford-shirt-white_d35b0e46.webp\tproducts/-UPthWscnsgkMGOtlSLxB.png\n",
+  "stderr": "",
+  "execution_time_ms": 1636
+}
