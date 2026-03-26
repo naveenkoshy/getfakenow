@@ -1105,3 +1105,109 @@ export async function upsertSetting(key: string, value: string) {
   }
   return db.insert(siteSettings).values({ key, value });
 }
+
+
+// ============ CSV Export Helpers ============
+
+/**
+ * Get all products for CSV export (no pagination, includes category name)
+ */
+export async function getAllProductsForExport() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({
+    id: products.id,
+    name: products.name,
+    slug: products.slug,
+    description: products.description,
+    price: products.price,
+    compareAtPrice: products.compareAtPrice,
+    sku: products.sku,
+    weight: products.weight,
+    categoryId: products.categoryId,
+    categoryName: categories.name,
+    stockQuantity: products.stockQuantity,
+    imageUrl: products.imageUrl,
+    productType: products.productType,
+    featured: products.featured,
+    active: products.active,
+    metaTitle: products.metaTitle,
+    metaDescription: products.metaDescription,
+    createdAt: products.createdAt,
+    updatedAt: products.updatedAt,
+  })
+    .from(products)
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+    .orderBy(desc(products.updatedAt));
+  
+  return result;
+}
+
+/**
+ * Get all orders for CSV export (no pagination, includes customer email and line items summary)
+ */
+export async function getAllOrdersForExport(filters?: { status?: string; paymentStatus?: string; startDate?: Date; endDate?: Date }) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const conditions: any[] = [];
+  
+  if (filters?.status) {
+    conditions.push(eq(orders.status, filters.status as any));
+  }
+  if (filters?.paymentStatus) {
+    conditions.push(eq(orders.paymentStatus, filters.paymentStatus as any));
+  }
+  if (filters?.startDate) {
+    conditions.push(gte(orders.createdAt, filters.startDate));
+  }
+  if (filters?.endDate) {
+    conditions.push(lte(orders.createdAt, filters.endDate));
+  }
+  
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  
+  const result = await db.select({
+    id: orders.id,
+    orderNumber: orders.orderNumber,
+    status: orders.status,
+    paymentStatus: orders.paymentStatus,
+    totalAmount: orders.totalAmount,
+    shippingCost: orders.shippingCost,
+    shippingName: orders.shippingName,
+    shippingEmail: orders.shippingEmail,
+    shippingPhone: orders.shippingPhone,
+    shippingAddress: orders.shippingAddress,
+    shippingCity: orders.shippingCity,
+    shippingState: orders.shippingState,
+    shippingPostalCode: orders.shippingPostalCode,
+    shippingCountry: orders.shippingCountry,
+    shippingMethod: orders.shippingMethod,
+    trackingNumber: orders.trackingNumber,
+    trackingUrl: orders.trackingUrl,
+    paymentIntentId: orders.paymentIntentId,
+    refundedAmount: orders.refundedAmount,
+    notes: orders.notes,
+    customerEmail: users.email,
+    customerName: users.name,
+    createdAt: orders.createdAt,
+    updatedAt: orders.updatedAt,
+  })
+    .from(orders)
+    .leftJoin(users, eq(orders.userId, users.id))
+    .where(whereClause)
+    .orderBy(desc(orders.createdAt));
+  
+  // Enrich with order items summary
+  const enriched = await Promise.all(
+    result.map(async (order) => {
+      const items = await db.select().from(orderItems).where(eq(orderItems.orderId, order.id));
+      const itemsSummary = items.map(i => `${i.productName} x${i.quantity} (${i.size}/${i.color})`).join('; ');
+      const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+      return { ...order, itemsSummary, itemCount };
+    })
+  );
+  
+  return enriched;
+}

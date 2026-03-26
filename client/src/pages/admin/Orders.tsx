@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { Search, Eye, Package } from "lucide-react";
+import { Search, Eye, Package, Download } from "lucide-react";
 import { AdminOrderDetailModal } from "@/components/AdminOrderDetailModal";
 
 export default function AdminOrders() {
@@ -26,6 +26,7 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   
   const { data: orders, isLoading } = trpc.admin.orders.list.useQuery();
   const { data: selectedOrder } = trpc.orders.getById.useQuery(
@@ -39,6 +40,36 @@ export default function AdminOrders() {
       utils.admin.orders.list.invalidate();
     },
   });
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const filters: Record<string, string> = {};
+      if (statusFilter !== "all") {
+        filters.status = statusFilter;
+      }
+      const result = await utils.admin.export.orders.fetch(
+        Object.keys(filters).length > 0 ? filters : undefined
+      );
+      if (result && result.csv) {
+        // Add BOM for Excel compatibility
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + result.csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      alert('Failed to export orders. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const formatPrice = (cents: number) => {
     return `RM${(cents / 100).toFixed(2)}`;
@@ -97,6 +128,14 @@ export default function AdminOrders() {
               Manage customer orders and fulfillment
             </p>
           </div>
+          <Button
+            variant="outline"
+            onClick={handleExportCSV}
+            disabled={isExporting || isLoading}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            {isExporting ? "Exporting..." : "Export CSV"}
+          </Button>
         </div>
 
         {/* Filters */}

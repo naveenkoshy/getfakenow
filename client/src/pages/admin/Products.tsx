@@ -11,11 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { trpc } from "@/lib/trpc";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Download } from "lucide-react";
 import { Link } from "wouter";
 
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
   const { data: productsData, isLoading } = trpc.admin.products.list.useQuery({});
   const products = productsData?.products;
   const utils = trpc.useUtils();
@@ -35,6 +36,30 @@ export default function AdminProducts() {
       await deleteMutation.mutateAsync({ id });
     } catch (error) {
       alert('Failed to delete product');
+    }
+  };
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const result = await utils.admin.export.products.fetch();
+      if (result && result.csv) {
+        // Add BOM for Excel compatibility
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + result.csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      alert('Failed to export products. Please try again.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -58,12 +83,22 @@ export default function AdminProducts() {
               Manage your product catalog and inventory
             </p>
           </div>
-          <Button asChild>
-            <Link href="/admin/products/new">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Product
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={handleExportCSV}
+              disabled={isExporting || isLoading}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {isExporting ? "Exporting..." : "Export CSV"}
+            </Button>
+            <Button asChild>
+              <Link href="/admin/products/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Search */}

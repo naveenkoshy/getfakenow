@@ -1355,6 +1355,126 @@ export const appRouter = router({
           return enriched;
         }),
     }),
+
+    // ---- CSV Export ----
+    export: router({
+      products: adminProcedure.query(async ({ ctx }) => {
+        const products = await db.getAllProductsForExport();
+        
+        const headers = [
+          'ID', 'Name', 'Slug', 'Description', 'Price (RM)', 'Compare At Price (RM)',
+          'SKU', 'Weight (g)', 'Category', 'Stock Quantity', 'Image URL',
+          'Product Type', 'Featured', 'Active', 'Meta Title', 'Meta Description',
+          'Created At', 'Updated At'
+        ];
+        
+        const rows = products.map(p => [
+          p.id,
+          p.name,
+          p.slug,
+          (p.description || '').replace(/[\r\n]+/g, ' ').replace(/"/g, '""'),
+          (p.price / 100).toFixed(2),
+          p.compareAtPrice ? (p.compareAtPrice / 100).toFixed(2) : '',
+          p.sku || '',
+          p.weight || '',
+          p.categoryName || `Category ${p.categoryId}`,
+          p.stockQuantity,
+          p.imageUrl || '',
+          p.productType,
+          p.featured ? 'Yes' : 'No',
+          p.active ? 'Yes' : 'No',
+          p.metaTitle || '',
+          (p.metaDescription || '').replace(/[\r\n]+/g, ' ').replace(/"/g, '""'),
+          p.createdAt ? new Date(p.createdAt).toISOString() : '',
+          p.updatedAt ? new Date(p.updatedAt).toISOString() : '',
+        ]);
+        
+        const csvContent = [
+          headers.map(h => `"${h}"`).join(','),
+          ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        
+        await db.logActivity({
+          userId: ctx.user.id,
+          action: 'export.products.csv',
+          entityType: 'product',
+          details: JSON.stringify({ count: products.length }),
+        });
+        
+        return { csv: csvContent, count: products.length, filename: `products-export-${new Date().toISOString().slice(0,10)}.csv` };
+      }),
+
+      orders: adminProcedure
+        .input(z.object({
+          status: z.string().optional(),
+          paymentStatus: z.string().optional(),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+        }).optional())
+        .query(async ({ ctx, input }) => {
+          const orders = await db.getAllOrdersForExport({
+            status: input?.status,
+            paymentStatus: input?.paymentStatus,
+            startDate: input?.startDate ? new Date(input.startDate) : undefined,
+            endDate: input?.endDate ? new Date(input.endDate) : undefined,
+          });
+          
+          const headers = [
+            'Order ID', 'Order Number', 'Status', 'Payment Status',
+            'Total (RM)', 'Shipping Cost (RM)', 'Refunded (RM)',
+            'Customer Name', 'Customer Email',
+            'Shipping Name', 'Shipping Email', 'Shipping Phone',
+            'Shipping Address', 'City', 'State', 'Postal Code', 'Country',
+            'Shipping Method', 'Tracking Number', 'Tracking URL',
+            'Items Count', 'Items Summary',
+            'Payment Intent ID', 'Notes',
+            'Created At', 'Updated At'
+          ];
+          
+          const rows = orders.map(o => [
+            o.id,
+            o.orderNumber,
+            o.status,
+            o.paymentStatus,
+            (o.totalAmount / 100).toFixed(2),
+            (o.shippingCost / 100).toFixed(2),
+            (o.refundedAmount / 100).toFixed(2),
+            o.customerName || '',
+            o.customerEmail || '',
+            o.shippingName,
+            o.shippingEmail,
+            o.shippingPhone,
+            (o.shippingAddress || '').replace(/[\r\n]+/g, ' '),
+            o.shippingCity,
+            o.shippingState,
+            o.shippingPostalCode,
+            o.shippingCountry,
+            o.shippingMethod || '',
+            o.trackingNumber || '',
+            o.trackingUrl || '',
+            o.itemCount,
+            o.itemsSummary,
+            o.paymentIntentId || '',
+            (o.notes || '').replace(/[\r\n]+/g, ' '),
+            o.createdAt ? new Date(o.createdAt).toISOString() : '',
+            o.updatedAt ? new Date(o.updatedAt).toISOString() : '',
+          ]);
+          
+          const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+          ].join('\n');
+          
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'export.orders.csv',
+            entityType: 'order',
+            details: JSON.stringify({ count: orders.length, filters: input }),
+          });
+          
+          return { csv: csvContent, count: orders.length, filename: `orders-export-${new Date().toISOString().slice(0,10)}.csv` };
+        }),
+    }),
   }),
 });
 

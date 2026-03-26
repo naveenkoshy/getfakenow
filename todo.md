@@ -229,3 +229,10 @@
 - [x] Frontend: Customer profile page (edit info, manage consent, view order history)
 - [ ] Frontend: Admin customer detail with tags, events timeline, marketing status
 - [x] Seed naveen.edmarker@gmail.com as super admin
+
+## CSV Export Feature
+- [x] Backend: Add CSV export procedure for products (all fields, admin-only)
+- [x] Backend: Add CSV export procedure for orders (all fields, admin-only)
+- [x] Frontend: Add "Export CSV" button to admin Products page
+- [x] Frontend: Add "Export CSV" button to admin Orders page
+- [x] Write tests for CSV export procedures
