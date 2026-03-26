@@ -45,6 +45,9 @@ export const users = mysqlTable("users", {
   averageOrderValue: int("averageOrderValue").default(0).notNull(), // In sen
   firstPurchaseDate: timestamp("firstPurchaseDate"),
   lastPurchaseDate: timestamp("lastPurchaseDate"),
+  // Email verification
+  emailVerificationToken: varchar("emailVerificationToken", { length: 255 }),
+  emailVerificationExpiry: timestamp("emailVerificationExpiry"),
   // Password reset
   resetToken: varchar("resetToken", { length: 255 }),
   resetTokenExpiry: timestamp("resetTokenExpiry"),
@@ -196,7 +199,7 @@ export const orders = mysqlTable("orders", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   orderNumber: varchar("orderNumber", { length: 64 }).notNull().unique(),
-  status: mysqlEnum("status", ["pending", "processing", "shipped", "delivered", "cancelled"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "processing", "shipped", "delivered", "cancelled", "return_requested", "returned"]).default("pending").notNull(),
   totalAmount: int("totalAmount").notNull(), // Total in cents
   shippingCost: int("shippingCost").default(0).notNull(), // Shipping fee in sen
   // Shipping details

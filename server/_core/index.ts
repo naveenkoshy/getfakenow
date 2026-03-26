@@ -40,6 +40,13 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // Trust proxy for accurate IP detection behind reverse proxy
+  app.set('trust proxy', 1);
+
+  // Rate limiting on auth and API endpoints
+  const { registerRateLimiters } = await import("../rateLimit");
+  registerRateLimiters(app);
   // SEO: Sitemap and robots.txt
   app.get("/sitemap.xml", async (req, res) => {
     try {

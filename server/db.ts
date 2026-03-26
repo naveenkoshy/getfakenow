@@ -511,7 +511,7 @@ export async function getAllOrders(filters?: { status?: string; paymentStatus?: 
   return { orders: result, total };
 }
 
-export async function updateOrderStatus(id: number, status: "pending" | "processing" | "shipped" | "delivered" | "cancelled") {
+export async function updateOrderStatus(id: number, status: "pending" | "processing" | "shipped" | "delivered" | "cancelled" | "return_requested" | "returned") {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return db.update(orders).set({ status }).where(eq(orders.id, id));

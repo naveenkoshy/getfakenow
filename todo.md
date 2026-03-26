@@ -323,3 +323,23 @@
 - [x] Upload all 138 recolored images to S3 CDN
 - [x] Update all 138 database records with new CDN URLs
 - [x] Verify consistency on product pages (Trust Me I'm Fake, The Alibi)
+
+## PRD Feedback Fixes — P0 (Launch Blockers)
+- [x] P0: Replace console.log email with real email transport (using platform notification system)
+- [x] P0: Add rate limiting on auth endpoints (login, register, forgotPassword)
+
+## PRD Feedback Fixes — P1 (High Priority)
+- [x] P1: Inventory concurrency — wrap checkout in DB transaction with SELECT FOR UPDATE
+- [x] P1: Add flat-rate shipping line item to Stripe checkout (free over RM75)
+- [x] P1: Enforce email verification before allowing checkout
+
+## PRD Feedback Fixes — P2 (Medium Priority)
+- [x] P2: Add return_requested and returned to order status enum
+- [x] P2: Build basic return request flow (customer initiate + admin process)
+- [x] P2: Add data anonymization procedure for PDPA compliance
+- [x] P2: Add database indexes on orders.createdAt, orders.userId, products.categoryId, orderItems.orderId
+
+## PRD Feedback Fixes — Tests
+- [x] Write tests for rate limiting
+- [x] Write tests for inventory concurrency locking
+- [x] Write tests for email verification enforcement

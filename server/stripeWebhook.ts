@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import * as db from "./db";
 import { constructWebhookEvent } from "./stripe";
+import { sendOrderConfirmationEmail } from "./email";
 
 /**
  * Handle Stripe webhook events
@@ -18,6 +19,12 @@ export async function handleStripeWebhook(
       return { success: true, message: "Checkout session completed" };
     }
 
+    case "checkout.session.expired": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      await handleCheckoutExpired(session);
+      return { success: true, message: "Checkout session expired — stock released" };
+    }
+
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log(`[Stripe Webhook] Payment succeeded: ${paymentIntent.id}`);
@@ -27,7 +34,6 @@ export async function handleStripeWebhook(
     case "payment_intent.payment_failed": {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log(`[Stripe Webhook] Payment failed: ${paymentIntent.id}`);
-      // TODO: Handle failed payment (update order status, notify customer)
       return { success: true, message: "Payment intent failed" };
     }
 
@@ -39,84 +45,151 @@ export async function handleStripeWebhook(
 
 /**
  * Handle successful checkout session completion
- * - Update order status from "Pending" to "Processing"
- * - Deduct inventory for ordered items
+ * - Update order status from "pending" to "processing"
+ * - Send order confirmation email
+ * 
+ * NOTE: Stock was already reserved (decremented) at checkout session creation time
+ * inside a database transaction with row-level locking. No stock changes needed here.
  */
 async function handleCheckoutCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
   const orderId = session.metadata?.orderId;
+  const orderNumber = session.metadata?.order_number;
 
   if (!orderId) {
     console.error("[Stripe Webhook] No orderId in session metadata");
     return;
   }
 
-  console.log(`[Stripe Webhook] Processing order ${orderId}`);
+  console.log(`[Stripe Webhook] Processing completed checkout for order ${orderId}`);
 
   try {
     const database = await db.getDb();
-    if (!database) {
-      throw new Error("Database connection failed");
-    }
+    if (!database) throw new Error("Database connection failed");
 
-    const { orders, orderItems, products } = await import("../drizzle/schema");
+    const { orders, orderItems } = await import("../drizzle/schema");
     const { eq } = await import("drizzle-orm");
 
     // Get order details
-    const order = await database
+    const [order] = await database
       .select()
       .from(orders)
       .where(eq(orders.id, parseInt(orderId)))
       .limit(1);
 
-    if (!order || order.length === 0) {
+    if (!order) {
       console.error(`[Stripe Webhook] Order ${orderId} not found`);
       return;
     }
 
-    // Get order items
-    const items = await database
-      .select()
-      .from(orderItems)
-      .where(eq(orderItems.orderId, parseInt(orderId)));
-
-    // Deduct inventory for each item
-    for (const item of items) {
-      const currentProduct = await database
-        .select()
-        .from(products)
-        .where(eq(products.id, item.productId))
-        .limit(1);
-
-      if (currentProduct && currentProduct.length > 0) {
-        const newStock = currentProduct[0].stockQuantity - item.quantity;
-        await database
-          .update(products)
-          .set({ stockQuantity: newStock })
-          .where(eq(products.id, item.productId));
-      }
-
-      console.log(
-        `[Stripe Webhook] Deducted ${item.quantity} units from product ${item.productId}`
-      );
-    }
-
-    // Update order status to "processing"
+    // Update order status to "processing" and payment to "paid"
     await database
       .update(orders)
       .set({
         status: "processing",
         paymentStatus: "paid",
+        paymentIntentId: session.payment_intent as string || null,
       })
       .where(eq(orders.id, parseInt(orderId)));
 
-    console.log(`[Stripe Webhook] Order ${orderId} updated to Processing`);
+    console.log(`[Stripe Webhook] Order ${orderId} updated to Processing/Paid`);
 
-    // TODO: Send order confirmation email to customer
-    // await sendOrderConfirmationEmail(order[0]);
+    // Send order confirmation email
+    try {
+      const items = await database
+        .select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, parseInt(orderId)));
+
+      const origin = session.success_url?.split("/order-confirmation")[0] || "https://getfakenow.com";
+      await sendOrderConfirmationEmail(
+        order.shippingEmail,
+        order.orderNumber,
+        order.totalAmount,
+        items.map((i) => ({ name: i.productName, quantity: i.quantity, price: i.productPrice * i.quantity })),
+        origin
+      );
+      console.log(`[Stripe Webhook] Order confirmation email sent for ${order.orderNumber}`);
+    } catch (emailErr) {
+      console.warn("[Stripe Webhook] Failed to send confirmation email:", emailErr);
+      // Non-fatal: order is still processed
+    }
   } catch (error) {
     console.error("[Stripe Webhook] Error processing checkout:", error);
+    throw error;
+  }
+}
+
+/**
+ * Handle expired checkout session
+ * - Release reserved stock by incrementing quantities back
+ * - Cancel the pending order
+ * 
+ * This ensures stock is not permanently locked when a customer abandons checkout.
+ */
+async function handleCheckoutExpired(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  const orderId = session.metadata?.orderId;
+
+  if (!orderId) {
+    console.error("[Stripe Webhook] No orderId in expired session metadata");
+    return;
+  }
+
+  console.log(`[Stripe Webhook] Releasing stock for expired session, order ${orderId}`);
+
+  try {
+    const database = await db.getDb();
+    if (!database) throw new Error("Database connection failed");
+
+    const { orders, orderItems, products } = await import("../drizzle/schema");
+    const { eq, sql: sqlOp } = await import("drizzle-orm");
+
+    // Get order to check it's still pending (not already processed)
+    const [order] = await database
+      .select()
+      .from(orders)
+      .where(eq(orders.id, parseInt(orderId)))
+      .limit(1);
+
+    if (!order) {
+      console.error(`[Stripe Webhook] Order ${orderId} not found for stock release`);
+      return;
+    }
+
+    // Only release stock if the order is still pending (not already paid/processed)
+    if (order.paymentStatus !== "pending") {
+      console.log(`[Stripe Webhook] Order ${orderId} already processed (${order.paymentStatus}), skipping stock release`);
+      return;
+    }
+
+    // Get order items and restore stock
+    const items = await database
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, parseInt(orderId)));
+
+    for (const item of items) {
+      await database.execute(
+        sqlOp`UPDATE products SET stockQuantity = stockQuantity + ${item.quantity} WHERE id = ${item.productId}`
+      );
+      console.log(`[Stripe Webhook] Restored ${item.quantity} units to product ${item.productId}`);
+    }
+
+    // Cancel the order
+    await database
+      .update(orders)
+      .set({
+        status: "cancelled",
+        paymentStatus: "failed",
+      })
+      .where(eq(orders.id, parseInt(orderId)));
+
+    console.log(`[Stripe Webhook] Order ${orderId} cancelled, stock released`);
+  } catch (error) {
+    console.error("[Stripe Webhook] Error releasing stock:", error);
     throw error;
   }
 }

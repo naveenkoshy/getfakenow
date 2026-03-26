@@ -78,6 +78,20 @@
       "when": 1774502251686,
       "tag": "0010_third_whiplash",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1774533746444,
+      "tag": "0011_natural_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1774533902689,
+      "tag": "0012_empty_mother_askani",
+      "breakpoints": true
     }
   ]
 }

@@ -11,6 +11,7 @@ import { createCheckoutSession } from "./stripe";
 import * as auth from "./auth";
 import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
+import { sendPasswordResetEmail, sendVerificationEmail, sendOrderConfirmationEmail } from "./email";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -81,12 +82,13 @@ export const appRouter = router({
     
     requestPasswordReset: publicProcedure
       .input(z.object({ email: z.string().email() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const user = await auth.getUserByEmail(input.email);
         if (!user) return { success: true, message: 'If email exists, reset link sent' };
         const token = auth.generateResetToken();
         await auth.setResetToken(input.email, token);
-        console.log(`Password reset token for ${input.email}: ${token}`);
+        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        await sendPasswordResetEmail(input.email, token, origin);
         return { success: true, message: 'If email exists, reset link sent' };
       }),
     
@@ -109,6 +111,50 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+
+    // Send email verification
+    sendVerificationEmail: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.emailVerified) {
+          return { success: true, message: 'Email already verified' };
+        }
+        const token = auth.generateResetToken(); // reuse secure token generator
+        const expiry = new Date();
+        expiry.setHours(expiry.getHours() + 24); // 24 hour validity
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        const { users } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        await dbConn.update(users).set({
+          emailVerificationToken: token,
+          emailVerificationExpiry: expiry,
+        }).where(eq(users.id, ctx.user.id));
+        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        await sendVerificationEmail(ctx.user.email || '', token, origin);
+        return { success: true, message: 'Verification email sent' };
+      }),
+
+    // Verify email with token
+    verifyEmail: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        const { users } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        const [user] = await dbConn.select().from(users)
+          .where(eq(users.emailVerificationToken, input.token)).limit(1);
+        if (!user) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid verification token' });
+        if (user.emailVerificationExpiry && new Date() > user.emailVerificationExpiry) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Verification token has expired. Please request a new one.' });
+        }
+        await dbConn.update(users).set({
+          emailVerified: true,
+          emailVerificationToken: null,
+          emailVerificationExpiry: null,
+        }).where(eq(users.id, user.id));
+        return { success: true, message: 'Email verified successfully' };
+      }),
 
     // Customer profile update (onboarding + profile page)
     updateProfile: protectedProcedure
@@ -278,53 +324,102 @@ export const appRouter = router({
         shippingCountry: z.string().default("Malaysia"),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Enforce email verification before checkout
+        if (!ctx.user.emailVerified) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Please verify your email address before checking out. Check your inbox for a verification link.' });
+        }
+
         const cartItems = await db.getCartItems(ctx.user.id);
         if (cartItems.length === 0) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cart is empty' });
-        
-        for (const item of cartItems) {
-          if (!item.product) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found in cart' });
-          if (item.product.stockQuantity < item.quantity) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: `Insufficient stock for ${item.product.name}` });
+
+        // Shipping: RM 8 flat rate, free over RM 75 (7500 sen)
+        const FREE_SHIPPING_THRESHOLD = 7500; // 75 MYR in sen
+        const FLAT_SHIPPING_FEE = 800; // 8 MYR in sen
+
+        // Use a database transaction with row-level locking to prevent overselling
+        const database = await db.getDb();
+        if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+        const { products: productsTable } = await import("../drizzle/schema");
+        const { eq: eqOp, sql: sqlOp } = await import("drizzle-orm");
+
+        const result = await database.transaction(async (tx) => {
+          // Lock and verify stock for each product in the cart
+          for (const item of cartItems) {
+            if (!item.product) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found in cart' });
+
+            // SELECT ... FOR UPDATE locks the row until transaction completes
+            const [lockedProduct] = await tx.execute(
+              sqlOp`SELECT id, stockQuantity FROM products WHERE id = ${item.productId} FOR UPDATE`
+            ) as any;
+
+            const stock = Array.isArray(lockedProduct) ? lockedProduct[0]?.stockQuantity : lockedProduct?.stockQuantity;
+            if (stock === undefined || stock < item.quantity) {
+              throw new TRPCError({ code: 'BAD_REQUEST', message: `Insufficient stock for ${item.product.name}. Only ${stock ?? 0} left.` });
+            }
+
+            // Reserve stock immediately by decrementing
+            await tx.execute(
+              sqlOp`UPDATE products SET stockQuantity = stockQuantity - ${item.quantity} WHERE id = ${item.productId}`
+            );
           }
-        }
-        
-        const orderNumber = `ORD-${nanoid(10).toUpperCase()}`;
-        const totalAmount = cartItems.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
-        
-        await db.createOrder({
-          userId: ctx.user.id, orderNumber, totalAmount,
-          shippingName: input.shippingName, shippingEmail: input.shippingEmail,
-          shippingPhone: input.shippingPhone, shippingAddress: input.shippingAddress,
-          shippingCity: input.shippingCity, shippingState: input.shippingState,
-          shippingPostalCode: input.shippingPostalCode, shippingCountry: input.shippingCountry,
-          status: 'pending', paymentStatus: 'pending',
+
+          // Calculate totals
+          const subtotal = cartItems.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
+          const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_FEE;
+          const totalAmount = subtotal + shippingCost;
+          const orderNumber = `ORD-${nanoid(10).toUpperCase()}`;
+
+          // Create order within the same transaction
+          await tx.insert((await import("../drizzle/schema")).orders).values({
+            userId: ctx.user.id, orderNumber, totalAmount, shippingCost,
+            shippingName: input.shippingName, shippingEmail: input.shippingEmail,
+            shippingPhone: input.shippingPhone, shippingAddress: input.shippingAddress,
+            shippingCity: input.shippingCity, shippingState: input.shippingState,
+            shippingPostalCode: input.shippingPostalCode, shippingCountry: input.shippingCountry,
+            status: 'pending', paymentStatus: 'pending',
+          });
+
+          const [orderRow] = await tx.select().from((await import("../drizzle/schema")).orders)
+            .where(eqOp((await import("../drizzle/schema")).orders.orderNumber, orderNumber)).limit(1);
+          if (!orderRow) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create order' });
+
+          for (const item of cartItems) {
+            if (!item.product) continue;
+            await tx.insert((await import("../drizzle/schema")).orderItems).values({
+              orderId: orderRow.id, productId: item.productId,
+              productName: item.product.name, productPrice: item.product.price,
+              quantity: item.quantity, size: item.size, color: item.color,
+              subtotal: item.product.price * item.quantity,
+            });
+          }
+
+          return { orderNumber, totalAmount, shippingCost, orderId: orderRow.id };
         });
-        
-        const order = await db.getOrderByNumber(orderNumber);
-        if (!order) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create order' });
-        
-        for (const item of cartItems) {
-          if (!item.product) continue;
-          await db.createOrderItem({
-            orderId: order.id, productId: item.productId,
-            productName: item.product.name, productPrice: item.product.price,
-            quantity: item.quantity, size: item.size, color: item.color,
-            subtotal: item.product.price * item.quantity,
+
+        // Create Stripe session outside the DB transaction
+        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        const stripeItems = cartItems.map(item => ({
+          name: item.product!.name, description: item.product!.description || undefined,
+          price: item.product!.price, quantity: item.quantity,
+          images: item.product!.imageUrl ? [item.product!.imageUrl] : undefined,
+        }));
+
+        // Add shipping as a line item if applicable
+        if (result.shippingCost > 0) {
+          stripeItems.push({
+            name: 'Shipping (Standard)', description: 'Flat rate shipping within Malaysia',
+            price: result.shippingCost, quantity: 1, images: undefined,
           });
         }
-        
-        const origin = ctx.req.headers.origin || 'http://localhost:3000';
+
         const session = await createCheckoutSession({
           userId: ctx.user.id, userEmail: ctx.user.email || '', userName: ctx.user.name || '',
-          items: cartItems.map(item => ({
-            name: item.product!.name, description: item.product!.description || undefined,
-            price: item.product!.price, quantity: item.quantity,
-            images: item.product!.imageUrl ? [item.product!.imageUrl] : undefined,
-          })),
-          origin, orderId: order.id, orderNumber: order.orderNumber,
+          items: stripeItems,
+          origin, orderId: result.orderId, orderNumber: result.orderNumber,
         });
-        
-        return { sessionId: session.id, url: session.url, orderNumber: order.orderNumber };
+
+        return { sessionId: session.id, url: session.url, orderNumber: result.orderNumber };
       }),
   }),
 
@@ -354,6 +449,35 @@ export const appRouter = router({
         }
         const items = await db.getOrderItems(order.id);
         return { ...order, items };
+      }),
+
+    // Customer-initiated return request
+    requestReturn: protectedProcedure
+      .input(z.object({
+        orderId: z.number(),
+        reason: z.string().min(10, 'Please provide a reason (at least 10 characters)'),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const order = await db.getOrderById(input.orderId);
+        if (!order) throw new TRPCError({ code: 'NOT_FOUND', message: 'Order not found' });
+        if (order.userId !== ctx.user.id) throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        if (order.status !== 'delivered') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Returns can only be requested for delivered orders' });
+        }
+        // Check 14-day return window
+        const deliveredDaysAgo = (Date.now() - new Date(order.updatedAt).getTime()) / (1000 * 60 * 60 * 24);
+        if (deliveredDaysAgo > 14) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Return window has expired (14 days from delivery)' });
+        }
+        await db.updateOrderStatus(input.orderId, 'return_requested');
+        await db.addOrderStatusHistory({
+          orderId: input.orderId,
+          previousStatus: 'delivered',
+          newStatus: 'return_requested',
+          changedBy: ctx.user.id,
+          note: `Customer return request: ${input.reason}`,
+        });
+        return { success: true, message: 'Return request submitted. We will review it shortly.' };
       }),
   }),
 
@@ -461,7 +585,7 @@ export const appRouter = router({
       updateStatus: adminProcedure
         .input(z.object({
           id: z.number(),
-          status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
+          status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned']),
           note: z.string().optional(),
         }))
         .mutation(async ({ ctx, input }) => {
@@ -470,6 +594,22 @@ export const appRouter = router({
           
           const previousStatus = order.status;
           await db.updateOrderStatus(input.id, input.status);
+          
+          // When marking as "returned", restore stock for all items
+          if (input.status === 'returned') {
+            const database = await db.getDb();
+            if (database) {
+              const { orderItems: oiTable } = await import('../drizzle/schema');
+              const { eq: eqOp, sql: sqlOp } = await import('drizzle-orm');
+              const items = await database.select().from(oiTable).where(eqOp(oiTable.orderId, input.id));
+              for (const item of items) {
+                await database.execute(
+                  sqlOp`UPDATE products SET stockQuantity = stockQuantity + ${item.quantity} WHERE id = ${item.productId}`
+                );
+              }
+              console.log(`[Admin] Restored stock for ${items.length} items from returned order ${input.id}`);
+            }
+          }
           
           // Log status change
           await db.addOrderStatusHistory({
@@ -777,6 +917,72 @@ export const appRouter = router({
             details: JSON.stringify({ newRole: input.role }),
           });
           return { success: true };
+        }),
+
+      // PDPA/GDPR: Anonymize customer data (right to be forgotten)
+      anonymize: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ ctx, input }) => {
+          const user = await db.getUserById(input.id);
+          if (!user) throw new TRPCError({ code: 'NOT_FOUND', message: 'Customer not found' });
+          if (user.role === 'admin') throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot anonymize admin accounts' });
+
+          const anonymizedEmail = `deleted-${input.id}@anonymized.local`;
+          await db.updateUser(input.id, {
+            name: 'Deleted User',
+            email: anonymizedEmail,
+            phone: null,
+            passwordHash: null,
+            avatarUrl: null,
+            addressLine1: null,
+            addressLine2: null,
+            city: null,
+            state: null,
+            postalCode: null,
+            country: null,
+            googleId: null,
+            facebookId: null,
+            messengerPsid: null,
+            marketingConsent: false,
+            emailOptIn: false,
+            smsOptIn: false,
+            whatsappOptIn: false,
+            messengerOptIn: false,
+            resetToken: null,
+            resetTokenExpiry: null,
+            emailVerificationToken: null,
+            emailVerificationExpiry: null,
+            utmSource: null,
+            utmMedium: null,
+            utmCampaign: null,
+            referralSource: null,
+          });
+
+          // Anonymize shipping details on orders (keep order for accounting)
+          const database = await db.getDb();
+          if (database) {
+            const { orders: ordersTable } = await import('../drizzle/schema');
+            const { eq: eqOp } = await import('drizzle-orm');
+            await database.update(ordersTable).set({
+              shippingName: 'Deleted User',
+              shippingEmail: anonymizedEmail,
+              shippingPhone: '000-000-0000',
+              shippingAddress: 'Anonymized',
+              shippingCity: 'Anonymized',
+              shippingState: 'Anonymized',
+              shippingPostalCode: '00000',
+            }).where(eqOp(ordersTable.userId, input.id));
+          }
+
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'customer.anonymize',
+            entityType: 'user',
+            entityId: input.id,
+            details: JSON.stringify({ reason: 'PDPA/GDPR data deletion request' }),
+          });
+
+          return { success: true, message: 'Customer data anonymized. Order records retained for accounting.' };
         }),
     }),
 
