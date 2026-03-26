@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, slug, categoryId FROM products WHERE slug LIKE '%fake%' OR slug LIKE '%bro%' OR name LIKE '%Printed%' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, categoryId FROM products WHERE slug LIKE '%fake%' OR slug LIKE '%bro%' OR name LIKE '%Printed%' LIMIT 10;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Fake It Classic Tee",
+      "slug": "fake-it-classic-tee",
+      "categoryId": "30001"
+    },
+    {
+      "id": "30004",
+      "name": "Fake Signature Hoodie",
+      "slug": "fake-signature-hoodie",
+      "categoryId": "30001"
+    },
+    {
+      "id": "30010",
+      "name": "The Headliner",
+      "slug": "fake-script-cap",
+      "categoryId": "30003"
+    },
+    {
+      "id": "60001",
+      "name": "It's all Fake Tee",
+      "slug": "it-s-all-fake-tee",
+      "categoryId": "30001"
+    },
+    {
+      "id": "60002",
+      "name": "Fake is not Hate Tee",
+      "slug": "fake-is-not-hate-tee",
+      "categoryId": "30001"
+    },
+    {
+      "id": "60003",
+      "name": "Live Life. Stay Fake. Tee",
+      "slug": "live-life-stay-fake-tee",
+      "categoryId": "30001"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "categoryId": "30001"
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "slug": "life-is-fake-just-make-it",
+      "categoryId": "30001"
+    },
+    {
+      "id": "70003",
+      "name": "Fake Like My Office",
+      "slug": "fake-like-my-office",
+      "categoryId": "30001"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "categoryId": "30001"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategoryId\n30001\tFake It Classic Tee\tfake-it-classic-tee\t30001\n30004\tFake Signature Hoodie\tfake-signature-hoodie\t30001\n30010\tThe Headliner\tfake-script-cap\t30003\n60001\tIt's all Fake Tee\tit-s-all-fake-tee\t30001\n60002\tFake is not Hate Tee\tfake-is-not-hate-tee\t30001\n60003\tLive Life. Stay Fake. Tee\tlive-life-stay-fake-tee\t30001\n70001\tYou Fake Bro?\tyou-fake-bro\t30001\n70002\tLife is Fake, Just Make It\tlife-is-fake-just-make-it\t30001\n70003\tFake Like My Office\tfake-like-my-office\t30001\n70004\tThe Real Fake\tthe-real-fake\t30001\n",
+  "stderr": "",
+  "execution_time_ms": 1605
+}

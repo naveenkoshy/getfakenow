@@ -1,0 +1,49 @@
+{
+  "query": "SELECT description FROM products WHERE id = 70001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT description FROM products WHERE id = 70001;",
+  "rows": [
+    {
+      "description": "The one that started the conversation. Bold block print on heavyweight cotton that gets softer with every wash. People will ask. You won't have to explain."
+    },
+    {
+      "description": "MATERIALS:"
+    },
+    {
+      "description": "100% premium combed cotton"
+    },
+    {
+      "description": "220 GSM heavyweight jersey"
+    },
+    {
+      "description": "Ribbed crew neck"
+    },
+    {
+      "description": "Double-stitched hems"
+    },
+    {
+      "description": "Pre-shrunk fabric"
+    },
+    {
+      "description": "CARE:"
+    },
+    {
+      "description": "Machine wash cold, inside out"
+    },
+    {
+      "description": "Tumble dry low"
+    },
+    {
+      "description": "Do not bleach"
+    },
+    {
+      "description": "Iron on reverse side if needed"
+    },
+    {
+      "description": "DTG print — won't crack, peel, or fade"
+    }
+  ],
+  "messages": [],
+  "stdout": "description\nThe one that started the conversation. Bold block print on heavyweight cotton that gets softer with every wash. People will ask. You won't have to explain.\n\nMATERIALS:\n100% premium combed cotton\n220 GSM heavyweight jersey\nRibbed crew neck\nDouble-stitched hems\nPre-shrunk fabric\n\nCARE:\nMachine wash cold, inside out\nTumble dry low\nDo not bleach\nIron on reverse side if needed\nDTG print — won't crack, peel, or fade\n",
+  "stderr": "",
+  "execution_time_ms": 1571
+}

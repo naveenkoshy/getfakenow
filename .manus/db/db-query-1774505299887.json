@@ -1,0 +1,33 @@
+{
+  "query": "SELECT id, name, price, stockQuantity, featured, LEFT(description, 200) as desc_preview FROM products WHERE id IN (70001, 70002) LIMIT 2;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, price, stockQuantity, featured, LEFT(description, 200) as desc_preview FROM products WHERE id IN (70001, 70002) LIMIT 2;",
+  "rows": [
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "price": "4900",
+      "stockQuantity": "100",
+      "featured": "1",
+      "desc_preview": "The one that started the conversation. Bold block print on heavyweight cotton that gets softer with every wash. People will ask. You won't have to explain."
+    },
+    {
+      "id": "70002",
+      "name": "Life is Fake, Just Make It",
+      "price": "4900",
+      "stockQuantity": "100",
+      "featured": "1",
+      "desc_preview": "For the ones who stopped waiting for permission. Relaxed drop-shoulder cut with a print that reads like a personal motto. Wear it like you mean it."
+    }
+  ],
+  "messages": [
+    "MATERIALS:",
+    "100% premium combed cotton",
+    "220 G",
+    "MATERIALS:",
+    "100% premium combed cotton",
+    "220 GSM heavy"
+  ],
+  "stdout": "id\tname\tprice\tstockQuantity\tfeatured\tdesc_preview\n70001\tYou Fake Bro?\t4900\t100\t1\tThe one that started the conversation. Bold block print on heavyweight cotton that gets softer with every wash. People will ask. You won't have to explain.\n\nMATERIALS:\n100% premium combed cotton\n220 G\n70002\tLife is Fake, Just Make It\t4900\t100\t1\tFor the ones who stopped waiting for permission. Relaxed drop-shoulder cut with a print that reads like a personal motto. Wear it like you mean it.\n\nMATERIALS:\n100% premium combed cotton\n220 GSM heavy\n",
+  "stderr": "",
+  "execution_time_ms": 1694
+}

@@ -236,3 +236,10 @@
 - [x] Frontend: Add "Export CSV" button to admin Products page
 - [x] Frontend: Add "Export CSV" button to admin Orders page
 - [x] Write tests for CSV export procedures
+
+## 20 New Printed Tee Products
+- [x] Generate AI product images for all 20 new tees
+- [x] Upload all images to S3 CDN
+- [x] Write personality descriptions, material specs, and care instructions for all 20
+- [x] Seed all 20 products into database
+- [x] Verify products display correctly on storefront
