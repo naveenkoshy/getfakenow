@@ -151,3 +151,81 @@
 ## Hero & Shop Improvements
 - [x] Add Women's Line CTA button to hero section
 - [x] Fix shop page category filter to properly filter women's products
+
+## Seller Center Phase 1 — Admin Backend
+- [x] Schema: Add SKU, weight, compareAtPrice columns to products table
+- [x] Schema: Add shippingCost, trackingNumber, trackingUrl, notes, refundedAmount columns to orders table
+- [x] Schema: Create orderStatusHistory table for audit trail
+- [x] Schema: Create activityLog table for admin action logging
+- [x] Backend: Admin dashboard stats procedure (GMV, orders, customers, revenue trends)
+- [x] Backend: Admin orders list with filters (status, date range, search)
+- [x] Backend: Admin order detail with status update and notes
+- [x] Backend: Admin products CRUD with image upload (enhance existing)
+- [x] Backend: Admin inventory view procedure (stock levels, low stock alerts)
+- [x] Backend: Admin customer list with order history and lifetime value
+- [x] Backend: Admin analytics procedures (sales trends, product performance, category breakdown)
+- [x] Frontend: Admin sidebar layout with navigation (Dashboard, Orders, Products, Inventory, Customers, Analytics, Settings)
+- [x] Frontend: Admin dashboard page with KPI cards and revenue chart
+- [x] Frontend: Admin orders list page with filters and status badges
+- [x] Frontend: Admin order detail page with status timeline and actions
+- [x] Frontend: Admin products list page with stock, status, performance columns
+- [x] Frontend: Admin product create/edit form with image upload
+- [x] Frontend: Admin inventory management page with low stock alerts
+- [x] Frontend: Admin customer list page with search and lifetime value
+- [x] Frontend: Admin customer detail page with order history
+- [x] Frontend: Admin sales analytics page with date range selector and charts
+- [x] Frontend: Admin route protection (redirect non-admins)
+- [x] App.tsx: Register all admin routes under /admin/*
+
+## Seller Center Expanded Modules
+- [x] Schema: Create emailTemplates, campaigns, campaignRecipients tables
+- [x] Schema: Create banners, staticPages, contentBlocks tables
+- [x] Schema: Create navigationItems, mediaLibrary tables
+- [x] Schema: Create seoMetadata, redirects, shippingZones tables
+- [x] Schema: Create promotions, siteSettings tables
+- [x] Backend: Email templates CRUD procedures
+- [x] Backend: Campaigns CRUD with send/schedule procedures
+- [x] Backend: Cart recovery procedures
+- [x] Backend: Banners CRUD procedures
+- [x] Backend: Static pages and content blocks CRUD procedures
+- [x] Backend: Navigation items CRUD procedures
+- [x] Backend: Media library upload/list/delete procedures
+- [x] Backend: SEO metadata and redirects CRUD procedures
+- [x] Backend: Shipping zones CRUD procedures
+- [x] Backend: Promotions CRUD with validation procedures
+- [x] Backend: Site settings get/set procedures
+- [x] Backend: Activity log list procedure
+- [x] Frontend: Email Templates management page
+- [x] Frontend: Campaigns management page (broadcast messaging)
+- [x] Frontend: Banners management page (homepage slides)
+- [x] Frontend: CMS Pages management page (static pages + content blocks)
+- [x] Frontend: Navigation management page (header/footer links)
+- [x] Frontend: Media Library page (upload, search, copy URL)
+- [x] Frontend: Shipping zones management page
+- [x] Frontend: SEO management page (meta tags, redirects, settings)
+- [x] Frontend: Promotions management page (discount codes)
+- [x] Frontend: Categories management page
+- [x] Frontend: Analytics page (revenue trends, order status breakdown)
+- [x] Frontend: Settings page (store info, currency, social, messaging channels)
+- [x] Frontend: Activity Log page
+- [x] App.tsx: All 18 admin routes registered
+
+## Multi-Provider Auth & Customer Profiles
+- [x] Schema: Add phone, address fields (street, city, state, zip, country), addressVerified flag to users
+- [x] Schema: Add marketingConsent, consentDate, marketingChannel preferences to users
+- [x] Schema: Create customerTags table for segmentation/tagging
+- [x] Schema: Create customerEvents table for behavior tracking (page views, cart actions, purchases)
+- [x] Schema: Add authProvider field to track login source (manus, google, facebook)
+- [x] Schema: Add profileCompleted flag and onboardingStep tracker
+- [x] Backend: Google OAuth flow (client ID, callback, token exchange)
+- [x] Backend: Facebook OAuth flow (app ID, callback, token exchange)
+- [x] Backend: Customer profile update procedure (phone, address, marketing consent)
+- [ ] Backend: Address verification flow
+- [x] Backend: Customer tagging CRUD (admin can tag customers for segmentation)
+- [x] Backend: Customer event tracking procedure (log browsing, cart, purchase events)
+- [x] Backend: Marketing consent management (opt-in, opt-out, preference center)
+- [x] Frontend: Multi-provider login modal (Manus + Google + Facebook buttons + email/password)
+- [x] Frontend: Post-login onboarding form (name, phone, address, marketing consent)
+- [x] Frontend: Customer profile page (edit info, manage consent, view order history)
+- [ ] Frontend: Admin customer detail with tags, events timeline, marketing status
+- [x] Seed naveen.edmarker@gmail.com as super admin

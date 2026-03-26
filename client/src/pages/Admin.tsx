@@ -132,7 +132,7 @@ export default function Admin() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {products?.map((product) => (
+                        {products?.products?.map((product: any) => (
                           <TableRow key={product.id}>
                             <TableCell>
                               <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ export default function Admin() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {orders?.map((order) => (
+                        {orders?.orders?.map((order: any) => (
                           <TableRow key={order.id}>
                             <TableCell className="font-mono text-sm">{order.orderNumber}</TableCell>
                             <TableCell>

@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO users (open_id, name, email, role, auth_provider, login_method, email_verified, profile_completed, created_at, updated_at) VALUES ('admin-naveen-001', 'Naveen', 'naveen.edmarker@gmail.com', 'admin', 'email', 'email', 1, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE role = 'admin', name = 'Naveen';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute INSERT INTO users (open_id, name, email, role, auth_provider, login_method, email_verified, profile_completed, created_at, updated_at) VALUES ('admin-naveen-001', 'Naveen', 'naveen.edmarker@gmail.com', 'admin', 'email', 'email', 1, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE role = 'admin', name = 'Naveen';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'open_id' in 'field list'"
+  ]
+}

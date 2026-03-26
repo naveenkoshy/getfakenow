@@ -9,22 +9,45 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Warehouse,
+  Tag,
+  Truck,
+  Mail,
+  Megaphone,
+  Image,
+  FileText,
+  Search,
+  BarChart3,
+  ChevronDown,
+  ChevronRight,
+  Globe,
+  Navigation,
+  ShoppingBag,
+  MessageSquare,
+  Activity,
+  Store,
 } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
+}
+
+interface NavItem {
+  name: string;
+  href?: string;
+  icon: any;
+  children?: { name: string; href: string }[];
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { user, logout } = useAuth();
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { toast } = useToast();
+  const [expandedSections, setExpandedSections] = useState<string[]>(["Orders", "Products"]);
 
-  // Check if user is admin
   if (!user || user.role !== "admin") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -43,20 +66,87 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     await logout();
-    toast({ title: "Logged out", description: "You've been logged out successfully" });
+    toast.success("Logged out successfully");
     window.location.href = "/";
   };
 
-  const navigation = [
+  const toggleSection = (name: string) => {
+    setExpandedSections(prev => 
+      prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]
+    );
+  };
+
+  const navigation: NavItem[] = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Products", href: "/admin/products", icon: Package },
-    { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+    { 
+      name: "Orders", 
+      icon: ShoppingCart,
+      children: [
+        { name: "All Orders", href: "/admin/orders" },
+        { name: "Cancellations", href: "/admin/orders/cancellations" },
+        { name: "Returns", href: "/admin/orders/returns" },
+      ]
+    },
+    { 
+      name: "Products", 
+      icon: Package,
+      children: [
+        { name: "All Products", href: "/admin/products" },
+        { name: "Add Product", href: "/admin/products/new" },
+        { name: "Categories", href: "/admin/categories" },
+        { name: "Inventory", href: "/admin/inventory" },
+      ]
+    },
     { name: "Customers", href: "/admin/customers", icon: Users },
+    { 
+      name: "Marketing", 
+      icon: Megaphone,
+      children: [
+        { name: "Promotions", href: "/admin/promotions" },
+        { name: "Campaigns", href: "/admin/campaigns" },
+        { name: "Cart Recovery", href: "/admin/cart-recovery" },
+      ]
+    },
+    { 
+      name: "Messaging", 
+      icon: MessageSquare,
+      children: [
+        { name: "Email Templates", href: "/admin/email-templates" },
+        { name: "Message Log", href: "/admin/messages" },
+      ]
+    },
+    { 
+      name: "Content", 
+      icon: FileText,
+      children: [
+        { name: "Banners", href: "/admin/banners" },
+        { name: "Pages", href: "/admin/pages" },
+        { name: "Navigation", href: "/admin/navigation" },
+        { name: "Media Library", href: "/admin/media" },
+      ]
+    },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+    { 
+      name: "SEO", 
+      icon: Search,
+      children: [
+        { name: "Meta Tags", href: "/admin/seo" },
+        { name: "Redirects", href: "/admin/seo/redirects" },
+      ]
+    },
+    { name: "Shipping", href: "/admin/shipping", icon: Truck },
+    { name: "Activity Log", href: "/admin/activity", icon: Activity },
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
+  const isActive = (href: string) => location === href;
+  const isSectionActive = (item: NavItem) => {
+    if (item.href) return location === item.href;
+    return item.children?.some(child => location === child.href || location.startsWith(child.href + "/"));
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -67,17 +157,22 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-card border-r border-border transition-transform lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 transition-transform lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
+          <div className="flex items-center justify-between h-16 px-5 border-b border-gray-200">
             <Link href="/admin">
               <div className="flex items-center gap-2 cursor-pointer">
-                <span className="brand-cursive text-3xl text-primary">Fake</span>
-                <span className="text-xs text-muted-foreground font-light">Admin</span>
+                <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                  <Store className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <span className="brand-cursive text-xl text-red-600">Fake</span>
+                  <span className="text-[10px] text-gray-400 ml-1 font-medium tracking-wider uppercase">Seller Center</span>
+                </div>
               </div>
             </Link>
             <Button
@@ -91,49 +186,105 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
             {navigation.map((item) => {
-              const isActive = location === item.href;
+              if (item.children) {
+                const isExpanded = expandedSections.includes(item.name);
+                const sectionActive = isSectionActive(item);
+                return (
+                  <div key={item.name}>
+                    <button
+                      onClick={() => toggleSection(item.name)}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                        sectionActive
+                          ? "text-red-700 bg-red-50 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <item.icon className="h-[18px] w-[18px]" />
+                        <span>{item.name}</span>
+                      </div>
+                      {isExpanded ? (
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
+                    {isExpanded && (
+                      <div className="ml-5 pl-4 border-l border-gray-200 mt-0.5 mb-1 space-y-0.5">
+                        {item.children.map((child) => (
+                          <Link key={child.href} href={child.href}>
+                            <span
+                              className={`block px-3 py-2 rounded-md text-sm transition-colors cursor-pointer ${
+                                isActive(child.href)
+                                  ? "text-red-700 bg-red-50 font-medium"
+                                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              }`}
+                              onClick={() => setSidebarOpen(false)}
+                            >
+                              {child.name}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
-                <Link key={item.href} href={item.href}>
-                  <a
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-foreground"
+                <Link key={item.name} href={item.href!}>
+                  <span
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
+                      isActive(item.href!)
+                        ? "text-red-700 bg-red-50 font-medium"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <item.icon className="h-5 w-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </a>
+                    <item.icon className="h-[18px] w-[18px]" />
+                    <span>{item.name}</span>
+                  </span>
                 </Link>
               );
             })}
           </nav>
 
           {/* User section */}
-          <div className="p-4 border-t border-border">
+          <div className="p-3 border-t border-gray-200">
             <div className="flex items-center gap-3 mb-3 px-2">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-sm font-bold text-primary">
+              <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-bold text-red-600">
                   {user.name?.charAt(0).toUpperCase() || "A"}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user.name || "Admin"}</p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{user.name || "Admin"}</p>
+                <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 text-xs"
+                asChild
+              >
+                <Link href="/">
+                  <Globe className="h-3.5 w-3.5 mr-1" />
+                  Store
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
         </div>
       </aside>
@@ -141,7 +292,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 h-16 bg-background border-b border-border">
+        <header className="sticky top-0 z-30 h-14 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between h-full px-6">
             <Button
               variant="ghost"
@@ -152,10 +303,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <Menu className="h-5 w-5" />
             </Button>
 
-            <div className="flex items-center gap-4">
-              <Button asChild variant="outline" size="sm">
+            <div className="flex-1" />
+
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" size="sm" className="text-xs">
                 <Link href="/">
-                  View Store
+                  <Globe className="h-3.5 w-3.5 mr-1.5" />
+                  View Storefront
                 </Link>
               </Button>
             </div>

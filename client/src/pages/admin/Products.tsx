@@ -16,12 +16,13 @@ import { Link } from "wouter";
 
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: products, isLoading } = trpc.products.list.useQuery({});
+  const { data: productsData, isLoading } = trpc.admin.products.list.useQuery({});
+  const products = productsData?.products;
   const utils = trpc.useUtils();
   
-  const deleteMutation = trpc.products.delete.useMutation({
+  const deleteMutation = trpc.admin.products.delete.useMutation({
     onSuccess: () => {
-      utils.products.list.invalidate();
+      utils.admin.products.list.invalidate();
     },
   });
   

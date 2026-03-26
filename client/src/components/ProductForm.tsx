@@ -31,25 +31,25 @@ export function ProductForm({ productId, initialData, onSuccess }: ProductFormPr
   const [isUploading, setIsUploading] = useState(false);
 
   const utils = trpc.useUtils();
-  const createProduct = trpc.products.create.useMutation({
+  const createProduct = trpc.admin.products.create.useMutation({
     onSuccess: () => {
       toast.success("Product created successfully!");
-      utils.products.invalidate();
+      utils.admin.products.invalidate();
       resetForm();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Failed to create product: ${error.message}`);
     },
   });
   
-  const updateProduct = trpc.products.update.useMutation({
+  const updateProduct = trpc.admin.products.update.useMutation({
     onSuccess: () => {
       toast.success("Product updated successfully!");
-      utils.products.invalidate();
+      utils.admin.products.invalidate();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Failed to update product: ${error.message}`);
     },
   });

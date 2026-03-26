@@ -10,4 +10,10 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  // Google OAuth
+  googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+  // Facebook OAuth
+  facebookAppId: process.env.FACEBOOK_APP_ID ?? "",
+  facebookAppSecret: process.env.FACEBOOK_APP_SECRET ?? "",
 };

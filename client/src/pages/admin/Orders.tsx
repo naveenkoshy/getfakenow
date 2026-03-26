@@ -77,10 +77,11 @@ export default function AdminOrders() {
     }
   };
 
-  const filteredOrders = orders?.filter((order) => {
+  const filteredOrders = orders?.orders?.filter((order: any) => {
     const matchesSearch = 
       order.id.toString().includes(searchQuery) ||
-      order.userId.toString().includes(searchQuery);
+      order.userId.toString().includes(searchQuery) ||
+      (order.orderNumber || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -145,7 +146,7 @@ export default function AdminOrders() {
                   </TableCell>
                 </TableRow>
               ) : filteredOrders && filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
+                filteredOrders.map((order: any) => (
                   <TableRow key={order.id}>
                     <TableCell className="font-medium">#{order.id}</TableCell>
                     <TableCell>{order.user?.name || order.user?.email || `User ${order.userId}`}</TableCell>

@@ -13,9 +13,9 @@ export default function EditProduct() {
   const { data: product, isLoading } = trpc.products.getById.useQuery({ id: productId });
   const utils = trpc.useUtils();
   
-  const updateMutation = trpc.products.update.useMutation({
+  const updateMutation = trpc.admin.products.update.useMutation({
     onSuccess: () => {
-      utils.products.list.invalidate();
+      utils.admin.products.list.invalidate();
       utils.products.getById.invalidate({ id: productId });
       setLocation("/admin/products");
     },
