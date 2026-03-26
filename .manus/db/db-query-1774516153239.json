@@ -1,0 +1,30 @@
+{
+  "query": "SELECT DISTINCT c.name, c.id, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON p.categoryId = c.id GROUP BY c.id, c.name ORDER BY c.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT DISTINCT c.name, c.id, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON p.categoryId = c.id GROUP BY c.id, c.name ORDER BY c.name",
+  "rows": [
+    {
+      "name": "Accessories",
+      "id": "30003",
+      "product_count": "4"
+    },
+    {
+      "name": "Casual",
+      "id": "30001",
+      "product_count": "38"
+    },
+    {
+      "name": "Professional",
+      "id": "30002",
+      "product_count": "7"
+    },
+    {
+      "name": "Women",
+      "id": "30004",
+      "product_count": "20"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\tid\tproduct_count\nAccessories\t30003\t4\nCasual\t30001\t38\nProfessional\t30002\t7\nWomen\t30004\t20\n",
+  "stderr": "",
+  "execution_time_ms": 1593
+}

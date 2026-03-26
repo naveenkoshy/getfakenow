@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, name, slug FROM products WHERE name LIKE '%Boardroom%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM products WHERE name LIKE '%Boardroom%';",
+  "rows": [
+    {
+      "id": "30007",
+      "name": "The Boardroom",
+      "slug": "white-oxford-shirt"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\n30007\tThe Boardroom\twhite-oxford-shirt\n",
+  "stderr": "",
+  "execution_time_ms": 1581
+}

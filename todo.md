@@ -300,3 +300,12 @@
 ## Women's Size Guide
 - [x] Create women's measurement chart (bust, waist, hip) for XXS-4XL
 - [x] Update size guide modal to show women's chart for women's products and men's/unisex chart for others
+
+## Label-as-Collection System (like Levi's tabs)
+- [x] Map 5 label designs to 5 collections: HEADLINE (Printed Tees), ESSENTIAL (Casual), PROFESSIONAL (Business), WOMEN (Women's line), ACCESSORIES (Premium accessories)
+- [x] Identify 66 products where back collar is visible and label application is relevant
+- [x] Generate 66 back-collar label images across all 5 collections
+- [x] Upload 66 label images to S3 and insert into productImages table as 'label' color
+- [x] Add collection badge to product detail page (HEADLINE/ESSENTIAL/PROFESSIONAL/WOMEN/ACCESSORIES)
+- [x] Add clickable label image thumbnail on product detail page
+- [x] Filter label images out of color selector (only show black/white/navy)

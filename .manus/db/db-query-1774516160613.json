@@ -1,0 +1,45 @@
+{
+  "query": "SELECT p.id, p.name, p.slug FROM products p WHERE p.categoryId = '30002' ORDER BY p.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug FROM products p WHERE p.categoryId = '30002' ORDER BY p.name",
+  "rows": [
+    {
+      "id": "60006",
+      "name": "The Blueprint",
+      "slug": "indigo-chambray"
+    },
+    {
+      "id": "30007",
+      "name": "The Boardroom",
+      "slug": "white-oxford-shirt"
+    },
+    {
+      "id": "80007",
+      "name": "The Foundation",
+      "slug": "dress-slacks"
+    },
+    {
+      "id": "60005",
+      "name": "The Heritage",
+      "slug": "heritage-chambray"
+    },
+    {
+      "id": "30008",
+      "name": "The Redirect",
+      "slug": "light-blue-oxford"
+    },
+    {
+      "id": "80006",
+      "name": "The Standard",
+      "slug": "dress-shirt"
+    },
+    {
+      "id": "30009",
+      "name": "The Workhorse",
+      "slug": "classic-chambray-work-shirt"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\n60006\tThe Blueprint\tindigo-chambray\n30007\tThe Boardroom\twhite-oxford-shirt\n80007\tThe Foundation\tdress-slacks\n60005\tThe Heritage\theritage-chambray\n30008\tThe Redirect\tlight-blue-oxford\n80006\tThe Standard\tdress-shirt\n30009\tThe Workhorse\tclassic-chambray-work-shirt\n",
+  "stderr": "",
+  "execution_time_ms": 1604
+}

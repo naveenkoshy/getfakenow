@@ -1,0 +1,118 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE c.name IN ('Casual', 'Printed Tees') ORDER BY c.name, p.name LIMIT 50 OFFSET 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE c.name IN ('Casual', 'Printed Tees') ORDER BY c.name, p.name LIMIT 50 OFFSET 20",
+  "rows": [
+    {
+      "id": "150011",
+      "name": "No Cap, All Fake",
+      "slug": "no-cap-all-fake",
+      "category": "Casual"
+    },
+    {
+      "id": "150008",
+      "name": "Not Real. Not Sorry.",
+      "slug": "not-real-not-sorry",
+      "category": "Casual"
+    },
+    {
+      "id": "150017",
+      "name": "POV: Fake Shirt On Purpose",
+      "slug": "pov-fake-shirt-on-purpose",
+      "category": "Casual"
+    },
+    {
+      "id": "150010",
+      "name": "Read the Label",
+      "slug": "read-the-label",
+      "category": "Casual"
+    },
+    {
+      "id": "150019",
+      "name": "Rent Free, Full Price",
+      "slug": "rent-free-full-price",
+      "category": "Casual"
+    },
+    {
+      "id": "150012",
+      "name": "Situationship Shirt",
+      "slug": "situationship-shirt",
+      "category": "Casual"
+    },
+    {
+      "id": "80004",
+      "name": "The Diplomat",
+      "slug": "mandarin-collar",
+      "category": "Casual"
+    },
+    {
+      "id": "80001",
+      "name": "The Downtime",
+      "slug": "sweat-pants",
+      "category": "Casual"
+    },
+    {
+      "id": "150005",
+      "name": "The Fake Life Had Better Fabric",
+      "slug": "fake-life-better-fabric",
+      "category": "Casual"
+    },
+    {
+      "id": "80002",
+      "name": "The Forecast",
+      "slug": "windbreaker",
+      "category": "Casual"
+    },
+    {
+      "id": "80003",
+      "name": "The Introduction",
+      "slug": "polo-tee",
+      "category": "Casual"
+    },
+    {
+      "id": "70004",
+      "name": "The Real Fake",
+      "slug": "the-real-fake",
+      "category": "Casual"
+    },
+    {
+      "id": "80005",
+      "name": "The Understatement",
+      "slug": "v-neck-tee",
+      "category": "Casual"
+    },
+    {
+      "id": "30002",
+      "name": "Till You Make It Tee",
+      "slug": "till-you-make-it-tee",
+      "category": "Casual"
+    },
+    {
+      "id": "150009",
+      "name": "Traces of Authenticity",
+      "slug": "traces-of-authenticity",
+      "category": "Casual"
+    },
+    {
+      "id": "150001",
+      "name": "Trust Me, I'm Fake",
+      "slug": "trust-me-im-fake",
+      "category": "Casual"
+    },
+    {
+      "id": "150020",
+      "name": "Understood the Assignment",
+      "slug": "understood-the-assignment",
+      "category": "Casual"
+    },
+    {
+      "id": "70001",
+      "name": "You Fake Bro?",
+      "slug": "you-fake-bro",
+      "category": "Casual"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategory\n150011\tNo Cap, All Fake\tno-cap-all-fake\tCasual\n150008\tNot Real. Not Sorry.\tnot-real-not-sorry\tCasual\n150017\tPOV: Fake Shirt On Purpose\tpov-fake-shirt-on-purpose\tCasual\n150010\tRead the Label\tread-the-label\tCasual\n150019\tRent Free, Full Price\trent-free-full-price\tCasual\n150012\tSituationship Shirt\tsituationship-shirt\tCasual\n80004\tThe Diplomat\tmandarin-collar\tCasual\n80001\tThe Downtime\tsweat-pants\tCasual\n150005\tThe Fake Life Had Better Fabric\tfake-life-better-fabric\tCasual\n80002\tThe Forecast\twindbreaker\tCasual\n80003\tThe Introduction\tpolo-tee\tCasual\n70004\tThe Real Fake\tthe-real-fake\tCasual\n80005\tThe Understatement\tv-neck-tee\tCasual\n30002\tTill You Make It Tee\ttill-you-make-it-tee\tCasual\n150009\tTraces of Authenticity\ttraces-of-authenticity\tCasual\n150001\tTrust Me, I'm Fake\ttrust-me-im-fake\tCasual\n150020\tUnderstood the Assignment\tunderstood-the-assignment\tCasual\n70001\tYou Fake Bro?\tyou-fake-bro\tCasual\n",
+  "stderr": "",
+  "execution_time_ms": 1592
+}

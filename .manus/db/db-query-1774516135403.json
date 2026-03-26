@@ -1,0 +1,130 @@
+{
+  "query": "SELECT p.id, p.name, p.slug, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE c.name IN ('Business', 'Women', 'Printed Tees') ORDER BY c.name, p.name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT p.id, p.name, p.slug, c.name as category FROM products p LEFT JOIN categories c ON p.categoryId = c.id WHERE c.name IN ('Business', 'Women', 'Printed Tees') ORDER BY c.name, p.name",
+  "rows": [
+    {
+      "id": "90001",
+      "name": "The Alibi",
+      "slug": "the-alibi",
+      "category": "Women"
+    },
+    {
+      "id": "90005",
+      "name": "The Closer",
+      "slug": "the-closer",
+      "category": "Women"
+    },
+    {
+      "id": "90002",
+      "name": "The Confession",
+      "slug": "the-confession",
+      "category": "Women"
+    },
+    {
+      "id": "90010",
+      "name": "The Corner Office",
+      "slug": "the-corner-office",
+      "category": "Women"
+    },
+    {
+      "id": "150030",
+      "name": "The Crop Blouse",
+      "slug": "the-crop-blouse",
+      "category": "Women"
+    },
+    {
+      "id": "90006",
+      "name": "The Encore",
+      "slug": "the-encore",
+      "category": "Women"
+    },
+    {
+      "id": "90009",
+      "name": "The Exit",
+      "slug": "the-exit",
+      "category": "Women"
+    },
+    {
+      "id": "90004",
+      "name": "The Getaway",
+      "slug": "the-getaway",
+      "category": "Women"
+    },
+    {
+      "id": "150025",
+      "name": "The Highrise",
+      "slug": "the-highrise",
+      "category": "Women"
+    },
+    {
+      "id": "150028",
+      "name": "The Linen",
+      "slug": "the-linen-blouse",
+      "category": "Women"
+    },
+    {
+      "id": "150027",
+      "name": "The Mandarin Blouse",
+      "slug": "the-mandarin-blouse",
+      "category": "Women"
+    },
+    {
+      "id": "150026",
+      "name": "The Oversized",
+      "slug": "the-oversized-blouse",
+      "category": "Women"
+    },
+    {
+      "id": "150022",
+      "name": "The Pencil",
+      "slug": "the-pencil-skirt",
+      "category": "Women"
+    },
+    {
+      "id": "150024",
+      "name": "The Pleat",
+      "slug": "the-pleat",
+      "category": "Women"
+    },
+    {
+      "id": "90007",
+      "name": "The Rundown",
+      "slug": "the-rundown",
+      "category": "Women"
+    },
+    {
+      "id": "150021",
+      "name": "The Silhouette",
+      "slug": "the-silhouette",
+      "category": "Women"
+    },
+    {
+      "id": "90008",
+      "name": "The Statement",
+      "slug": "the-statement",
+      "category": "Women"
+    },
+    {
+      "id": "90003",
+      "name": "The Understudy",
+      "slug": "the-understudy",
+      "category": "Women"
+    },
+    {
+      "id": "150029",
+      "name": "The Wrap Blouse",
+      "slug": "the-wrap-blouse",
+      "category": "Women"
+    },
+    {
+      "id": "150023",
+      "name": "The Wrap Skirt",
+      "slug": "the-wrap-skirt",
+      "category": "Women"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategory\n90001\tThe Alibi\tthe-alibi\tWomen\n90005\tThe Closer\tthe-closer\tWomen\n90002\tThe Confession\tthe-confession\tWomen\n90010\tThe Corner Office\tthe-corner-office\tWomen\n150030\tThe Crop Blouse\tthe-crop-blouse\tWomen\n90006\tThe Encore\tthe-encore\tWomen\n90009\tThe Exit\tthe-exit\tWomen\n90004\tThe Getaway\tthe-getaway\tWomen\n150025\tThe Highrise\tthe-highrise\tWomen\n150028\tThe Linen\tthe-linen-blouse\tWomen\n150027\tThe Mandarin Blouse\tthe-mandarin-blouse\tWomen\n150026\tThe Oversized\tthe-oversized-blouse\tWomen\n150022\tThe Pencil\tthe-pencil-skirt\tWomen\n150024\tThe Pleat\tthe-pleat\tWomen\n90007\tThe Rundown\tthe-rundown\tWomen\n150021\tThe Silhouette\tthe-silhouette\tWomen\n90008\tThe Statement\tthe-statement\tWomen\n90003\tThe Understudy\tthe-understudy\tWomen\n150029\tThe Wrap Blouse\tthe-wrap-blouse\tWomen\n150023\tThe Wrap Skirt\tthe-wrap-skirt\tWomen\n",
+  "stderr": "",
+  "execution_time_ms": 1576
+}

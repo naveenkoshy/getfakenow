@@ -22,6 +22,15 @@ const COLOR_MAP: Record<string, string> = {
   gray: '#6b7280',
 };
 
+// Collection label system - maps collection type to display info
+const COLLECTION_LABELS: Record<string, { name: string; color: string; bg: string; border: string }> = {
+  headline: { name: 'HEADLINE', color: 'text-red-600', bg: 'bg-black', border: 'border-red-600' },
+  essential: { name: 'ESSENTIAL', color: 'text-gray-700', bg: 'bg-white', border: 'border-gray-300' },
+  professional: { name: 'PROFESSIONAL', color: 'text-white', bg: 'bg-[#1e3a5f]', border: 'border-[#1e3a5f]' },
+  women: { name: 'WOMEN', color: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-200' },
+  accessories: { name: 'ACCESSORIES', color: 'text-white', bg: 'bg-gray-900', border: 'border-gray-700' },
+};
+
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [, setLocation] = useLocation();
@@ -45,10 +54,19 @@ export default function ProductDetail() {
     { enabled: !!product?.id }
   );
 
+  // Separate label images from color variant images
+  const colorImages = product?.images?.filter((img: any) => img.color?.toLowerCase() !== 'label') || [];
+  const labelImage = product?.images?.find((img: any) => img.color?.toLowerCase() === 'label');
+  const [showingLabel, setShowingLabel] = useState(false);
+
+  // Determine collection type from label fileKey
+  const collectionType = labelImage ? (labelImage as any).fileKey?.split('-')[1] || '' : '';
+  const collectionInfo = COLLECTION_LABELS[collectionType];
+
   // Set default color when product loads
   useEffect(() => {
-    if (product?.images && product.images.length > 0) {
-      setSelectedColor(product.images[0].color?.toLowerCase() || 'black');
+    if (colorImages.length > 0) {
+      setSelectedColor(colorImages[0].color?.toLowerCase() || 'black');
     }
   }, [product]);
 
@@ -94,8 +112,9 @@ export default function ProductDetail() {
 
   const getDisplayImage = () => {
     if (!product) return '';
+    if (showingLabel && labelImage) return labelImage.imageUrl;
     if (!selectedColor) return product.imageUrl || '';
-    const variantImage = product.images?.find(
+    const variantImage = colorImages.find(
       (img: any) => img.color?.toLowerCase() === selectedColor.toLowerCase()
     );
     return variantImage?.imageUrl || product.imageUrl || '';
@@ -235,10 +254,29 @@ export default function ProductDetail() {
               <Heart size={18} />
             </button>
             {/* Badge */}
-            {product.featured && (
+            {product.featured && !collectionInfo && (
               <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold tracking-wider px-3 py-1.5 rounded">
                 FEATURED
               </span>
+            )}
+            {/* Collection Badge */}
+            {collectionInfo && (
+              <span className={`absolute top-4 left-4 ${collectionInfo.bg} ${collectionInfo.color} text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded border ${collectionInfo.border}`}>
+                {collectionInfo.name}
+              </span>
+            )}
+            {/* Label image thumbnail */}
+            {labelImage && (
+              <button
+                onClick={() => { setShowingLabel(!showingLabel); setImageLoaded(false); }}
+                className={`absolute bottom-4 left-4 w-16 h-16 rounded-lg overflow-hidden border-2 shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 ${
+                  showingLabel ? 'border-red-600 ring-2 ring-red-600/30' : 'border-white/80'
+                }`}
+                title="View inner label"
+                aria-label="View inner clothing label"
+              >
+                <img src={labelImage.imageUrl} alt="Inner clothing label" className="w-full h-full object-cover" />
+              </button>
             )}
           </div>
 
@@ -290,15 +328,20 @@ export default function ProductDetail() {
             <div className="border-t border-gray-100 my-6" />
 
             {/* Color Selection */}
-            {product.images && product.images.length > 0 && (
+            {colorImages.length > 0 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-semibold text-gray-900">
-                    Color: <span className="font-normal text-gray-500 capitalize">{selectedColor}</span>
+                    Color: <span className="font-normal text-gray-500 capitalize">{showingLabel ? 'Label View' : selectedColor}</span>
                   </span>
+                  {showingLabel && (
+                    <button onClick={() => { setShowingLabel(false); setImageLoaded(false); }} className="text-xs text-red-600 hover:text-red-700 font-medium underline underline-offset-2">
+                      Back to product
+                    </button>
+                  )}
                 </div>
                 <div className="flex gap-3">
-                  {product.images.map((img: any) => {
+                  {colorImages.map((img: any) => {
                     const colorName = img.color?.toLowerCase() || 'black';
                     const hex = COLOR_MAP[colorName] || colorName;
                     const isSelected = selectedColor === colorName;
@@ -307,6 +350,7 @@ export default function ProductDetail() {
                         key={img.id}
                         onClick={() => {
                           setSelectedColor(colorName);
+                          setShowingLabel(false);
                           setImageLoaded(false);
                         }}
                         className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${

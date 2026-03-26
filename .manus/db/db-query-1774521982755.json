@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, productId, color, fileKey, LEFT(imageUrl, 60) as urlStart FROM productImages WHERE color = 'label' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, productId, color, fileKey, LEFT(imageUrl, 60) as urlStart FROM productImages WHERE color = 'label' LIMIT 5;",
+  "rows": [
+    {
+      "id": "120001",
+      "productId": "30010",
+      "color": "label",
+      "fileKey": "label-accessories-30010",
+      "urlStart": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC"
+    },
+    {
+      "id": "120002",
+      "productId": "80008",
+      "color": "label",
+      "fileKey": "label-accessories-80008",
+      "urlStart": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC"
+    },
+    {
+      "id": "120003",
+      "productId": "80009",
+      "color": "label",
+      "fileKey": "label-accessories-80009",
+      "urlStart": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC"
+    },
+    {
+      "id": "120004",
+      "productId": "80010",
+      "color": "label",
+      "fileKey": "label-accessories-80010",
+      "urlStart": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC"
+    },
+    {
+      "id": "120005",
+      "productId": "30001",
+      "color": "label",
+      "fileKey": "label-essential-30001",
+      "urlStart": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproductId\tcolor\tfileKey\turlStart\n120001\t30010\tlabel\tlabel-accessories-30010\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC\n120002\t80008\tlabel\tlabel-accessories-80008\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC\n120003\t80009\tlabel\tlabel-accessories-80009\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC\n120004\t80010\tlabel\tlabel-accessories-80010\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC\n120005\t30001\tlabel\tlabel-essential-30001\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC\n",
+  "stderr": "",
+  "execution_time_ms": 1598
+}
