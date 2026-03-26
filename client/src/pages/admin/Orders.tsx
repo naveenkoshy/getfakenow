@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { Search, Eye, Package, Download } from "lucide-react";
+import { Search, Eye, Package, Download, Calendar } from "lucide-react";
 import { AdminOrderDetailModal } from "@/components/AdminOrderDetailModal";
 
 export default function AdminOrders() {
@@ -27,6 +27,9 @@ export default function AdminOrders() {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [showDateFilter, setShowDateFilter] = useState(false);
   
   const { data: orders, isLoading } = trpc.admin.orders.list.useQuery();
   const { data: selectedOrder } = trpc.orders.getById.useQuery(
@@ -48,11 +51,16 @@ export default function AdminOrders() {
       if (statusFilter !== "all") {
         filters.status = statusFilter;
       }
+      if (exportStartDate) {
+        filters.startDate = exportStartDate;
+      }
+      if (exportEndDate) {
+        filters.endDate = exportEndDate;
+      }
       const result = await utils.admin.export.orders.fetch(
         Object.keys(filters).length > 0 ? filters : undefined
       );
       if (result && result.csv) {
-        // Add BOM for Excel compatibility
         const bom = '\uFEFF';
         const blob = new Blob([bom + result.csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -128,15 +136,57 @@ export default function AdminOrders() {
               Manage customer orders and fulfillment
             </p>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleExportCSV}
-            disabled={isExporting || isLoading}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            {isExporting ? "Exporting..." : "Export CSV"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDateFilter(!showDateFilter)}
+              className={showDateFilter ? "bg-accent" : ""}
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Date Range
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExportCSV}
+              disabled={isExporting || isLoading}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {isExporting ? "Exporting..." : "Export CSV"}
+            </Button>
+          </div>
         </div>
+
+        {/* Date Range Filter */}
+        {showDateFilter && (
+          <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border">
+            <span className="text-sm font-medium text-muted-foreground">Export date range:</span>
+            <Input
+              type="date"
+              value={exportStartDate}
+              onChange={(e) => setExportStartDate(e.target.value)}
+              className="w-[160px]"
+              placeholder="Start date"
+            />
+            <span className="text-muted-foreground">to</span>
+            <Input
+              type="date"
+              value={exportEndDate}
+              onChange={(e) => setExportEndDate(e.target.value)}
+              className="w-[160px]"
+              placeholder="End date"
+            />
+            {(exportStartDate || exportEndDate) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setExportStartDate(""); setExportEndDate(""); }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex items-center gap-4">

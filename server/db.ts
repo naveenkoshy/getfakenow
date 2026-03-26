@@ -24,6 +24,7 @@ import {
   seoMeta, InsertSeoMeta,
   redirects, InsertRedirect,
   siteSettings, InsertSiteSetting,
+  customerTags, customerTagAssignments,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1210,4 +1211,131 @@ export async function getAllOrdersForExport(filters?: { status?: string; payment
   );
   
   return enriched;
+}
+
+
+/**
+ * Get all customers for CSV export with tags, lifetime value, and marketing consent
+ */
+export async function getAllCustomersForExport() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    phone: users.phone,
+    role: users.role,
+    customerGroup: users.customerGroup,
+    lifetimeValue: users.lifetimeValue,
+    totalOrders: users.totalOrders,
+    averageOrderValue: users.averageOrderValue,
+    firstPurchaseDate: users.firstPurchaseDate,
+    lastPurchaseDate: users.lastPurchaseDate,
+    addressLine1: users.addressLine1,
+    addressLine2: users.addressLine2,
+    city: users.city,
+    state: users.state,
+    postalCode: users.postalCode,
+    country: users.country,
+    marketingConsent: users.marketingConsent,
+    consentDate: users.consentDate,
+    emailOptIn: users.emailOptIn,
+    smsOptIn: users.smsOptIn,
+    whatsappOptIn: users.whatsappOptIn,
+    messengerOptIn: users.messengerOptIn,
+    referralSource: users.referralSource,
+    utmSource: users.utmSource,
+    utmMedium: users.utmMedium,
+    utmCampaign: users.utmCampaign,
+    profileCompleted: users.profileCompleted,
+    authProvider: users.authProvider,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+  })
+    .from(users)
+    .orderBy(desc(users.createdAt));
+  
+  // Enrich with tags
+  const enriched = await Promise.all(
+    result.map(async (user) => {
+      const tagAssignments = await db.select({
+        tagName: customerTags.name,
+      })
+        .from(customerTagAssignments)
+        .innerJoin(customerTags, eq(customerTagAssignments.tagId, customerTags.id))
+        .where(eq(customerTagAssignments.userId, user.id));
+      
+      const tags = tagAssignments.map(t => t.tagName).join(', ');
+      return { ...user, tags };
+    })
+  );
+  
+  return enriched;
+}
+
+/**
+ * Get analytics/sales report data for CSV export
+ */
+export async function getSalesReportForExport(startDate?: Date, endDate?: Date) {
+  const db = await getDb();
+  if (!db) return { dailyRevenue: [], topProducts: [], summary: { totalRevenue: 0, totalOrders: 0, avgOrderValue: 0 } };
+  
+  const conditions: any[] = [eq(orders.paymentStatus, 'paid')];
+  if (startDate) conditions.push(gte(orders.createdAt, startDate));
+  if (endDate) conditions.push(lte(orders.createdAt, endDate));
+  
+  const whereClause = and(...conditions);
+  
+  // Daily revenue breakdown using raw SQL to avoid GROUP BY issues
+  const dailyRevenue = await db.execute(
+    sql`SELECT DATE(createdAt) as date, SUM(totalAmount) as revenue, COUNT(*) as orderCount, ROUND(AVG(totalAmount)) as avgOrderValue FROM orders WHERE ${whereClause} GROUP BY DATE(createdAt) ORDER BY DATE(createdAt)`
+  ) as any;
+  const dailyRevenueRows = (dailyRevenue[0] || []) as Array<{ date: string; revenue: string; orderCount: number; avgOrderValue: string }>;
+  
+  // Top products for the period
+  const orderConditions: any[] = [];
+  if (startDate || endDate) {
+    // Get order IDs within date range
+    const orderIdsResult = await db.select({ id: orders.id })
+      .from(orders)
+      .where(whereClause);
+    const orderIds = orderIdsResult.map(o => o.id);
+    if (orderIds.length > 0) {
+      orderConditions.push(sql`${orderItems.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`);
+    }
+  }
+  
+  const topProducts = await db.select({
+    productId: orderItems.productId,
+    productName: orderItems.productName,
+    totalQuantity: sum(orderItems.quantity),
+    totalRevenue: sum(orderItems.subtotal),
+    orderCount: count(),
+  })
+    .from(orderItems)
+    .where(orderConditions.length > 0 ? and(...orderConditions) : undefined)
+    .groupBy(orderItems.productId, orderItems.productName)
+    .orderBy(desc(sum(orderItems.subtotal)))
+    .limit(50);
+  
+  // Summary totals
+  const [summaryResult] = await db.select({
+    totalRevenue: sum(orders.totalAmount),
+    totalOrders: count(),
+    avgOrderValue: sql<string>`ROUND(AVG(${orders.totalAmount}))`,
+  })
+    .from(orders)
+    .where(whereClause);
+  
+  return {
+    dailyRevenue: dailyRevenueRows,
+    topProducts,
+    summary: {
+      totalRevenue: Number(summaryResult?.totalRevenue || 0),
+      totalOrders: summaryResult?.totalOrders || 0,
+      avgOrderValue: Number(summaryResult?.avgOrderValue || 0),
+    },
+  };
 }

@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, slug, price FROM products WHERE categoryId = 30004 ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, price FROM products WHERE categoryId = 30004 ORDER BY id;",
+  "rows": [
+    {
+      "id": "90001",
+      "name": "The Alibi",
+      "slug": "the-alibi",
+      "price": "3900"
+    },
+    {
+      "id": "90002",
+      "name": "The Confession",
+      "slug": "the-confession",
+      "price": "7500"
+    },
+    {
+      "id": "90003",
+      "name": "The Understudy",
+      "slug": "the-understudy",
+      "price": "2900"
+    },
+    {
+      "id": "90004",
+      "name": "The Getaway",
+      "slug": "the-getaway",
+      "price": "8900"
+    },
+    {
+      "id": "90005",
+      "name": "The Closer",
+      "slug": "the-closer",
+      "price": "15900"
+    },
+    {
+      "id": "90006",
+      "name": "The Encore",
+      "slug": "the-encore",
+      "price": "12900"
+    },
+    {
+      "id": "90007",
+      "name": "The Rundown",
+      "slug": "the-rundown",
+      "price": "6500"
+    },
+    {
+      "id": "90008",
+      "name": "The Statement",
+      "slug": "the-statement",
+      "price": "4500"
+    },
+    {
+      "id": "90009",
+      "name": "The Exit",
+      "slug": "the-exit",
+      "price": "13900"
+    },
+    {
+      "id": "90010",
+      "name": "The Corner Office",
+      "slug": "the-corner-office",
+      "price": "9900"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tprice\n90001\tThe Alibi\tthe-alibi\t3900\n90002\tThe Confession\tthe-confession\t7500\n90003\tThe Understudy\tthe-understudy\t2900\n90004\tThe Getaway\tthe-getaway\t8900\n90005\tThe Closer\tthe-closer\t15900\n90006\tThe Encore\tthe-encore\t12900\n90007\tThe Rundown\tthe-rundown\t6500\n90008\tThe Statement\tthe-statement\t4500\n90009\tThe Exit\tthe-exit\t13900\n90010\tThe Corner Office\tthe-corner-office\t9900\n",
+  "stderr": "",
+  "execution_time_ms": 1540
+}

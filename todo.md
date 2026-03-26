@@ -243,3 +243,31 @@
 - [x] Write personality descriptions, material specs, and care instructions for all 20
 - [x] Seed all 20 products into database
 - [x] Verify products display correctly on storefront
+
+## Customer CSV Export
+- [x] Backend: Add customer CSV export procedure with tags, lifetime value, marketing consent
+- [x] Frontend: Add "Export CSV" button to admin Customers page
+
+## Orders Export Date Range Filter
+- [x] Frontend: Add date picker inputs to admin Orders page for date range filtering on export
+
+## Analytics/Sales Report Export
+- [x] Backend: Add analytics CSV export procedure (daily revenue, order counts, top products)
+- [x] Frontend: Add export button to admin Analytics page with date range selector
+
+## New Arrivals Homepage Section
+- [x] Add "New Arrivals" section to homepage spotlighting the 20 new tees
+
+## Color Variants for All Products
+- [x] Add black/white/navy color variants to all products via productImages table
+- [x] Seed color variants into database (3 colors minimum per product)
+
+## Women's Line Expansion
+- [x] Design 5 women's skirts (casual and semi-formal) with names, descriptions, materials
+- [x] Design 5 women's blouses (casual and semi-formal) with names, descriptions, materials
+- [x] Generate AI product images for women's skirts and blouses
+- [x] Seed 10 women's skirts and blouses into database
+
+## Headline Drop Marketing Banner
+- [x] Create "Headline Drop" marketing banner in admin for new collection announcement
+- [x] Generate banner image and insert into bannerSlides database

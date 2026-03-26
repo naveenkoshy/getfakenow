@@ -1474,6 +1474,138 @@ export const appRouter = router({
           
           return { csv: csvContent, count: orders.length, filename: `orders-export-${new Date().toISOString().slice(0,10)}.csv` };
         }),
+
+      customers: adminProcedure.query(async ({ ctx }) => {
+        const customers = await db.getAllCustomersForExport();
+        
+        const headers = [
+          'ID', 'Name', 'Email', 'Phone', 'Role', 'Customer Group',
+          'Lifetime Value (RM)', 'Total Orders', 'Avg Order Value (RM)',
+          'First Purchase', 'Last Purchase',
+          'Address Line 1', 'Address Line 2', 'City', 'State', 'Postal Code', 'Country',
+          'Marketing Consent', 'Consent Date', 'Email Opt-In', 'SMS Opt-In',
+          'WhatsApp Opt-In', 'Messenger Opt-In',
+          'Tags', 'Referral Source', 'UTM Source', 'UTM Medium', 'UTM Campaign',
+          'Auth Provider', 'Profile Completed', 'Registered At', 'Last Sign In'
+        ];
+        
+        const rows = customers.map(c => [
+          c.id,
+          c.name || '',
+          c.email,
+          c.phone || '',
+          c.role,
+          c.customerGroup || 'new',
+          (c.lifetimeValue / 100).toFixed(2),
+          c.totalOrders,
+          (c.averageOrderValue / 100).toFixed(2),
+          c.firstPurchaseDate ? new Date(c.firstPurchaseDate).toISOString() : '',
+          c.lastPurchaseDate ? new Date(c.lastPurchaseDate).toISOString() : '',
+          c.addressLine1 || '',
+          c.addressLine2 || '',
+          c.city || '',
+          c.state || '',
+          c.postalCode || '',
+          c.country || '',
+          c.marketingConsent ? 'Yes' : 'No',
+          c.consentDate ? new Date(c.consentDate).toISOString() : '',
+          c.emailOptIn ? 'Yes' : 'No',
+          c.smsOptIn ? 'Yes' : 'No',
+          c.whatsappOptIn ? 'Yes' : 'No',
+          c.messengerOptIn ? 'Yes' : 'No',
+          c.tags || '',
+          c.referralSource || '',
+          c.utmSource || '',
+          c.utmMedium || '',
+          c.utmCampaign || '',
+          c.authProvider,
+          c.profileCompleted ? 'Yes' : 'No',
+          c.createdAt ? new Date(c.createdAt).toISOString() : '',
+          c.lastSignedIn ? new Date(c.lastSignedIn).toISOString() : '',
+        ]);
+        
+        const csvContent = [
+          headers.map(h => `"${h}"`).join(','),
+          ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        
+        await db.logActivity({
+          userId: ctx.user.id,
+          action: 'export.customers.csv',
+          entityType: 'user',
+          details: JSON.stringify({ count: customers.length }),
+        });
+        
+        return { csv: csvContent, count: customers.length, filename: `customers-export-${new Date().toISOString().slice(0,10)}.csv` };
+      }),
+
+      analytics: adminProcedure
+        .input(z.object({
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+        }).optional())
+        .query(async ({ ctx, input }) => {
+          const report = await db.getSalesReportForExport(
+            input?.startDate ? new Date(input.startDate) : undefined,
+            input?.endDate ? new Date(input.endDate) : undefined,
+          );
+          
+          // Daily revenue CSV
+          const dailyHeaders = ['Date', 'Revenue (RM)', 'Order Count', 'Avg Order Value (RM)'];
+          const dailyRows = report.dailyRevenue.map(d => [
+            d.date,
+            (Number(d.revenue || 0) / 100).toFixed(2),
+            d.orderCount,
+            (Number(d.avgOrderValue || 0) / 100).toFixed(2),
+          ]);
+          
+          // Top products CSV
+          const productHeaders = ['Product ID', 'Product Name', 'Units Sold', 'Revenue (RM)', 'Order Count'];
+          const productRows = report.topProducts.map(p => [
+            p.productId,
+            p.productName,
+            p.totalQuantity || 0,
+            (Number(p.totalRevenue || 0) / 100).toFixed(2),
+            p.orderCount,
+          ]);
+          
+          // Summary line
+          const summaryLine = `"SUMMARY","Total Revenue: RM ${(report.summary.totalRevenue / 100).toFixed(2)}","Total Orders: ${report.summary.totalOrders}","Avg Order: RM ${(report.summary.avgOrderValue / 100).toFixed(2)}"`;
+          
+          const csvContent = [
+            '"=== DAILY REVENUE ==="',
+            dailyHeaders.map(h => `"${h}"`).join(','),
+            ...dailyRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+            '',
+            '"=== TOP PRODUCTS ==="',
+            productHeaders.map(h => `"${h}"`).join(','),
+            ...productRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+            '',
+            summaryLine,
+          ].join('\n');
+          
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'export.analytics.csv',
+            entityType: 'report',
+            details: JSON.stringify({ 
+              dateRange: { start: input?.startDate, end: input?.endDate },
+              dailyRows: report.dailyRevenue.length,
+              topProducts: report.topProducts.length,
+            }),
+          });
+          
+          const dateRange = input?.startDate && input?.endDate 
+            ? `${input.startDate}-to-${input.endDate}` 
+            : 'all-time';
+          
+          return { 
+            csv: csvContent, 
+            count: report.dailyRevenue.length,
+            summary: report.summary,
+            filename: `sales-report-${new Date().toISOString().slice(0,10)}.csv` 
+          };
+        }),
     }),
   }),
 });

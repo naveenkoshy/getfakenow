@@ -161,3 +161,120 @@ describe("admin CSV export - orders", () => {
     await expect(caller.admin.export.orders()).rejects.toThrow();
   });
 });
+
+describe("admin CSV export - customers", () => {
+  it("returns valid CSV content with headers and rows", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.admin.export.customers();
+
+    expect(result).toBeDefined();
+    expect(typeof result.csv).toBe("string");
+    expect(typeof result.count).toBe("number");
+    expect(typeof result.filename).toBe("string");
+    expect(result.filename).toMatch(/^customers-export-\d{4}-\d{2}-\d{2}\.csv$/);
+
+    // Verify CSV structure
+    const lines = result.csv.split("\n");
+    expect(lines.length).toBeGreaterThan(0);
+
+    // Check header row
+    const headerLine = lines[0];
+    expect(headerLine).toContain('"ID"');
+    expect(headerLine).toContain('"Name"');
+    expect(headerLine).toContain('"Email"');
+    expect(headerLine).toContain('"Lifetime Value (RM)"');
+    expect(headerLine).toContain('"Total Orders"');
+    expect(headerLine).toContain('"Customer Group"');
+    expect(headerLine).toContain('"Marketing Consent"');
+    expect(headerLine).toContain('"Email Opt-In"');
+    expect(headerLine).toContain('"SMS Opt-In"');
+    expect(headerLine).toContain('"Tags"');
+  });
+
+  it("denies non-admin access to customer export", async () => {
+    const ctx = createUserContext();
+    const caller = appRouter.createCaller(ctx);
+
+    await expect(caller.admin.export.customers()).rejects.toThrow();
+  });
+});
+
+describe("admin CSV export - analytics/sales report", () => {
+  it("returns valid CSV content with headers", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.admin.export.analytics({});
+
+    expect(result).toBeDefined();
+    expect(typeof result.csv).toBe("string");
+    expect(typeof result.count).toBe("number");
+    expect(typeof result.filename).toBe("string");
+    expect(result.filename).toMatch(/^sales-report-\d{4}-\d{2}-\d{2}\.csv$/);
+
+    // Verify CSV structure
+    const lines = result.csv.split("\n");
+    expect(lines.length).toBeGreaterThan(0);
+
+    // Line 0 is section header "=== DAILY REVENUE ===", line 1 is actual column headers
+    const headerLine = lines[1];
+    expect(headerLine).toContain('"Date"');
+    expect(headerLine).toContain('"Revenue (RM)"');
+    expect(headerLine).toContain('"Order Count"');
+  });
+
+  it("supports date range filtering", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.admin.export.analytics({
+      startDate: "2025-01-01",
+      endDate: "2025-12-31",
+    });
+
+    expect(result).toBeDefined();
+    expect(typeof result.csv).toBe("string");
+    expect(typeof result.count).toBe("number");
+  });
+
+  it("denies non-admin access to sales report export", async () => {
+    const ctx = createUserContext();
+    const caller = appRouter.createCaller(ctx);
+
+    await expect(caller.admin.export.analytics({})).rejects.toThrow();
+  });
+});
+
+describe("admin CSV export - orders with date range", () => {
+  it("supports date range filtering", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.admin.export.orders({
+      startDate: "2025-01-01",
+      endDate: "2025-12-31",
+    });
+
+    expect(result).toBeDefined();
+    expect(typeof result.csv).toBe("string");
+    expect(typeof result.count).toBe("number");
+    expect(result.filename).toMatch(/^orders-export-\d{4}-\d{2}-\d{2}\.csv$/);
+  });
+
+  it("supports combined status and date range filter", async () => {
+    const ctx = createAdminContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.admin.export.orders({
+      status: "delivered",
+      startDate: "2025-01-01",
+      endDate: "2025-12-31",
+    });
+
+    expect(result).toBeDefined();
+    expect(typeof result.csv).toBe("string");
+    expect(typeof result.count).toBe("number");
+  });
+});

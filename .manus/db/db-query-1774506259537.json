@@ -1,0 +1,57 @@
+{
+  "query": "SELECT id, name, slug FROM categories; SELECT id, name, slug, categoryId FROM products ORDER BY id DESC LIMIT 25;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM categories; SELECT id, name, slug, categoryId FROM products ORDER BY id DESC LIMIT 25;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30002",
+      "name": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30003",
+      "name": "Accessories",
+      "slug": "accessories"
+    },
+    {
+      "id": "30004",
+      "name": "Women",
+      "slug": "women"
+    }
+  ],
+  "messages": [
+    "id\tname\tslug\tcategoryId",
+    "150020\tUnderstood the Assignment\tunderstood-the-assignment\t30001",
+    "150019\tRent Free, Full Price\trent-free-full-price\t30001",
+    "150018\tGiving Absolutely Nothing\tgiving-absolutely-nothing\t30001",
+    "150017\tPOV: Fake Shirt On Purpose\tpov-fake-shirt-on-purpose\t30001",
+    "150016\tMain Character Energy\tmain-character-energy\t30001",
+    "150015\tGiving Fake (And I'm Okay With That)\tgiving-fake-okay-with-that\t30001",
+    "150014\tFake Personality, Real Fit\tfake-personality-real-fit\t30001",
+    "150013\tDelulu Is the Solulu\tdelulu-is-the-solulu\t30001",
+    "150012\tSituationship Shirt\tsituationship-shirt\t30001",
+    "150011\tNo Cap, All Fake\tno-cap-all-fake\t30001",
+    "150010\tRead the Label\tread-the-label\t30001",
+    "150009\tTraces of Authenticity\ttraces-of-authenticity\t30001",
+    "150008\tNot Real. Not Sorry.\tnot-real-not-sorry\t30001",
+    "150007\tFake It Till You Make It (I Made It)\tfake-it-till-you-make-it\t30001",
+    "150006\t100% Genuine Fake\t100-percent-genuine-fake\t30001",
+    "150005\tThe Fake Life Had Better Fabric\tfake-life-better-fabric\t30001",
+    "150004\tFake News, Real Drip\tfake-news-real-drip\t30001",
+    "150003\tMy Other Shirt Is Also Fake\tmy-other-shirt-is-also-fake\t30001",
+    "150002\tAuthentically Fake Since 2026\tauthentically-fake-since-2026\t30001",
+    "150001\tTrust Me, I'm Fake\ttrust-me-im-fake\t30001",
+    "90010\tThe Corner Office\tthe-corner-office\t30004",
+    "90009\tThe Exit\tthe-exit\t30004",
+    "90008\tThe Statement\tthe-statement\t30004",
+    "90007\tThe Rundown\tthe-rundown\t30004",
+    "90006\tThe Encore\tthe-encore\t30004"
+  ],
+  "stdout": "id\tname\tslug\n30001\tCasual\tcasual\n30002\tProfessional\tprofessional\n30003\tAccessories\taccessories\n30004\tWomen\twomen\nid\tname\tslug\tcategoryId\n150020\tUnderstood the Assignment\tunderstood-the-assignment\t30001\n150019\tRent Free, Full Price\trent-free-full-price\t30001\n150018\tGiving Absolutely Nothing\tgiving-absolutely-nothing\t30001\n150017\tPOV: Fake Shirt On Purpose\tpov-fake-shirt-on-purpose\t30001\n150016\tMain Character Energy\tmain-character-energy\t30001\n150015\tGiving Fake (And I'm Okay With That)\tgiving-fake-okay-with-that\t30001\n150014\tFake Personality, Real Fit\tfake-personality-real-fit\t30001\n150013\tDelulu Is the Solulu\tdelulu-is-the-solulu\t30001\n150012\tSituationship Shirt\tsituationship-shirt\t30001\n150011\tNo Cap, All Fake\tno-cap-all-fake\t30001\n150010\tRead the Label\tread-the-label\t30001\n150009\tTraces of Authenticity\ttraces-of-authenticity\t30001\n150008\tNot Real. Not Sorry.\tnot-real-not-sorry\t30001\n150007\tFake It Till You Make It (I Made It)\tfake-it-till-you-make-it\t30001\n150006\t100% Genuine Fake\t100-percent-genuine-fake\t30001\n150005\tThe Fake Life Had Better Fabric\tfake-life-better-fabric\t30001\n150004\tFake News, Real Drip\tfake-news-real-drip\t30001\n150003\tMy Other Shirt Is Also Fake\tmy-other-shirt-is-also-fake\t30001\n150002\tAuthentically Fake Since 2026\tauthentically-fake-since-2026\t30001\n150001\tTrust Me, I'm Fake\ttrust-me-im-fake\t30001\n90010\tThe Corner Office\tthe-corner-office\t30004\n90009\tThe Exit\tthe-exit\t30004\n90008\tThe Statement\tthe-statement\t30004\n90007\tThe Rundown\tthe-rundown\t30004\n90006\tThe Encore\tthe-encore\t30004\n",
+  "stderr": "",
+  "execution_time_ms": 1799
+}

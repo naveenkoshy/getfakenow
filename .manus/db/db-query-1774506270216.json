@@ -1,0 +1,130 @@
+{
+  "query": "SELECT slug, name, price, imageUrl FROM products WHERE id >= 150001 AND id <= 150020 ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT slug, name, price, imageUrl FROM products WHERE id >= 150001 AND id <= 150020 ORDER BY id;",
+  "rows": [
+    {
+      "slug": "trust-me-im-fake",
+      "name": "Trust Me, I'm Fake",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp"
+    },
+    {
+      "slug": "authentically-fake-since-2026",
+      "name": "Authentically Fake Since 2026",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp"
+    },
+    {
+      "slug": "my-other-shirt-is-also-fake",
+      "name": "My Other Shirt Is Also Fake",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp"
+    },
+    {
+      "slug": "fake-news-real-drip",
+      "name": "Fake News, Real Drip",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-news-real-drip_14f4606e.webp"
+    },
+    {
+      "slug": "fake-life-better-fabric",
+      "name": "The Fake Life Had Better Fabric",
+      "price": "5400",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-life-better-fabric_b2c5ccb2.webp"
+    },
+    {
+      "slug": "100-percent-genuine-fake",
+      "name": "100% Genuine Fake",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/100-percent-genuine-fake_85ae2bdf.webp"
+    },
+    {
+      "slug": "fake-it-till-you-make-it",
+      "name": "Fake It Till You Make It (I Made It)",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-till-you-make-it_67f82441.webp"
+    },
+    {
+      "slug": "not-real-not-sorry",
+      "name": "Not Real. Not Sorry.",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp"
+    },
+    {
+      "slug": "traces-of-authenticity",
+      "name": "Traces of Authenticity",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp"
+    },
+    {
+      "slug": "read-the-label",
+      "name": "Read the Label",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp"
+    },
+    {
+      "slug": "no-cap-all-fake",
+      "name": "No Cap, All Fake",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp"
+    },
+    {
+      "slug": "situationship-shirt",
+      "name": "Situationship Shirt",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp"
+    },
+    {
+      "slug": "delulu-is-the-solulu",
+      "name": "Delulu Is the Solulu",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp"
+    },
+    {
+      "slug": "fake-personality-real-fit",
+      "name": "Fake Personality, Real Fit",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-personality-real-fit_c4a72913.webp"
+    },
+    {
+      "slug": "giving-fake-okay-with-that",
+      "name": "Giving Fake (And I'm Okay With That)",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-fake-okay-with-that_dbc3444c.webp"
+    },
+    {
+      "slug": "main-character-energy",
+      "name": "Main Character Energy",
+      "price": "5400",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp"
+    },
+    {
+      "slug": "pov-fake-shirt-on-purpose",
+      "name": "POV: Fake Shirt On Purpose",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp"
+    },
+    {
+      "slug": "giving-absolutely-nothing",
+      "name": "Giving Absolutely Nothing",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp"
+    },
+    {
+      "slug": "rent-free-full-price",
+      "name": "Rent Free, Full Price",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp"
+    },
+    {
+      "slug": "understood-the-assignment",
+      "name": "Understood the Assignment",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "slug\tname\tprice\timageUrl\ntrust-me-im-fake\tTrust Me, I'm Fake\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp\nauthentically-fake-since-2026\tAuthentically Fake Since 2026\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp\nmy-other-shirt-is-also-fake\tMy Other Shirt Is Also Fake\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp\nfake-news-real-drip\tFake News, Real Drip\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-news-real-drip_14f4606e.webp\nfake-life-better-fabric\tThe Fake Life Had Better Fabric\t5400\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-life-better-fabric_b2c5ccb2.webp\n100-percent-genuine-fake\t100% Genuine Fake\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/100-percent-genuine-fake_85ae2bdf.webp\nfake-it-till-you-make-it\tFake It Till You Make It (I Made It)\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-till-you-make-it_67f82441.webp\nnot-real-not-sorry\tNot Real. Not Sorry.\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp\ntraces-of-authenticity\tTraces of Authenticity\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp\nread-the-label\tRead the Label\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp\nno-cap-all-fake\tNo Cap, All Fake\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp\nsituationship-shirt\tSituationship Shirt\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp\ndelulu-is-the-solulu\tDelulu Is the Solulu\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp\nfake-personality-real-fit\tFake Personality, Real Fit\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-personality-real-fit_c4a72913.webp\ngiving-fake-okay-with-that\tGiving Fake (And I'm Okay With That)\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-fake-okay-with-that_dbc3444c.webp\nmain-character-energy\tMain Character Energy\t5400\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp\npov-fake-shirt-on-purpose\tPOV: Fake Shirt On Purpose\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp\ngiving-absolutely-nothing\tGiving Absolutely Nothing\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp\nrent-free-full-price\tRent Free, Full Price\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp\nunderstood-the-assignment\tUnderstood the Assignment\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1520
+}

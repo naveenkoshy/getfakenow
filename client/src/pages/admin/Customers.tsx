@@ -7,12 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Search, Users, Loader2, Shield, User, Mail, Calendar, ShoppingBag } from "lucide-react";
+import { Search, Users, Loader2, Shield, User, Mail, Calendar, ShoppingBag, Download } from "lucide-react";
 
 export default function AdminCustomers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const filters = useMemo(() => ({
     search: search || undefined,
@@ -25,10 +26,35 @@ export default function AdminCustomers() {
   const { data: customerDetail, isLoading: detailLoading } = trpc.admin.customers.getById.useQuery(
     { id: selectedId! }, { enabled: !!selectedId }
   );
+  const utils = trpc.useUtils();
   const updateRole = trpc.admin.customers.updateRole.useMutation({
     onSuccess: () => { toast.success("Role updated"); refetch(); },
     onError: (e) => toast.error(e.message),
   });
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const result = await utils.admin.export.customers.fetch();
+      if (result && result.csv) {
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + result.csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success(`Exported ${result.count} customers`);
+      }
+    } catch (error) {
+      toast.error('Failed to export customers. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const formatDate = (d: string | Date) => new Date(d).toLocaleDateString("en-MY", { month: "short", day: "numeric", year: "numeric" });
   const formatCurrency = (cents: number) => `RM ${(cents / 100).toFixed(2)}`;
@@ -36,9 +62,19 @@ export default function AdminCustomers() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-          <p className="text-sm text-gray-500 mt-1">{data?.total || 0} registered customers</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
+            <p className="text-sm text-gray-500 mt-1">{data?.total || 0} registered customers</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleExportCSV}
+            disabled={isExporting || isLoading}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            {isExporting ? "Exporting..." : "Export CSV"}
+          </Button>
         </div>
 
         <Card className="bg-white border-gray-200">

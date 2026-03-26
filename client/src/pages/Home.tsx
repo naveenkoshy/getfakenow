@@ -203,6 +203,9 @@ export default function Home() {
             <Link href="/shop" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">
               SHOP
             </Link>
+            <a href="#new-arrivals" className="text-xs font-semibold tracking-widest text-red-600 hover:text-red-700 transition-colors">
+              NEW
+            </a>
             <a href="#casual" className="text-xs font-semibold tracking-widest text-gray-700 hover:text-red-600 transition-colors">
               CASUAL
             </a>
@@ -251,6 +254,7 @@ export default function Home() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-3">
             <Link href="/shop" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Shop All</Link>
+            <a href="#new-arrivals" className="block text-sm font-medium text-red-600 hover:text-red-700" onClick={() => setMobileMenuOpen(false)}>New Arrivals</a>
             <a href="#casual" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Casual</a>
             <a href="#women" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Women</a>
             <a href="#business" className="block text-sm font-medium text-gray-700 hover:text-red-600" onClick={() => setMobileMenuOpen(false)}>Business</a>
@@ -294,6 +298,84 @@ export default function Home() {
             <span>Free shipping over RM75</span>
             <span>S — 10XL on everything</span>
             <span>30-day returns</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── New Arrivals / Headline Drop ── */}
+      <section id="new-arrivals" className="py-20 md:py-24 px-6 bg-gray-950">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.3em] text-red-500 mb-2">JUST DROPPED</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white">
+                New Arrivals
+              </h2>
+              <p className="mt-2 text-gray-400 text-sm">20 new headlines. Same heavyweight cotton. Same zero fine print.</p>
+            </div>
+            <Link href="/shop" className="hidden sm:flex items-center gap-2 text-sm font-semibold text-red-500 hover:text-red-400 transition-colors">
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {/* Scrollable row for first 10 — ironic classics */}
+          <div className="mb-8">
+            <p className="text-xs font-semibold tracking-widest text-gray-500 mb-4">THE IRONIC CLASSICS</p>
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
+              {[
+                { slug: 'trust-me-im-fake', name: "Trust Me, I'm Fake", image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/trust-me-im-fake_63dd6728.webp', price: 49 },
+                { slug: 'authentically-fake-since-2026', name: 'Authentically Fake Since 2026', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/authentically-fake-since-2026_5d56d55a.webp', price: 49 },
+                { slug: 'my-other-shirt-is-also-fake', name: 'My Other Shirt Is Also Fake', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/my-other-shirt-is-also-fake_59792a27.webp', price: 49 },
+                { slug: 'fake-news-real-drip', name: 'Fake News, Real Drip', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-news-real-drip_14f4606e.webp', price: 49 },
+                { slug: 'fake-life-better-fabric', name: 'The Fake Life Had Better Fabric', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-life-better-fabric_b2c5ccb2.webp', price: 54 },
+                { slug: '100-percent-genuine-fake', name: '100% Genuine Fake', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/100-percent-genuine-fake_85ae2bdf.webp', price: 49 },
+                { slug: 'fake-it-till-you-make-it', name: 'Fake It Till You Make It (I Made It)', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-it-till-you-make-it_67f82441.webp', price: 49 },
+                { slug: 'not-real-not-sorry', name: 'Not Real. Not Sorry.', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/not-real-not-sorry_bd1f077e.webp', price: 49 },
+                { slug: 'traces-of-authenticity', name: 'Traces of Authenticity', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/traces-of-authenticity_71ead9c4.webp', price: 49 },
+                { slug: 'read-the-label', name: 'Read the Label', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/read-the-label_66dbcb13.webp', price: 49 },
+              ].map((tee) => (
+                <Link key={tee.slug} href={`/product/${tee.slug}`} className="group flex-shrink-0 w-[200px] md:w-[220px] snap-start">
+                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden relative">
+                    <img src={tee.image} alt={tee.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold tracking-wider px-2 py-0.5">NEW</span>
+                  </div>
+                  <div className="pt-3">
+                    <h3 className="font-semibold text-white text-sm leading-tight group-hover:text-red-500 transition-colors truncate">{tee.name}</h3>
+                    <span className="text-sm font-bold text-gray-300 mt-1 block">RM {tee.price}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Scrollable row for next 10 — Gen Z */}
+          <div>
+            <p className="text-xs font-semibold tracking-widest text-gray-500 mb-4">THE GEN Z COLLECTION</p>
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
+              {[
+                { slug: 'no-cap-all-fake', name: 'No Cap, All Fake', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/no-cap-all-fake_8a34933e.webp', price: 49 },
+                { slug: 'situationship-shirt', name: 'Situationship Shirt', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/situationship-shirt_377c1dbe.webp', price: 49 },
+                { slug: 'delulu-is-the-solulu', name: 'Delulu Is the Solulu', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/delulu-is-the-solulu_0cc1dd70.webp', price: 49 },
+                { slug: 'fake-personality-real-fit', name: 'Fake Personality, Real Fit', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/fake-personality-real-fit_c4a72913.webp', price: 49 },
+                { slug: 'giving-fake-okay-with-that', name: "Giving Fake (And I'm Okay With That)", image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-fake-okay-with-that_dbc3444c.webp', price: 49 },
+                { slug: 'main-character-energy', name: 'Main Character Energy', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp', price: 54 },
+                { slug: 'pov-fake-shirt-on-purpose', name: 'POV: Fake Shirt On Purpose', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp', price: 49 },
+                { slug: 'giving-absolutely-nothing', name: 'Giving Absolutely Nothing', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp', price: 49 },
+                { slug: 'rent-free-full-price', name: 'Rent Free, Full Price', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp', price: 49 },
+                { slug: 'understood-the-assignment', name: 'Understood the Assignment', image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp', price: 49 },
+              ].map((tee) => (
+                <Link key={tee.slug} href={`/product/${tee.slug}`} className="group flex-shrink-0 w-[200px] md:w-[220px] snap-start">
+                  <div className="aspect-[3/4] bg-gray-800 overflow-hidden relative">
+                    <img src={tee.image} alt={tee.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold tracking-wider px-2 py-0.5">NEW</span>
+                  </div>
+                  <div className="pt-3">
+                    <h3 className="font-semibold text-white text-sm leading-tight group-hover:text-red-500 transition-colors truncate">{tee.name}</h3>
+                    <span className="text-sm font-bold text-gray-300 mt-1 block">RM {tee.price}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

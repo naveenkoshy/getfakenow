@@ -1,15 +1,24 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
-import { Loader2, TrendingUp, DollarSign, ShoppingCart, Users, Package, BarChart3 } from "lucide-react";
+import { toast } from "sonner";
+import { Loader2, TrendingUp, DollarSign, ShoppingCart, Users, Package, BarChart3, Download, Calendar } from "lucide-react";
 
 export default function AdminAnalytics() {
   const [period, setPeriod] = useState("7");
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [showExportPanel, setShowExportPanel] = useState(false);
+
   const { data: stats, isLoading: statsLoading } = trpc.admin.dashboard.stats.useQuery();
   const { data: ordersData } = trpc.admin.orders.list.useQuery({ offset: 0, limit: 100 });
   const { data: productsData } = trpc.admin.products.list.useQuery({ offset: 0, limit: 1 });
+  const utils = trpc.useUtils();
 
   const orders = ordersData?.orders || [];
 
@@ -63,6 +72,35 @@ export default function AdminAnalytics() {
 
   const maxRevenue = Math.max(...analytics.dailyData.map(d => d.revenue), 1);
 
+  const handleExportReport = async () => {
+    setIsExporting(true);
+    try {
+      const filters: Record<string, string> = {};
+      if (exportStartDate) filters.startDate = exportStartDate;
+      if (exportEndDate) filters.endDate = exportEndDate;
+      const result = await utils.admin.export.analytics.fetch(
+        Object.keys(filters).length > 0 ? filters : undefined
+      );
+      if (result && result.csv) {
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + result.csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success("Sales report exported");
+      }
+    } catch (error) {
+      toast.error('Failed to export report. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -71,16 +109,70 @@ export default function AdminAnalytics() {
             <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
             <p className="text-sm text-gray-500 mt-1">Track sales performance, revenue trends, and customer insights</p>
           </div>
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="14">Last 14 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="14">Last 14 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="90">Last 90 days</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={() => setShowExportPanel(!showExportPanel)}
+              className={showExportPanel ? "bg-accent" : ""}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export Report
+            </Button>
+          </div>
         </div>
+
+        {/* Export Panel */}
+        {showExportPanel && (
+          <Card className="bg-muted/50 border-dashed">
+            <CardContent className="py-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-medium text-muted-foreground">Export sales report:</span>
+                <Input
+                  type="date"
+                  value={exportStartDate}
+                  onChange={(e) => setExportStartDate(e.target.value)}
+                  className="w-[160px]"
+                />
+                <span className="text-muted-foreground">to</span>
+                <Input
+                  type="date"
+                  value={exportEndDate}
+                  onChange={(e) => setExportEndDate(e.target.value)}
+                  className="w-[160px]"
+                />
+                <Button
+                  onClick={handleExportReport}
+                  disabled={isExporting}
+                  size="sm"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  {isExporting ? "Exporting..." : "Download CSV"}
+                </Button>
+                {(exportStartDate || exportEndDate) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setExportStartDate(""); setExportEndDate(""); }}
+                  >
+                    Clear dates
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Includes daily revenue breakdown, top products by revenue, and summary totals. Leave dates empty for all-time data.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

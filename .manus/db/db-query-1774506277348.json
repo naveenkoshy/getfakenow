@@ -1,0 +1,40 @@
+{
+  "query": "SELECT slug, name, price, imageUrl FROM products WHERE id >= 150016 AND id <= 150020 ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT slug, name, price, imageUrl FROM products WHERE id >= 150016 AND id <= 150020 ORDER BY id;",
+  "rows": [
+    {
+      "slug": "main-character-energy",
+      "name": "Main Character Energy",
+      "price": "5400",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp"
+    },
+    {
+      "slug": "pov-fake-shirt-on-purpose",
+      "name": "POV: Fake Shirt On Purpose",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp"
+    },
+    {
+      "slug": "giving-absolutely-nothing",
+      "name": "Giving Absolutely Nothing",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp"
+    },
+    {
+      "slug": "rent-free-full-price",
+      "name": "Rent Free, Full Price",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp"
+    },
+    {
+      "slug": "understood-the-assignment",
+      "name": "Understood the Assignment",
+      "price": "4900",
+      "imageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "slug\tname\tprice\timageUrl\nmain-character-energy\tMain Character Energy\t5400\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/main-character-energy_3b0c6699.webp\npov-fake-shirt-on-purpose\tPOV: Fake Shirt On Purpose\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/pov-fake-shirt-on-purpose_473d3e00.webp\ngiving-absolutely-nothing\tGiving Absolutely Nothing\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/giving-absolutely-nothing_20c8313b.webp\nrent-free-full-price\tRent Free, Full Price\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/rent-free-full-price_b3f1635f.webp\nunderstood-the-assignment\tUnderstood the Assignment\t4900\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663244348328/mnC6672QxsyxZGLVMrqTHR/understood-the-assignment_bfcbd135.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1570
+}
