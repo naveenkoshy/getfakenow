@@ -357,41 +357,86 @@ export default function ProductDetail() {
                 {/* Size Guide Dropdown */}
                 {showSizeGuide && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">Size Guide (inches)</h4>
-                    <table className="w-full text-xs text-gray-600">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-2 font-semibold text-gray-900">Size</th>
-                          <th className="text-center py-2 font-semibold text-gray-900">Chest</th>
-                          <th className="text-center py-2 font-semibold text-gray-900">Length</th>
-                          <th className="text-center py-2 font-semibold text-gray-900">Shoulder</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { size: 'S', chest: '36-38', length: '27', shoulder: '17' },
-                          { size: 'M', chest: '38-40', length: '28', shoulder: '18' },
-                          { size: 'L', chest: '40-42', length: '29', shoulder: '19' },
-                          { size: 'XL', chest: '42-44', length: '30', shoulder: '20' },
-                          { size: '2XL', chest: '44-48', length: '31', shoulder: '21' },
-                          { size: '3XL', chest: '48-52', length: '32', shoulder: '22' },
-                          { size: '4XL', chest: '52-56', length: '33', shoulder: '23' },
-                          { size: '5XL', chest: '56-60', length: '34', shoulder: '24' },
-                          { size: '6XL', chest: '60-64', length: '35', shoulder: '25' },
-                          { size: '7XL', chest: '64-68', length: '36', shoulder: '26' },
-                          { size: '8XL', chest: '68-72', length: '37', shoulder: '27' },
-                          { size: '9XL', chest: '72-76', length: '38', shoulder: '28' },
-                          { size: '10XL', chest: '76-80', length: '39', shoulder: '29' },
-                        ].map((row) => (
-                          <tr key={row.size} className="border-b border-gray-100 last:border-0">
-                            <td className="py-2 font-medium">{row.size}</td>
-                            <td className="py-2 text-center">{row.chest}</td>
-                            <td className="py-2 text-center">{row.length}</td>
-                            <td className="py-2 text-center">{row.shoulder}</td>
+                    <h4 className="text-sm font-bold text-gray-900 mb-1">
+                      {isWomens ? "Women's Size Guide" : "Men's / Unisex Size Guide"}
+                    </h4>
+                    <p className="text-[11px] text-gray-400 mb-3">All measurements in inches. Measure flat across.</p>
+
+                    {isWomens ? (
+                      <table className="w-full text-xs text-gray-600">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-2 font-semibold text-gray-900">Size</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Bust</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Waist</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Hip</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Length</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {[
+                            { size: 'XXS', bust: '30-31', waist: '23-24', hip: '33-34', length: '23' },
+                            { size: 'XS', bust: '31-33', waist: '24-26', hip: '34-36', length: '24' },
+                            { size: 'S', bust: '33-35', waist: '26-28', hip: '36-38', length: '25' },
+                            { size: 'M', bust: '35-37', waist: '28-30', hip: '38-40', length: '26' },
+                            { size: 'L', bust: '37-40', waist: '30-33', hip: '40-43', length: '27' },
+                            { size: 'XL', bust: '40-43', waist: '33-36', hip: '43-46', length: '28' },
+                            { size: '2XL', bust: '43-47', waist: '36-40', hip: '46-50', length: '29' },
+                            { size: '3XL', bust: '47-51', waist: '40-44', hip: '50-54', length: '30' },
+                            { size: '4XL', bust: '51-55', waist: '44-48', hip: '54-58', length: '31' },
+                          ].map((row) => (
+                            <tr key={row.size} className="border-b border-gray-100 last:border-0">
+                              <td className="py-2 font-medium">{row.size}</td>
+                              <td className="py-2 text-center">{row.bust}</td>
+                              <td className="py-2 text-center">{row.waist}</td>
+                              <td className="py-2 text-center">{row.hip}</td>
+                              <td className="py-2 text-center">{row.length}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <table className="w-full text-xs text-gray-600">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-2 font-semibold text-gray-900">Size</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Chest</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Length</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Shoulder</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { size: 'S', chest: '36-38', length: '27', shoulder: '17' },
+                            { size: 'M', chest: '38-40', length: '28', shoulder: '18' },
+                            { size: 'L', chest: '40-42', length: '29', shoulder: '19' },
+                            { size: 'XL', chest: '42-44', length: '30', shoulder: '20' },
+                            { size: '2XL', chest: '44-48', length: '31', shoulder: '21' },
+                            { size: '3XL', chest: '48-52', length: '32', shoulder: '22' },
+                            { size: '4XL', chest: '52-56', length: '33', shoulder: '23' },
+                            { size: '5XL', chest: '56-60', length: '34', shoulder: '24' },
+                            { size: '6XL', chest: '60-64', length: '35', shoulder: '25' },
+                            { size: '7XL', chest: '64-68', length: '36', shoulder: '26' },
+                            { size: '8XL', chest: '68-72', length: '37', shoulder: '27' },
+                            { size: '9XL', chest: '72-76', length: '38', shoulder: '28' },
+                            { size: '10XL', chest: '76-80', length: '39', shoulder: '29' },
+                          ].map((row) => (
+                            <tr key={row.size} className="border-b border-gray-100 last:border-0">
+                              <td className="py-2 font-medium">{row.size}</td>
+                              <td className="py-2 text-center">{row.chest}</td>
+                              <td className="py-2 text-center">{row.length}</td>
+                              <td className="py-2 text-center">{row.shoulder}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+
+                    <p className="mt-3 text-[11px] text-gray-400">
+                      {isWomens
+                        ? 'Relaxed fit. If between sizes, we recommend sizing down for a closer fit or up for an oversized look.'
+                        : 'Regular fit. If between sizes, we recommend sizing up for a comfortable fit.'}
+                    </p>
                   </div>
                 )}
               </div>

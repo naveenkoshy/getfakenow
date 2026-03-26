@@ -296,3 +296,7 @@
 - [x] Update women's products to include XXS and XS sizes
 - [x] Cap women's sizes at 4XL instead of 10XL
 - [x] Update frontend size display logic to show correct range per product/category
+
+## Women's Size Guide
+- [x] Create women's measurement chart (bust, waist, hip) for XXS-4XL
+- [x] Update size guide modal to show women's chart for women's products and men's/unisex chart for others
