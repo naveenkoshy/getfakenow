@@ -485,3 +485,62 @@
 - [x] Show refund count and total amount trends with summary stats
 - [x] Integrate chart into admin dashboard page
 - [x] Write tests for refund trends procedure (41 tests total, all passing)
+
+## CMS Backend - Full Operational Upgrade
+
+### Customers Management
+- [x] Add "Create Customer" form with name, email, phone, address fields
+- [x] Add inline edit for customer fields (name, phone, address)
+- [x] Add help guidelines and subtext on each field
+- [x] Add form validation (email format, required fields)
+- [x] Add confirmation dialogs for role changes and destructive actions
+
+### Orders & Logistics
+- [x] Add fulfillment workflow (pending → processing → shipped → delivered)
+- [x] Add bulk status update for multiple orders
+- [x] Add print packing slip / invoice
+- [x] Add order timeline with status history visualization
+- [x] Add help text explaining each status transition
+- [x] Add confirmation dialogs for status changes
+- [x] Add order detail side panel with full item breakdown
+
+### Media Library
+- [x] Add video upload support (mp4, webm, mov)
+- [x] Add video preview/playback in media grid
+- [x] Add file type badges (image, video, document)
+- [x] Add drag-and-drop upload
+- [ ] Add bulk upload support
+- [x] Add file size limits with clear error messages
+- [x] Add help guidelines for supported formats and size limits
+
+### Pages & Content
+- [x] Add page status (draft/published) with toggle
+- [x] Add visual preview of content blocks
+- [x] Add media picker integration for image/video in content
+- [x] Add help text for block types and content formatting
+- [x] Add validation for required fields (title, slug, body)
+- [x] Add confirmation before publishing/unpublishing
+
+### Products, Categories & Inventory
+- [x] Add inline validation on product form fields
+- [x] Add help subtext for pricing, SKU, weight fields
+- [x] Add confirmation dialog before deleting products/categories
+- [x] Add stock level warnings with color-coded badges
+- [x] Add bulk stock update capability
+- [x] Add category help text explaining hierarchy
+
+### Marketing (Promotions, Campaigns, Banners)
+- [x] Add promotion validation (dates, discount amounts, code format)
+- [x] Add campaign status badges (draft, active, completed, paused)
+- [x] Add banner preview with dimensions guide
+- [x] Add help text for each marketing feature
+- [x] Add confirmation before activating/deactivating promotions
+
+### Settings, Shipping, SEO, Email Templates
+- [x] Add field-level validation for settings (email format, URL format)
+- [x] Add confirmation before saving critical settings
+- [x] Add help guidelines for shipping zone configuration
+- [x] Add SEO score/checklist with recommendations
+- [x] Add email template preview with variable substitution
+- [x] Add validation for email template variables
+- [x] Write CMS upgrade tests (29 tests, all passing)

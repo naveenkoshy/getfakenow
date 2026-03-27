@@ -1342,6 +1342,91 @@ export const appRouter = router({
 
           return { success: true, message: 'Customer data anonymized. Order records retained for accounting.' };
         }),
+      // Admin: Create a new customer manually
+      create: adminProcedure
+        .input(z.object({
+          name: z.string().min(1, 'Name is required').max(200),
+          email: z.string().email('Invalid email format'),
+          phone: z.string().optional(),
+          addressLine1: z.string().optional(),
+          addressLine2: z.string().optional(),
+          city: z.string().optional(),
+          state: z.string().optional(),
+          postalCode: z.string().optional(),
+          country: z.string().default('Malaysia'),
+          role: z.enum(['user', 'admin']).default('user'),
+          customerGroup: z.string().optional(),
+          notes: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const database = await db.getDb();
+          if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+          // Check if email already exists
+          const existing = await db.getUserByEmail(input.email);
+          if (existing) throw new TRPCError({ code: 'CONFLICT', message: 'A customer with this email already exists' });
+          const { users: usersTable } = await import('../drizzle/schema');
+          const result = await database.insert(usersTable).values({
+            name: input.name,
+            email: input.email,
+            phone: input.phone || null,
+            addressLine1: input.addressLine1 || null,
+            addressLine2: input.addressLine2 || null,
+            city: input.city || null,
+            state: input.state || null,
+            postalCode: input.postalCode || null,
+            country: input.country,
+            role: input.role,
+            customerGroup: input.customerGroup || 'new',
+            loginMethod: 'email',
+            authProvider: 'email',
+            profileCompleted: !!(input.addressLine1 && input.city && input.state && input.postalCode),
+          });
+          const newId = result[0].insertId;
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'customer.create',
+            entityType: 'user',
+            entityId: newId,
+            details: JSON.stringify({ name: input.name, email: input.email }),
+          });
+          return { success: true, id: newId };
+        }),
+
+      // Admin: Update customer profile fields
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().min(1).max(200).optional(),
+          phone: z.string().optional(),
+          addressLine1: z.string().optional(),
+          addressLine2: z.string().optional(),
+          city: z.string().optional(),
+          state: z.string().optional(),
+          postalCode: z.string().optional(),
+          country: z.string().optional(),
+          customerGroup: z.string().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const user = await db.getUserById(input.id);
+          if (!user) throw new TRPCError({ code: 'NOT_FOUND', message: 'Customer not found' });
+          const { id, ...updates } = input;
+          // Filter out undefined values
+          const cleanUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([_, v]) => v !== undefined)
+          );
+          if (Object.keys(cleanUpdates).length === 0) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'No fields to update' });
+          }
+          await db.updateUser(input.id, cleanUpdates);
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'customer.update',
+            entityType: 'user',
+            entityId: input.id,
+            details: JSON.stringify({ fields: Object.keys(cleanUpdates) }),
+          });
+          return { success: true };
+        }),
     }),
 
     // ---- Promotions ----
