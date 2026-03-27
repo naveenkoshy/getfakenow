@@ -366,8 +366,8 @@ export const appRouter = router({
       .input(z.object({
         productId: z.number(),
         quantity: z.number().min(1).default(1),
-        size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
-        color: z.enum(['black', 'white', 'navy', 'red']),
+        size: z.string().min(1).max(10),
+        color: z.string().min(1).max(20),
       }))
       .mutation(async ({ ctx, input }) => {
         const product = await db.getProductById(input.productId);

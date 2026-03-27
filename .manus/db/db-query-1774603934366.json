@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, name, slug, categoryId FROM products WHERE name LIKE '%slack%' OR name LIKE '%trouser%' OR name LIKE '%pant%' OR name LIKE '%Slack%' OR name LIKE '%Trouser%' OR name LIKE '%Pant%' OR slug LIKE '%slack%' OR slug LIKE '%trouser%' OR slug LIKE '%pant%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug, categoryId FROM products WHERE name LIKE '%slack%' OR name LIKE '%trouser%' OR name LIKE '%pant%' OR name LIKE '%Slack%' OR name LIKE '%Trouser%' OR name LIKE '%Pant%' OR slug LIKE '%slack%' OR slug LIKE '%trouser%' OR slug LIKE '%pant%';",
+  "rows": [
+    {
+      "id": "80001",
+      "name": "The Downtime",
+      "slug": "sweat-pants",
+      "categoryId": "30001"
+    },
+    {
+      "id": "80007",
+      "name": "The Foundation",
+      "slug": "dress-slacks",
+      "categoryId": "30002"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcategoryId\n80001\tThe Downtime\tsweat-pants\t30001\n80007\tThe Foundation\tdress-slacks\t30002\n",
+  "stderr": "",
+  "execution_time_ms": 1607
+}

@@ -329,7 +329,12 @@ export default function Cart() {
 
                       <div className="flex gap-4 mt-1.5">
                         {item.size && (
-                          <span className="text-xs text-gray-500">Size: <span className="font-medium text-gray-700">{item.size}</span></span>
+                          <span className="text-xs text-gray-500">
+                            {['dress-slacks', 'sweat-pants'].includes(item.slug) ? 'Waist' : 'Size'}:{' '}
+                            <span className="font-medium text-gray-700">
+                              {['dress-slacks', 'sweat-pants'].includes(item.slug) ? `${item.size}"` : item.size}
+                            </span>
+                          </span>
                         )}
                         {item.color && (
                           <span className="text-xs text-gray-500 flex items-center gap-1">

@@ -374,7 +374,7 @@ export default function Checkout() {
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-gray-900 text-sm leading-tight truncate">{item.product?.name}</p>
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {item.size && `Size: ${item.size}`}
+                            {item.size && (['dress-slacks', 'sweat-pants'].includes(item.product?.slug) ? `Waist: ${item.size}"` : `Size: ${item.size}`)}
                             {item.size && item.color && ' · '}
                             {item.color && `Color: ${item.color}`}
                             {' · '}Qty: {item.quantity}

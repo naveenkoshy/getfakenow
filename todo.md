@@ -562,3 +562,14 @@
 - [x] Apply shared components to Promotions, Campaigns, Banners, Shipping, SEO, Settings, Email Templates
 - [x] Apply shared components to ActivityLog, Analytics, Navigation, RefundHistory, Returns, Team
 - [x] All 226 tests passing after UI consistency changes
+
+## Slacks Waist-Inch Sizing
+- [x] Identify all slacks/trousers products in database (dress-slacks, sweat-pants)
+- [x] Update size options from S/M/L to waist inches (28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50)
+- [x] Update frontend size selector to show waist inches with " mark for slacks/trousers
+- [x] Update size guide to show waist-inch measurements (waist, hip, inseam, thigh)
+- [x] Update cart display to show "Waist: 32\"" for bottom-wear products
+- [x] Update checkout display for waist-inch products
+- [x] Update cart.add backend validation to accept flexible size strings
+- [x] Update guest cart type to accept flexible size/color strings
+- [x] All 226 tests passing

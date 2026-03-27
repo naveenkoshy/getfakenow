@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 export interface GuestCartItem {
   productId: number;
   quantity: number;
-  size: 'S' | 'M' | 'L' | 'XL' | 'XXL';
-  color: 'black' | 'white' | 'navy' | 'red';
+  size: string;
+  color: string;
   productName?: string;
   productPrice?: number;
   productImage?: string;

@@ -13,6 +13,10 @@ import { updateMetaTags, injectStructuredData, generateProductSchema, generateBr
 
 const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL', '7XL', '8XL', '9XL', '10XL'];
 const WOMEN_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
+const WAIST_SIZES = ['28', '30', '32', '34', '36', '38', '40', '42', '44', '46', '48', '50'];
+
+// Slugs that use waist-inch sizing instead of S/M/L
+const WAIST_SIZED_SLUGS = ['dress-slacks', 'sweat-pants'];
 
 const COLOR_MAP: Record<string, string> = {
   white: '#ffffff',
@@ -159,7 +163,8 @@ export default function ProductDetail() {
   };
 
   const isWomens = product?.category?.name?.toLowerCase() === 'women';
-  const availableSizes = isWomens ? WOMEN_SIZES : DEFAULT_SIZES;
+  const isWaistSized = WAIST_SIZED_SLUGS.includes(product?.slug || '');
+  const availableSizes = isWaistSized ? WAIST_SIZES : isWomens ? WOMEN_SIZES : DEFAULT_SIZES;
 
   // Loading state
   if (isLoading) {
@@ -402,7 +407,7 @@ export default function ProductDetail() {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-semibold text-gray-900">
-                    Size: <span className="font-normal text-gray-500">{selectedSize || 'Select'}</span>
+                    {isWaistSized ? 'Waist' : 'Size'}: <span className="font-normal text-gray-500">{selectedSize ? (isWaistSized ? `${selectedSize}"` : selectedSize) : 'Select'}</span>
                   </span>
                   <button
                     onClick={() => setShowSizeGuide(!showSizeGuide)}
@@ -422,7 +427,7 @@ export default function ProductDetail() {
                           : 'border-gray-200 text-gray-700 hover:border-gray-900'
                       }`}
                     >
-                      {size}
+                      {isWaistSized ? `${size}"` : size}
                     </button>
                   ))}
                 </div>
@@ -431,11 +436,47 @@ export default function ProductDetail() {
                 {showSizeGuide && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
                     <h4 className="text-sm font-bold text-gray-900 mb-1">
-                      {isWomens ? "Women's Size Guide" : "Men's / Unisex Size Guide"}
+                      {isWaistSized ? 'Bottoms Size Guide (Waist Inches)' : isWomens ? "Women's Size Guide" : "Men's / Unisex Size Guide"}
                     </h4>
-                    <p className="text-[11px] text-gray-400 mb-3">All measurements in inches. Measure flat across.</p>
+                    <p className="text-[11px] text-gray-400 mb-3">
+                      {isWaistSized ? 'Measure around your natural waistline. If between sizes, size up.' : 'All measurements in inches. Measure flat across.'}
+                    </p>
 
-                    {isWomens ? (
+                    {isWaistSized ? (
+                      <table className="w-full text-xs text-gray-600">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-2 font-semibold text-gray-900">Waist</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Hip</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Inseam</th>
+                            <th className="text-center py-2 font-semibold text-gray-900">Thigh</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { waist: '28"', hip: '36-37', inseam: '30', thigh: '21-22' },
+                            { waist: '30"', hip: '38-39', inseam: '30', thigh: '22-23' },
+                            { waist: '32"', hip: '40-41', inseam: '31', thigh: '23-24' },
+                            { waist: '34"', hip: '42-43', inseam: '31', thigh: '24-25' },
+                            { waist: '36"', hip: '44-45', inseam: '32', thigh: '25-26' },
+                            { waist: '38"', hip: '46-47', inseam: '32', thigh: '26-27' },
+                            { waist: '40"', hip: '48-49', inseam: '32', thigh: '27-28' },
+                            { waist: '42"', hip: '50-51', inseam: '32', thigh: '28-29' },
+                            { waist: '44"', hip: '52-53', inseam: '32', thigh: '29-30' },
+                            { waist: '46"', hip: '54-55', inseam: '32', thigh: '30-31' },
+                            { waist: '48"', hip: '56-57', inseam: '32', thigh: '31-32' },
+                            { waist: '50"', hip: '58-59', inseam: '32', thigh: '32-33' },
+                          ].map((row) => (
+                            <tr key={row.waist} className="border-b border-gray-100 last:border-0">
+                              <td className="py-2 font-medium">{row.waist}</td>
+                              <td className="py-2 text-center">{row.hip}</td>
+                              <td className="py-2 text-center">{row.inseam}</td>
+                              <td className="py-2 text-center">{row.thigh}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : isWomens ? (
                       <table className="w-full text-xs text-gray-600">
                         <thead>
                           <tr className="border-b border-gray-200">
@@ -506,9 +547,11 @@ export default function ProductDetail() {
                     )}
 
                     <p className="mt-3 text-[11px] text-gray-400">
-                      {isWomens
-                        ? 'Relaxed fit. If between sizes, we recommend sizing down for a closer fit or up for an oversized look.'
-                        : 'Regular fit. If between sizes, we recommend sizing up for a comfortable fit.'}
+                      {isWaistSized
+                        ? 'True to size. Measure your natural waist — not where your jeans sit. If between sizes, go up.'
+                        : isWomens
+                          ? 'Relaxed fit. If between sizes, we recommend sizing down for a closer fit or up for an oversized look.'
+                          : 'Regular fit. If between sizes, we recommend sizing up for a comfortable fit.'}
                     </p>
                   </div>
                 )}
