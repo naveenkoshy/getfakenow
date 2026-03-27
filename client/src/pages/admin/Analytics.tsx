@@ -7,6 +7,7 @@ import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { Loader2, TrendingUp, DollarSign, ShoppingCart, Users, Package, BarChart3, Download, Calendar } from "lucide-react";
+import { PageHeader } from "@/components/admin/CmsUI";
 
 export default function AdminAnalytics() {
   const [period, setPeriod] = useState("7");
@@ -104,31 +105,28 @@ export default function AdminAnalytics() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-            <p className="text-sm text-gray-500 mt-1">Track sales performance, revenue trends, and customer insights</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="14">Last 14 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              onClick={() => setShowExportPanel(!showExportPanel)}
-              className={showExportPanel ? "bg-accent" : ""}
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export Report
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Analytics"
+          description="Track sales performance, revenue trends, and customer insights"
+        >
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="14">Last 14 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            onClick={() => setShowExportPanel(!showExportPanel)}
+            className={showExportPanel ? "bg-accent" : ""}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export Report
+          </Button>
+        </PageHeader>
 
         {/* Export Panel */}
         {showExportPanel && (

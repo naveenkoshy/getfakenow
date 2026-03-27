@@ -10,6 +10,7 @@ import {
   Search, Filter, Shield, LogIn, LogOut, UserPlus, Trash2, RotateCcw,
   ChevronLeft, ChevronRight, Globe, AlertTriangle
 } from "lucide-react";
+import { PageHeader } from "@/components/admin/CmsUI";
 
 const actionIcons: Record<string, any> = {
   "admin.login.success": LogIn,
@@ -80,10 +81,10 @@ export default function AdminActivityLog() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Activity Audit Log</h1>
-          <p className="text-sm text-gray-500 mt-1">Security audit trail of all admin actions with IP tracking</p>
-        </div>
+        <PageHeader
+          title="Activity Audit Log"
+          description="Security audit trail of all admin actions with IP tracking"
+        />
 
         {/* Filters */}
         <Card className="bg-white border-gray-200">

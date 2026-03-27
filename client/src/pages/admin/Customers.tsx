@@ -21,8 +21,9 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import {
   Search, Users, Loader2, Shield, User, Mail, Calendar, ShoppingBag, Download, UserX,
-  AlertTriangle, Plus, Pencil, Phone, MapPin, Tag, HelpCircle, CheckCircle2, XCircle, Save
+  AlertTriangle, Plus, Pencil, Phone, MapPin, Tag, CheckCircle2, XCircle, Save
 } from "lucide-react";
+import { PageHeader, HelpText, FormField, ConfirmDialog, StatusBadge as CmsStatusBadge } from "@/components/admin/CmsUI";
 
 const CUSTOMER_GROUPS = [
   { value: "new", label: "New Customer", color: "bg-blue-100 text-blue-800" },
@@ -37,10 +38,6 @@ const MALAYSIAN_STATES = [
   "Terengganu", "W.P. Kuala Lumpur", "W.P. Labuan", "W.P. Putrajaya",
 ];
 
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
-
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
     <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
@@ -50,12 +47,11 @@ function FieldLabel({ children, required }: { children: React.ReactNode; require
   );
 }
 
-function StatusBadge({ verified, label }: { verified: boolean; label: string }) {
+function VerifiedBadge({ verified, label }: { verified: boolean; label: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${verified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-      {verified ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+    <CmsStatusBadge variant={verified ? "success" : "neutral"} dot>
       {label}
-    </span>
+    </CmsStatusBadge>
   );
 }
 
@@ -192,25 +188,18 @@ export default function AdminCustomers() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage your customer base. {data?.total || 0} registered customers.
-              <span className="text-gray-400 ml-1">Create, edit, and manage customer profiles and roles.</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
-              <Download className="h-4 w-4 mr-2" />
-              {isExporting ? "Exporting..." : "Export CSV"}
-            </Button>
-            <Button onClick={() => setCreateDialog(true)} className="bg-red-600 hover:bg-red-700 text-white">
-              <Plus className="h-4 w-4 mr-2" /> Add Customer
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Customers"
+          description={`Manage your customer base. ${data?.total || 0} registered customers. Create, edit, and manage customer profiles and roles.`}
+        >
+          <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
+            <Download className="h-4 w-4 mr-2" />
+            {isExporting ? "Exporting..." : "Export CSV"}
+          </Button>
+          <Button onClick={() => setCreateDialog(true)} className="bg-red-600 hover:bg-red-700 text-white">
+            <Plus className="h-4 w-4 mr-2" /> Add Customer
+          </Button>
+        </PageHeader>
 
         {/* Filters */}
         <Card className="bg-white border-gray-200">
@@ -300,8 +289,8 @@ export default function AdminCustomers() {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex flex-col gap-1">
-                              <StatusBadge verified={u.emailVerified} label={u.emailVerified ? "Verified" : "Unverified"} />
-                              {u.profileCompleted && <StatusBadge verified={true} label="Profile complete" />}
+                              <VerifiedBadge verified={u.emailVerified} label={u.emailVerified ? "Verified" : "Unverified"} />
+                              {u.profileCompleted && <VerifiedBadge verified={true} label="Profile complete" />}
                             </div>
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-500">{formatDate(u.createdAt)}</td>
@@ -461,8 +450,8 @@ export default function AdminCustomers() {
                     <p className="font-semibold text-gray-900">{customerDetail.name || "—"}</p>
                     <p className="text-sm text-gray-500">{customerDetail.email}</p>
                     <div className="flex gap-2 mt-1">
-                      <StatusBadge verified={customerDetail.emailVerified} label={customerDetail.emailVerified ? "Email verified" : "Email unverified"} />
-                      <StatusBadge verified={customerDetail.profileCompleted} label={customerDetail.profileCompleted ? "Profile complete" : "Profile incomplete"} />
+                      <VerifiedBadge verified={customerDetail.emailVerified} label={customerDetail.emailVerified ? "Email verified" : "Email unverified"} />
+                      <VerifiedBadge verified={customerDetail.profileCompleted} label={customerDetail.profileCompleted ? "Profile complete" : "Profile incomplete"} />
                     </div>
                   </div>
                 </div>

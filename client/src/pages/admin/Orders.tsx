@@ -20,8 +20,9 @@ import { toast } from "sonner";
 import {
   Search, Eye, Package, Download, Calendar, Loader2, Truck, CreditCard,
   User, MapPin, Clock, CheckCircle2, XCircle, AlertTriangle, FileText,
-  ExternalLink, StickyNote, HelpCircle, ChevronRight, Printer, Copy
+  ExternalLink, StickyNote, ChevronRight, Printer, Copy
 } from "lucide-react";
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; helpText: string }> = {
   pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800 border-yellow-200", icon: Clock, helpText: "Order placed, awaiting payment confirmation or processing." },
@@ -43,9 +44,7 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   cancelled: [],
 };
 
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+// HelpText imported from shared CmsUI components
 
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -167,23 +166,17 @@ export default function AdminOrders() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage customer orders, fulfillment, and logistics. {data?.total || 0} total orders.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowDateFilter(!showDateFilter)} className={showDateFilter ? "bg-gray-100" : ""}>
-              <Calendar className="h-4 w-4 mr-2" /> Date Range
-            </Button>
-            <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
-              <Download className="h-4 w-4 mr-2" /> {isExporting ? "Exporting..." : "Export CSV"}
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Orders"
+          description={`Manage customer orders, fulfillment, and logistics. ${data?.total || 0} total orders.`}
+        >
+          <Button variant="outline" size="sm" onClick={() => setShowDateFilter(!showDateFilter)} className={showDateFilter ? "bg-gray-100" : ""}>
+            <Calendar className="h-4 w-4 mr-2" /> Date Range
+          </Button>
+          <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
+            <Download className="h-4 w-4 mr-2" /> {isExporting ? "Exporting..." : "Export CSV"}
+          </Button>
+        </PageHeader>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-5 gap-3">

@@ -20,10 +20,7 @@ import {
   Plus, Pencil, Trash2, Loader2, Search, ArrowRightLeft, Globe, Settings,
   HelpCircle, AlertTriangle, CheckCircle2, Eye
 } from "lucide-react";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 export default function AdminSEO() {
   const { data: seoMetas, isLoading: metaLoading, refetch: refetchMeta } = trpc.admin.seo.list.useQuery();
@@ -60,10 +57,10 @@ export default function AdminSEO() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">SEO Management</h1>
-          <p className="text-sm text-gray-500 mt-1">Optimize search engine visibility, manage redirects, and configure global SEO settings</p>
-        </div>
+        <PageHeader
+          title="SEO Management"
+          description="Optimize search engine visibility, manage redirects, and configure global SEO settings"
+        />
 
         {/* Help */}
         <Card className="bg-blue-50 border-blue-200">

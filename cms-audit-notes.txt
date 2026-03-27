@@ -1,0 +1,60 @@
+CMS UI CONSISTENCY AUDIT
+========================
+
+INCONSISTENCIES FOUND:
+
+1. PAGE HEADERS
+   - Most pages: text-2xl font-bold text-gray-900 (Dashboard, Orders, Customers, etc.)
+   - EditProduct/AddProduct: text-3xl font-bold tracking-tight (different size + tracking)
+   - Description: text-sm text-gray-500 mt-1 (most) vs text-muted-foreground (EditProduct)
+
+2. HELP TEXT PATTERNS
+   - Upgraded pages define local HelpText/FieldHelp components (each page re-defines them)
+   - Non-upgraded pages (Dashboard, ActivityLog, Analytics, Team, Navigation, RefundHistory, Returns) have NO help text
+   - HelpText styling varies slightly: text-xs text-gray-400 (most) but not shared
+
+3. CONFIRM DIALOGS
+   - Upgraded pages use AlertDialog from shadcn (consistent)
+   - But each page re-implements the same AlertDialog pattern locally
+   - Non-upgraded pages have no confirm dialogs
+
+4. STATUS BADGES
+   - Each page defines its own StatusBadge or status color functions locally
+   - Colors are mostly consistent (green=active, red=inactive, yellow=pending)
+   - But implementation varies (some use Badge component, some use spans)
+
+5. EMPTY STATES
+   - Inconsistent: some use Card with centered text, some use inline text
+   - No shared illustration or icon pattern
+
+6. TABLE STYLING
+   - Most use: "min-w-full divide-y divide-gray-200" for tables
+   - Header: "bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider"
+   - Mostly consistent but some pages have slight variations
+
+7. CARD STYLING
+   - Most use: "bg-white border-gray-200" 
+   - Stats cards: some use colored left borders, some don't
+   - Padding varies: p-4, p-5, p-6
+
+8. BUTTON PLACEMENT
+   - Page header actions: mostly top-right, consistent
+   - Dialog buttons: Cancel left, Primary right (consistent)
+   - But some dialogs have different button sizing
+
+9. PAGES MISSING UPGRADES (no help text, no confirm dialogs):
+   - Dashboard.tsx
+   - ActivityLog.tsx
+   - Analytics.tsx
+   - Team.tsx
+   - Navigation.tsx
+   - RefundHistory.tsx
+   - Returns.tsx
+   - AddProduct.tsx / EditProduct.tsx
+
+PLAN:
+- Create shared components in client/src/components/admin/
+- PageHeader, HelpText, ConfirmDialog, StatusBadge, EmptyState
+- Apply to ALL pages for consistency
+- Fix header sizes (all should be text-2xl)
+- Standardize card padding and stats card styling

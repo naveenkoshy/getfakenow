@@ -13,10 +13,7 @@ import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2, FolderOpen, HelpCircle, AlertTriangle, Search } from "lucide-react";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 export default function AdminCategories() {
   const { data: categories, isLoading, refetch } = trpc.admin.categories.list.useQuery();
@@ -58,15 +55,14 @@ export default function AdminCategories() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-            <p className="text-sm text-gray-500 mt-1">Organize your product catalog into categories — {categories?.length || 0} total</p>
-          </div>
+        <PageHeader
+          title="Categories"
+          description={`Organize your product catalog into categories — ${categories?.length || 0} total`}
+        >
           <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white">
             <Plus className="h-4 w-4 mr-2" /> Add Category
           </Button>
-        </div>
+        </PageHeader>
 
         {/* Help */}
         <Card className="bg-blue-50 border-blue-200">

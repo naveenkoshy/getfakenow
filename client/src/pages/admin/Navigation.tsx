@@ -8,6 +8,7 @@ import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Loader2, Menu, GripVertical } from "lucide-react";
+import { PageHeader } from "@/components/admin/CmsUI";
 
 export default function AdminNavigation() {
   const { data: items, isLoading, refetch } = trpc.admin.navigation.list.useQuery();
@@ -55,13 +56,12 @@ export default function AdminNavigation() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Navigation</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage header and footer navigation links</p>
-          </div>
+        <PageHeader
+          title="Navigation"
+          description="Manage header and footer navigation links"
+        >
           <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white"><Plus className="h-4 w-4 mr-2" /> Add Item</Button>
-        </div>
+        </PageHeader>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>

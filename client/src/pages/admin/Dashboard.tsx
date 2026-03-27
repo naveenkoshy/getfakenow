@@ -5,10 +5,11 @@ import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { 
   Package, ShoppingCart, Users, DollarSign, TrendingUp, 
-  AlertTriangle, ArrowRight, Clock, CheckCircle2, XCircle,
+  AlertTriangle, ArrowRight, Clock, CheckCircle2,
   Loader2
 } from "lucide-react";
 import { RefundTrendsChart } from "@/components/RefundTrendsChart";
+import { PageHeader, StatusBadge, EmptyState } from "@/components/admin/CmsUI";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = trpc.admin.dashboard.stats.useQuery();
@@ -20,25 +21,18 @@ export default function AdminDashboard() {
   const formatCurrency = (cents: number) => `RM ${(cents / 100).toFixed(2)}`;
   const formatDate = (d: string | Date) => new Date(d).toLocaleDateString("en-MY", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
-  const statusColor = (s: string) => {
-    const map: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800",
-      processing: "bg-blue-100 text-blue-800",
-      shipped: "bg-purple-100 text-purple-800",
-      delivered: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      refunded: "bg-gray-100 text-gray-800",
+  const orderStatusVariant = (s: string) => {
+    const map: Record<string, "success" | "warning" | "error" | "info" | "neutral" | "purple"> = {
+      pending: "warning", processing: "info", shipped: "purple",
+      delivered: "success", cancelled: "error", refunded: "neutral",
     };
-    return map[s] || "bg-gray-100 text-gray-800";
+    return map[s] || "neutral";
   };
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Overview of your store performance</p>
-        </div>
+        <PageHeader title="Dashboard" description="Overview of your store performance" />
 
         {/* KPI Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -135,7 +129,7 @@ export default function AdminDashboard() {
 
         {/* Main content grid */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Recent Orders - takes 2 cols */}
+          {/* Recent Orders */}
           <Card className="lg:col-span-2 bg-white border-gray-200">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-base font-semibold text-gray-900">Recent Orders</CardTitle>
@@ -149,7 +143,7 @@ export default function AdminDashboard() {
                   <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
                 </div>
               ) : !recentOrders?.orders?.length ? (
-                <div className="text-center py-8 text-gray-500 text-sm">No orders yet</div>
+                <EmptyState icon="inbox" title="No orders yet" description="Orders will appear here once customers start purchasing." />
               ) : (
                 <div className="space-y-3">
                   {recentOrders.orders.map((order: any) => (
@@ -164,9 +158,9 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor(order.status)}`}>
+                        <StatusBadge variant={orderStatusVariant(order.status)} dot>
                           {order.status}
-                        </span>
+                        </StatusBadge>
                         <span className="text-sm font-semibold text-gray-900">{formatCurrency(order.totalAmount)}</span>
                       </div>
                     </div>
@@ -190,10 +184,7 @@ export default function AdminDashboard() {
                   <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
                 </div>
               ) : !lowStock?.length && !outOfStock?.length ? (
-                <div className="text-center py-8">
-                  <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">All products in stock</p>
-                </div>
+                <EmptyState icon="package" title="All products in stock" description="No stock alerts at this time." />
               ) : (
                 <div className="space-y-2">
                   {outOfStock?.map((p: any) => (
@@ -201,7 +192,7 @@ export default function AdminDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-red-900 truncate">{p.name}</p>
                       </div>
-                      <span className="text-xs font-bold text-red-600 ml-2">OUT</span>
+                      <StatusBadge variant="error">OUT</StatusBadge>
                     </div>
                   ))}
                   {lowStock?.slice(0, 5).map((p: any) => (
@@ -209,7 +200,7 @@ export default function AdminDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-yellow-900 truncate">{p.name}</p>
                       </div>
-                      <span className="text-xs font-bold text-yellow-600 ml-2">{p.stockQuantity} left</span>
+                      <StatusBadge variant="warning">{p.stockQuantity} left</StatusBadge>
                     </div>
                   ))}
                 </div>

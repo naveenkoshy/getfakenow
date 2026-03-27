@@ -13,14 +13,11 @@ import {
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
-  Plus, Search, Pencil, Trash2, Download, Loader2, Package, HelpCircle,
+  Plus, Search, Pencil, Trash2, Download, Loader2, Package,
   AlertTriangle, Star, Eye, CheckCircle2, XCircle
 } from "lucide-react";
 import { Link } from "wouter";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText, ConfirmDialog, StatusBadge } from "@/components/admin/CmsUI";
 
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,26 +75,20 @@ export default function AdminProducts() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage your product catalog — {totalProducts} product{totalProducts !== 1 ? "s" : ""} total
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
-              {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Download className="h-4 w-4 mr-2" />}
-              Export CSV
-            </Button>
-            <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
-              <Link href="/admin/products/new">
-                <Plus className="h-4 w-4 mr-2" /> Add Product
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Products"
+          description={`Manage your product catalog — ${totalProducts} product${totalProducts !== 1 ? "s" : ""} total`}
+        >
+          <Button variant="outline" onClick={handleExportCSV} disabled={isExporting || isLoading}>
+            {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Download className="h-4 w-4 mr-2" />}
+            Export CSV
+          </Button>
+          <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
+            <Link href="/admin/products/new">
+              <Plus className="h-4 w-4 mr-2" /> Add Product
+            </Link>
+          </Button>
+        </PageHeader>
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-3">

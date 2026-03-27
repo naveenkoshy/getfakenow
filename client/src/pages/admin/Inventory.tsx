@@ -12,10 +12,7 @@ import { toast } from "sonner";
 import {
   Loader2, AlertTriangle, CheckCircle2, Package, Save, HelpCircle, Search, Undo2
 } from "lucide-react";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 export default function AdminInventory() {
   const { data: products, isLoading, refetch } = trpc.admin.products.list.useQuery({ limit: 200, offset: 0 });
@@ -56,23 +53,20 @@ export default function AdminInventory() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Inventory</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage stock levels across all products</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {editCount > 0 && (
-              <Button variant="outline" onClick={() => setEdits({})} title="Discard changes">
-                <Undo2 className="h-4 w-4 mr-2" /> Discard ({editCount})
-              </Button>
-            )}
-            <Button onClick={handleSave} disabled={editCount === 0 || bulkUpdate.isPending} className="bg-red-600 hover:bg-red-700 text-white">
-              {bulkUpdate.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-              Save Changes ({editCount})
+        <PageHeader
+          title="Inventory"
+          description="Manage stock levels across all products"
+        >
+          {editCount > 0 && (
+            <Button variant="outline" onClick={() => setEdits({})} title="Discard changes">
+              <Undo2 className="h-4 w-4 mr-2" /> Discard ({editCount})
             </Button>
-          </div>
-        </div>
+          )}
+          <Button onClick={handleSave} disabled={editCount === 0 || bulkUpdate.isPending} className="bg-red-600 hover:bg-red-700 text-white">
+            {bulkUpdate.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+            Save Changes ({editCount})
+          </Button>
+        </PageHeader>
 
         {/* Help */}
         <Card className="bg-blue-50 border-blue-200">

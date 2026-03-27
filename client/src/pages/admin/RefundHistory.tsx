@@ -11,6 +11,7 @@ import {
   Clock, CheckCircle2, XCircle, AlertTriangle, Filter,
   ChevronLeft, ChevronRight, ExternalLink, Copy, RefreshCw
 } from "lucide-react";
+import { PageHeader } from "@/components/admin/CmsUI";
 import {
   Select,
   SelectContent,
@@ -161,42 +162,39 @@ export default function AdminRefundHistory() {
     <AdminLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Refund History</h1>
-            <p className="text-sm text-gray-500 mt-1">Track all processed refunds with Stripe IDs, amounts, and timestamps</p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              className="gap-1.5"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Refresh
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleExport}
-              disabled={exportMutation.isPending}
-              className="bg-gray-900 hover:bg-gray-800 text-white gap-1.5"
-            >
-              {exportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export CSV
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handlePdfExport}
-              disabled={pdfExportMutation.isPending}
-              className="gap-1.5"
-            >
-              {pdfExportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export PDF
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Refund History"
+          description="Track all processed refunds with Stripe IDs, amounts, and timestamps"
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="gap-1.5"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleExport}
+            disabled={exportMutation.isPending}
+            className="bg-gray-900 hover:bg-gray-800 text-white gap-1.5"
+          >
+            {exportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Export CSV
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handlePdfExport}
+            disabled={pdfExportMutation.isPending}
+            className="gap-1.5"
+          >
+            {pdfExportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Export PDF
+          </Button>
+        </PageHeader>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

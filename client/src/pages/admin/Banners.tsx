@@ -16,10 +16,7 @@ import {
   Plus, Pencil, Trash2, Loader2, Image, GripVertical, HelpCircle, AlertTriangle,
   Eye, CheckCircle2, Clock, XCircle
 } from "lucide-react";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 export default function AdminBanners() {
   const { data: banners, isLoading, refetch } = trpc.admin.banners.list.useQuery();
@@ -89,15 +86,12 @@ export default function AdminBanners() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Banner Slides</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage homepage hero banners and promotional slides — {banners?.length || 0} total
-            </p>
-          </div>
+        <PageHeader
+          title="Banner Slides"
+          description={`Manage homepage hero banners and promotional slides — ${banners?.length || 0} total`}
+        >
           <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white"><Plus className="h-4 w-4 mr-2" /> Add Banner</Button>
-        </div>
+        </PageHeader>
 
         {/* Help */}
         <Card className="bg-blue-50 border-blue-200">

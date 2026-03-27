@@ -10,6 +10,7 @@ import {
   Loader2, UserPlus, Mail, Shield, Clock, CheckCircle2, XCircle, 
   AlertTriangle, Copy, Users 
 } from "lucide-react";
+import { PageHeader } from "@/components/admin/CmsUI";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -62,10 +63,10 @@ export default function AdminTeam() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team & Invites</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage admin team members and send invitations</p>
-        </div>
+        <PageHeader
+          title="Team & Invites"
+          description="Manage admin team members and send invitations"
+        />
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -17,6 +17,7 @@ import {
   Plus, Trash2, Loader2, Image, Copy, Search, Upload, FileVideo, FileText,
   FileImage, File, HelpCircle, Eye, X, Film, Music, CheckCircle2
 } from "lucide-react";
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_TYPES = {
@@ -64,10 +65,6 @@ function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
 }
 
 export default function AdminMedia() {
@@ -172,18 +169,14 @@ export default function AdminMedia() {
   return (
     <AdminLayout>
       <div className="space-y-6" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Media Library</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Upload and manage images, videos, documents, and audio files. {stats.total} file(s) total.
-            </p>
-          </div>
+        <PageHeader
+          title="Media Library"
+          description={`Upload and manage images, videos, documents, and audio files. ${stats.total} file(s) total.`}
+        >
           <Button onClick={() => setUploadDialog(true)} className="bg-red-600 hover:bg-red-700 text-white">
             <Plus className="h-4 w-4 mr-2" /> Upload Files
           </Button>
-        </div>
+        </PageHeader>
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-3">

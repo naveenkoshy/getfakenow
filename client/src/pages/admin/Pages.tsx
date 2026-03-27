@@ -22,10 +22,7 @@ import {
   Plus, Pencil, Trash2, Loader2, FileText, Blocks, HelpCircle, Eye, Globe,
   EyeOff, Search, ExternalLink, Image, Copy, CheckCircle2, AlertTriangle
 } from "lucide-react";
-
-function HelpText({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-gray-400 mt-1 flex items-start gap-1"><HelpCircle className="h-3 w-3 mt-0.5 flex-shrink-0" /><span>{children}</span></p>;
-}
+import { PageHeader, HelpText } from "@/components/admin/CmsUI";
 
 function FieldLabel({ label, required, hint }: { label: string; required?: boolean; hint?: string }) {
   return (
@@ -130,15 +127,10 @@ export default function AdminPages() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Pages & Content</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Create and manage static pages and reusable content blocks for your storefront.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          title="Pages & Content"
+          description="Create and manage static pages and reusable content blocks for your storefront."
+        />
 
         {/* Help banner */}
         <Card className="bg-blue-50 border-blue-200">
