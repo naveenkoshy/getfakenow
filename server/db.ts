@@ -1,4 +1,4 @@
-import { eq, and, desc, asc, like, sql, gte, lte, count, sum, ne, isNull, isNotNull, inArray } from "drizzle-orm";
+import { eq, and, or, desc, asc, like, sql, gte, lte, count, sum, ne, isNull, isNotNull, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, 
@@ -25,6 +25,7 @@ import {
   redirects, InsertRedirect,
   siteSettings, InsertSiteSetting,
   customerTags, customerTagAssignments,
+  refunds, InsertRefund,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1432,4 +1433,128 @@ export async function recordPromoUsage(promotionId: number, userId: number, orde
   await db.update(promosTable)
     .set({ usageCount: sql`${promosTable.usageCount} + 1` })
     .where(eq(promosTable.id, promotionId));
+}
+
+
+// ============ Refund Operations ============
+
+export async function createRefundRecord(data: InsertRefund) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(refunds).values(data);
+}
+
+export async function getRefundsByOrderId(orderId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(refunds).where(eq(refunds.orderId, orderId)).orderBy(desc(refunds.createdAt));
+}
+
+export async function getRefundHistory(params?: {
+  search?: string;
+  refundType?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return { refunds: [], total: 0 };
+
+  const conditions = [];
+  if (params?.search) {
+    conditions.push(
+      or(
+        like(refunds.orderNumber, `%${params.search}%`),
+        like(refunds.stripeRefundId, `%${params.search}%`),
+        like(refunds.customerEmail, `%${params.search}%`),
+        like(refunds.customerName, `%${params.search}%`)
+      )
+    );
+  }
+  if (params?.refundType && params.refundType !== 'all') {
+    conditions.push(eq(refunds.refundType, params.refundType as any));
+  }
+  if (params?.status && params.status !== 'all') {
+    conditions.push(eq(refunds.status, params.status as any));
+  }
+  if (params?.startDate) {
+    conditions.push(gte(refunds.createdAt, new Date(params.startDate)));
+  }
+  if (params?.endDate) {
+    conditions.push(lte(refunds.createdAt, new Date(params.endDate)));
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const limit = params?.limit || 50;
+  const offset = params?.offset || 0;
+
+  const rows = await db.select().from(refunds)
+    .where(whereClause)
+    .orderBy(desc(refunds.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const [countResult] = await db.select({ count: count() }).from(refunds).where(whereClause);
+
+  return { refunds: rows, total: countResult?.count || 0 };
+}
+
+export async function getRefundStats(startDate?: string, endDate?: string) {
+  const db = await getDb();
+  if (!db) return { totalRefunded: 0, refundCount: 0, fullRefunds: 0, partialRefunds: 0, failedRefunds: 0, avgRefundAmount: 0 };
+
+  const conditions = [];
+  if (startDate) conditions.push(gte(refunds.createdAt, new Date(startDate)));
+  if (endDate) conditions.push(lte(refunds.createdAt, new Date(endDate)));
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [totals] = await db.select({
+    totalRefunded: sql<number>`COALESCE(SUM(CASE WHEN ${refunds.status} = 'succeeded' THEN ${refunds.refundAmount} ELSE 0 END), 0)`,
+    refundCount: count(),
+    avgRefundAmount: sql<number>`COALESCE(AVG(CASE WHEN ${refunds.status} = 'succeeded' THEN ${refunds.refundAmount} ELSE NULL END), 0)`,
+  }).from(refunds).where(whereClause);
+
+  const [fullCount] = await db.select({ count: count() }).from(refunds)
+    .where(whereClause ? and(whereClause, eq(refunds.refundType, 'full')) : eq(refunds.refundType, 'full'));
+  const [partialCount] = await db.select({ count: count() }).from(refunds)
+    .where(whereClause ? and(whereClause, eq(refunds.refundType, 'partial')) : eq(refunds.refundType, 'partial'));
+  const [failedCount] = await db.select({ count: count() }).from(refunds)
+    .where(whereClause ? and(whereClause, eq(refunds.status, 'failed')) : eq(refunds.status, 'failed'));
+
+  return {
+    totalRefunded: Number(totals?.totalRefunded) || 0,
+    refundCount: Number(totals?.refundCount) || 0,
+    fullRefunds: Number(fullCount?.count) || 0,
+    partialRefunds: Number(partialCount?.count) || 0,
+    failedRefunds: Number(failedCount?.count) || 0,
+    avgRefundAmount: Math.round(Number(totals?.avgRefundAmount) || 0),
+  };
+}
+
+export async function getAllRefundsForExport(params?: {
+  startDate?: string;
+  endDate?: string;
+  refundType?: string;
+  status?: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+  if (params?.startDate) conditions.push(gte(refunds.createdAt, new Date(params.startDate)));
+  if (params?.endDate) conditions.push(lte(refunds.createdAt, new Date(params.endDate)));
+  if (params?.refundType && params.refundType !== 'all') {
+    conditions.push(eq(refunds.refundType, params.refundType as any));
+  }
+  if (params?.status && params.status !== 'all') {
+    conditions.push(eq(refunds.status, params.status as any));
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  return db.select().from(refunds)
+    .where(whereClause)
+    .orderBy(desc(refunds.createdAt));
 }

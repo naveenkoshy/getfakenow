@@ -442,3 +442,26 @@
 - [x] Add refund status badges on returns list (Full Refund, Partial Refund, Refunded)
 - [x] Send refund confirmation email to customer via sendRefundConfirmationEmail
 - [x] Write tests for refund flow (156 tests passing across 16 files)
+
+## Refund UI Optimization
+- [x] Improve partial refund input with quick-fill buttons (25%, 50%, 75%, Subtotal Only)
+- [x] Add refund amount validation (cannot exceed original order total)
+- [x] Show refund breakdown (original amount, shipping, items) in confirmation dialog
+- [x] Add refund reason dropdown (defective, wrong item, customer changed mind, other)
+- [x] Show refund processing status with spinner/progress indicator
+
+## Customer Notifications Improvement
+- [ ] Send return request acknowledgment email when customer initiates return
+- [x] Send return approved/rejected notification email with refund details
+- [x] Send refund processed confirmation with Stripe refund ID and expected timeline
+- [ ] Add notification preferences for return/refund updates
+
+## Admin Refund History Dashboard
+- [x] Create refunds table in schema to track all refund records with Stripe IDs
+- [x] Build tRPC procedures for refund history with filtering (date range, status, amount)
+- [x] Build /admin/orders/refunds page with sortable table (Stripe ID, order number, amount, timestamp)
+- [x] Add refund stats cards (total refunded, count, average refund amount)
+- [x] Add CSV export for refund history
+- [ ] Add PDF export for refund history
+- [x] Add date range picker for filtering refunds
+- [x] Write tests for refund history and export features (25 tests passing)

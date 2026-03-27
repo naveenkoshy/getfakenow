@@ -799,6 +799,7 @@ export const appRouter = router({
           note: z.string().optional(),
           refundAmount: z.number().min(0).optional(), // Amount in sen to refund (only for 'returned' status)
           refundType: z.enum(['full', 'partial', 'none']).optional(), // Refund type (only for 'returned' status)
+          refundReason: z.string().optional(), // Reason category for the refund
         }))
         .mutation(async ({ ctx, input }) => {
           const order = await db.getOrderById(input.id);
@@ -828,12 +829,11 @@ export const appRouter = router({
               // Process Stripe refund if order has a paymentIntentId and refund is requested
               const shouldRefund = input.refundType && input.refundType !== 'none';
               if (shouldRefund && order.paymentIntentId) {
+                const refundAmountSen = input.refundType === 'full'
+                  ? order.totalAmount + (order.shippingCost || 0)
+                  : (input.refundAmount || 0);
                 try {
                   const { createRefund } = await import('./stripe');
-                  
-                  const refundAmountSen = input.refundType === 'full'
-                    ? order.totalAmount + (order.shippingCost || 0)
-                    : (input.refundAmount || 0);
                   
                   if (refundAmountSen <= 0) {
                     throw new TRPCError({ code: 'BAD_REQUEST', message: 'Refund amount must be greater than 0' });
@@ -862,6 +862,28 @@ export const appRouter = router({
                     refundedAmount: refundAmountSen,
                   };
                   
+                  // Record refund in refunds table for history/accounting
+                  try {
+                    await db.createRefundRecord({
+                      orderId: input.id,
+                      orderNumber: order.orderNumber,
+                      userId: order.userId,
+                      adminId: ctx.user.id,
+                      stripeRefundId: refund.id,
+                      stripePaymentIntentId: order.paymentIntentId,
+                      refundType: input.refundType as 'full' | 'partial',
+                      refundAmount: refundAmountSen,
+                      orderTotal: order.totalAmount + (order.shippingCost || 0),
+                      reason: input.refundReason || 'requested_by_customer',
+                      adminNote: input.note || null,
+                      customerEmail: order.shippingEmail,
+                      customerName: order.shippingName,
+                      status: 'succeeded',
+                    });
+                  } catch (recErr) {
+                    console.warn('[Admin] Failed to create refund record:', recErr);
+                  }
+                  
                   console.log(`[Admin] Stripe refund ${refund.id} issued for order ${input.id}: RM ${(refundAmountSen / 100).toFixed(2)} (${input.refundType})`);
                   
                   // Send refund confirmation email to customer
@@ -880,6 +902,28 @@ export const appRouter = router({
                   }
                 } catch (stripeErr: any) {
                   console.error(`[Admin] Stripe refund failed for order ${input.id}:`, stripeErr);
+                  // Record failed refund attempt
+                  try {
+                    await db.createRefundRecord({
+                      orderId: input.id,
+                      orderNumber: order.orderNumber,
+                      userId: order.userId,
+                      adminId: ctx.user.id,
+                      stripeRefundId: null,
+                      stripePaymentIntentId: order.paymentIntentId,
+                      refundType: input.refundType as 'full' | 'partial',
+                      refundAmount: refundAmountSen,
+                      orderTotal: order.totalAmount + (order.shippingCost || 0),
+                      reason: input.refundReason || 'requested_by_customer',
+                      adminNote: input.note || null,
+                      customerEmail: order.shippingEmail,
+                      customerName: order.shippingName,
+                      status: 'failed',
+                      failureReason: stripeErr.message || 'Unknown error',
+                    });
+                  } catch (recErr) {
+                    console.warn('[Admin] Failed to create failed refund record:', recErr);
+                  }
                   // Don't throw — the return status is already updated, log the failure
                   // Admin can retry the refund manually via Stripe dashboard
                   await db.addOrderStatusHistory({
@@ -2424,6 +2468,96 @@ export const appRouter = router({
           .where(eq(users.role, 'admin'));
         return admins;
       }),
+    }),
+
+    // ---- Refund History ----
+    refunds: router({
+      list: adminProcedure
+        .input(z.object({
+          search: z.string().optional(),
+          refundType: z.enum(['full', 'partial', 'all']).default('all'),
+          status: z.enum(['succeeded', 'pending', 'failed', 'all']).default('all'),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          limit: z.number().default(50),
+          offset: z.number().default(0),
+        }).optional())
+        .query(async ({ input }) => {
+          return db.getRefundHistory({
+            search: input?.search,
+            refundType: input?.refundType,
+            status: input?.status,
+            startDate: input?.startDate,
+            endDate: input?.endDate,
+            limit: input?.limit,
+            offset: input?.offset,
+          });
+        }),
+
+      stats: adminProcedure
+        .input(z.object({
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+        }).optional())
+        .query(async ({ input }) => {
+          return db.getRefundStats(input?.startDate, input?.endDate);
+        }),
+
+      export: adminProcedure
+        .input(z.object({
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          refundType: z.enum(['full', 'partial', 'all']).optional(),
+          status: z.enum(['succeeded', 'pending', 'failed', 'all']).optional(),
+        }).optional())
+        .mutation(async ({ ctx, input }) => {
+          const rows = await db.getAllRefundsForExport({
+            startDate: input?.startDate,
+            endDate: input?.endDate,
+            refundType: input?.refundType,
+            status: input?.status,
+          });
+
+          // Build CSV
+          const BOM = '\uFEFF';
+          const headers = [
+            'Refund ID', 'Stripe Refund ID', 'Order Number', 'Customer Name', 'Customer Email',
+            'Refund Type', 'Refund Amount (RM)', 'Order Total (RM)', 'Status',
+            'Reason', 'Admin Note', 'Stripe Payment Intent', 'Date'
+          ];
+
+          const escCsv = (v: string | null | undefined) => {
+            const s = v ?? '';
+            return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+          };
+
+          const csvRows = rows.map(r => [
+            r.id.toString(),
+            escCsv(r.stripeRefundId),
+            escCsv(r.orderNumber),
+            escCsv(r.customerName),
+            escCsv(r.customerEmail),
+            r.refundType,
+            (r.refundAmount / 100).toFixed(2),
+            (r.orderTotal / 100).toFixed(2),
+            r.status,
+            escCsv(r.reason),
+            escCsv(r.adminNote),
+            escCsv(r.stripePaymentIntentId),
+            r.createdAt ? new Date(r.createdAt).toISOString() : '',
+          ].join(','));
+
+          const csv = BOM + headers.join(',') + '\n' + csvRows.join('\n');
+
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'refund.export',
+            entityType: 'refund',
+            details: JSON.stringify({ count: rows.length, filters: input }),
+          });
+
+          return { csv, count: rows.length };
+        }),
     }),
   }),
 });

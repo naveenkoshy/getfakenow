@@ -53,6 +53,7 @@ import AdminActivityLog from "./pages/admin/ActivityLog";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminTeam from "./pages/admin/Team";
 import AdminReturns from "./pages/admin/Returns";
+import AdminRefundHistory from "./pages/admin/RefundHistory";
 import AdminSetup from "./pages/admin/AdminSetup";
 import { AdminRoute } from "./components/AdminRoute";
 
@@ -109,6 +110,9 @@ function Router() {
       </Route>
       <Route path="/admin/orders/returns">
         {() => <AdminRoute><AdminReturns /></AdminRoute>}
+      </Route>
+      <Route path="/admin/orders/refunds">
+        {() => <AdminRoute><AdminRefundHistory /></AdminRoute>}
       </Route>
       <Route path="/admin/customers">
         {() => <AdminRoute><AdminCustomers /></AdminRoute>}

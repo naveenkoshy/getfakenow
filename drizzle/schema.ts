@@ -682,3 +682,33 @@ export const siteSettings = mysqlTable("siteSettings", {
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+
+// ============================================
+// REFUNDS TABLE
+// ============================================
+
+/**
+ * Refunds - tracks all refund records with Stripe IDs for accounting reconciliation
+ */
+export const refunds = mysqlTable("refunds", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  orderNumber: varchar("orderNumber", { length: 64 }).notNull(),
+  userId: int("userId").notNull(), // Customer who received the refund
+  adminId: int("adminId").notNull(), // Admin who processed the refund
+  stripeRefundId: varchar("stripeRefundId", { length: 255 }), // Stripe refund ID (re_xxx)
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }), // Original payment intent
+  refundType: mysqlEnum("refundType", ["full", "partial"]).notNull(),
+  refundAmount: int("refundAmount").notNull(), // Amount in sen
+  orderTotal: int("orderTotal").notNull(), // Original order total in sen (subtotal + shipping)
+  reason: varchar("reason", { length: 100 }).default("requested_by_customer"), // Refund reason category
+  adminNote: text("adminNote"), // Admin's note about the refund
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerName: varchar("customerName", { length: 255 }),
+  status: mysqlEnum("status", ["succeeded", "pending", "failed"]).default("succeeded").notNull(),
+  failureReason: text("failureReason"), // If refund failed, why
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Refund = typeof refunds.$inferSelect;
+export type InsertRefund = typeof refunds.$inferInsert;

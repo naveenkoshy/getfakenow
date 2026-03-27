@@ -90,6 +90,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         { name: "All Orders", href: "/admin/orders" },
         { name: "Cancellations", href: "/admin/orders/cancellations" },
         { name: "Returns", href: "/admin/orders/returns" },
+        { name: "Refund History", href: "/admin/orders/refunds" },
       ]
     },
     { 

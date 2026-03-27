@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import {
   Loader2, RotateCcw, Package, Clock, CheckCircle2,
   ChevronDown, ChevronUp, MessageSquare, DollarSign,
-  CreditCard, AlertCircle
+  CreditCard, AlertCircle, Percent, Receipt
 } from "lucide-react";
 import {
   AlertDialog,
@@ -22,9 +22,27 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type StatusFilter = "return_requested" | "returned" | "all";
 type RefundType = "full" | "partial" | "none";
+
+const REFUND_REASONS = [
+  { value: "requested_by_customer", label: "Customer Request" },
+  { value: "defective_item", label: "Defective / Damaged Item" },
+  { value: "wrong_item", label: "Wrong Item Sent" },
+  { value: "not_as_described", label: "Not As Described" },
+  { value: "size_issue", label: "Size / Fit Issue" },
+  { value: "late_delivery", label: "Late Delivery" },
+  { value: "duplicate_order", label: "Duplicate Order" },
+  { value: "other", label: "Other" },
+];
 
 export default function AdminReturns() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("return_requested");
@@ -33,6 +51,7 @@ export default function AdminReturns() {
   const [processNote, setProcessNote] = useState("");
   const [refundType, setRefundType] = useState<RefundType>("full");
   const [partialAmount, setPartialAmount] = useState("");
+  const [refundReason, setRefundReason] = useState("requested_by_customer");
 
   const { data: stats, isLoading: statsLoading } = trpc.admin.returns.stats.useQuery();
   const { data, isLoading, refetch } = trpc.admin.returns.list.useQuery({ status: statusFilter });
@@ -47,10 +66,13 @@ export default function AdminReturns() {
       }
       refetch();
       utils.admin.returns.stats.invalidate();
+      utils.admin.refunds.list.invalidate();
+      utils.admin.refunds.stats.invalidate();
       setProcessId(null);
       setProcessNote("");
       setRefundType("full");
       setPartialAmount("");
+      setRefundReason("requested_by_customer");
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -61,7 +83,20 @@ export default function AdminReturns() {
     return data.returns.find((r: any) => r.id === processId) || null;
   }, [processId, data]);
 
-  const orderTotal = processingOrder ? (processingOrder.totalAmount + (processingOrder.shippingCost || 0)) : 0;
+  const orderSubtotal = processingOrder?.totalAmount || 0;
+  const orderShipping = processingOrder?.shippingCost || 0;
+  const orderTotal = orderSubtotal + orderShipping;
+
+  const quickFillPercentages = [25, 50, 75];
+
+  const handleQuickFill = useCallback((pct: number) => {
+    const amount = (orderTotal * pct) / 10000;
+    setPartialAmount(amount.toFixed(2));
+  }, [orderTotal]);
+
+  const handleSubtotalOnly = useCallback(() => {
+    setPartialAmount((orderSubtotal / 100).toFixed(2));
+  }, [orderSubtotal]);
 
   const handleProcess = () => {
     if (!processId) return;
@@ -88,6 +123,7 @@ export default function AdminReturns() {
       note: processNote || "Return approved and processed",
       refundType,
       refundAmount: refundType === "partial" ? refundAmountSen : undefined,
+      refundReason,
     });
   };
 
@@ -315,6 +351,7 @@ export default function AdminReturns() {
                                   setRefundType("full");
                                   setPartialAmount("");
                                   setProcessNote("");
+                                  setRefundReason("requested_by_customer");
                                 }}
                                 className="bg-green-600 hover:bg-green-700 text-white"
                               >
@@ -346,9 +383,10 @@ export default function AdminReturns() {
           setProcessNote("");
           setRefundType("full");
           setPartialAmount("");
+          setRefundReason("requested_by_customer");
         }
       }}>
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="max-w-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <RotateCcw className="h-5 w-5 text-green-600" />
@@ -360,31 +398,68 @@ export default function AdminReturns() {
           </AlertDialogHeader>
 
           <div className="space-y-4 py-2">
-            {/* Order Summary */}
+            {/* Order Breakdown */}
             {processingOrder && (
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-700">Order #{processingOrder.orderNumber}</span>
-                  <span className="text-sm font-bold text-gray-900">
-                    Total: {formatPrice(processingOrder.totalAmount + (processingOrder.shippingCost || 0))}
-                  </span>
+              <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-100">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-gray-700">Order #{processingOrder.orderNumber}</span>
+                    <span className="text-sm font-bold text-gray-900">
+                      Total: {formatPrice(orderTotal)}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Subtotal: {formatPrice(processingOrder.totalAmount)}
-                  {processingOrder.shippingCost > 0 && ` + Shipping: ${formatPrice(processingOrder.shippingCost)}`}
-                </p>
+                <div className="px-4 py-2 space-y-1">
+                  {processingOrder.items?.map((item: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center text-xs py-1">
+                      <span className="text-gray-600">
+                        {item.productName} ({item.color}/{item.size}) x{item.quantity}
+                      </span>
+                      <span className="text-gray-800 font-medium">{formatPrice(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                  <div className="border-t border-gray-200 pt-1 mt-1 space-y-0.5">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-500">Subtotal</span>
+                      <span className="text-gray-700">{formatPrice(orderSubtotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-500">Shipping</span>
+                      <span className="text-gray-700">{orderShipping > 0 ? formatPrice(orderShipping) : "FREE"}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-semibold pt-0.5">
+                      <span className="text-gray-700">Order Total</span>
+                      <span className="text-gray-900">{formatPrice(orderTotal)}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
+
+            {/* Refund Reason */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">Refund Reason</label>
+              <Select value={refundReason} onValueChange={setRefundReason}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REFUND_REASONS.map(r => (
+                    <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             {/* Refund Type Selection */}
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">Refund Type</label>
               <div className="grid grid-cols-3 gap-2">
                 {([
-                  { value: "full" as RefundType, label: "Full Refund", desc: processingOrder ? formatPrice(orderTotal) : "" },
-                  { value: "partial" as RefundType, label: "Partial", desc: "Custom amount" },
-                  { value: "none" as RefundType, label: "No Refund", desc: "Return only" },
-                ]).map(({ value, label, desc }) => (
+                  { value: "full" as RefundType, label: "Full Refund", desc: processingOrder ? formatPrice(orderTotal) : "", icon: DollarSign },
+                  { value: "partial" as RefundType, label: "Partial", desc: "Custom amount", icon: Percent },
+                  { value: "none" as RefundType, label: "No Refund", desc: "Return only", icon: RotateCcw },
+                ]).map(({ value, label, desc, icon: Icon }) => (
                   <button
                     key={value}
                     type="button"
@@ -397,21 +472,55 @@ export default function AdminReturns() {
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <p className={`text-sm font-medium ${refundType === value ? (value === "none" ? "text-gray-700" : "text-green-700") : "text-gray-700"}`}>
-                      {label}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Icon className={`h-3.5 w-3.5 ${refundType === value ? (value === "none" ? "text-gray-600" : "text-green-600") : "text-gray-400"}`} />
+                      <p className={`text-sm font-medium ${refundType === value ? (value === "none" ? "text-gray-700" : "text-green-700") : "text-gray-700"}`}>
+                        {label}
+                      </p>
+                    </div>
+                    <p className="text-xs text-gray-500">{desc}</p>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Partial Amount Input */}
+            {/* Partial Amount Input with Quick-Fill */}
             {refundType === "partial" && (
-              <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1.5">Refund Amount (RM)</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 block">Refund Amount (RM)</label>
+                
+                {/* Quick-fill buttons */}
+                <div className="flex gap-2 flex-wrap">
+                  {quickFillPercentages.map(pct => (
+                    <Button
+                      key={pct}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleQuickFill(pct)}
+                      className="text-xs h-7 px-2.5"
+                    >
+                      {pct}%
+                      <span className="text-gray-400 ml-1">({formatPrice(Math.round(orderTotal * pct / 100))})</span>
+                    </Button>
+                  ))}
+                  {orderShipping > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSubtotalOnly}
+                      className="text-xs h-7 px-2.5"
+                    >
+                      Subtotal Only
+                      <span className="text-gray-400 ml-1">({formatPrice(orderSubtotal)})</span>
+                    </Button>
+                  )}
+                </div>
+
+                {/* Amount input */}
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">RM</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">RM</span>
                   <Input
                     type="number"
                     step="0.01"
@@ -420,18 +529,26 @@ export default function AdminReturns() {
                     value={partialAmount}
                     onChange={(e) => setPartialAmount(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10"
+                    className="pl-10 text-lg font-semibold"
                   />
                 </div>
-                {processingOrder && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Maximum refundable: {formatPrice(orderTotal)}
-                  </p>
-                )}
+
+                {/* Validation messages */}
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-500">
+                    Max refundable: {formatPrice(orderTotal)}
+                  </span>
+                  {partialAmount && parseFloat(partialAmount) > 0 && orderTotal > 0 && (
+                    <span className="text-gray-500">
+                      {((parseFloat(partialAmount) * 100 / orderTotal) * 100).toFixed(0)}% of order total
+                    </span>
+                  )}
+                </div>
+
                 {partialAmount && parseFloat(partialAmount) > 0 && processingOrder && parseFloat(partialAmount) * 100 > orderTotal && (
-                  <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-red-500 flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
-                    Amount exceeds order total
+                    Amount exceeds order total of {formatPrice(orderTotal)}
                   </p>
                 )}
               </div>
@@ -453,19 +570,33 @@ export default function AdminReturns() {
             {/* Refund Summary */}
             {refundType !== "none" && processingOrder?.paymentIntentId && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">
-                    Refund: {refundType === "full"
-                      ? formatPrice(orderTotal)
-                      : partialAmount
-                        ? `RM ${parseFloat(partialAmount).toFixed(2)}`
-                        : "Enter amount"
-                    }
-                  </span>
+                <div className="flex items-center gap-2 mb-2">
+                  <Receipt className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-semibold text-green-800">Refund Summary</span>
                 </div>
-                <p className="text-xs text-green-700 mt-1">
-                  Will be refunded to the customer's original payment method via Stripe. Takes 5-10 business days.
+                <div className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-700">Refund Amount</span>
+                    <span className="font-bold text-green-800">
+                      {refundType === "full"
+                        ? formatPrice(orderTotal)
+                        : partialAmount && parseFloat(partialAmount) > 0
+                          ? `RM ${parseFloat(partialAmount).toFixed(2)}`
+                          : "Enter amount"
+                      }
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-green-600">Type</span>
+                    <span className="text-green-700">{refundType === "full" ? "Full Refund" : "Partial Refund"}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-green-600">Reason</span>
+                    <span className="text-green-700">{REFUND_REASONS.find(r => r.value === refundReason)?.label}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-green-600 mt-2 pt-2 border-t border-green-200">
+                  Refund will be sent to the customer's original payment method via Stripe. Typically takes 5-10 business days.
                 </p>
               </div>
             )}
@@ -489,7 +620,14 @@ export default function AdminReturns() {
               disabled={updateStatus.isPending || (refundType === "partial" && (!partialAmount || parseFloat(partialAmount) <= 0))}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
-              {updateStatus.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              {updateStatus.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
               {refundType === "none"
                 ? "Approve Return (No Refund)"
                 : `Approve & Refund ${refundType === "full"
@@ -497,6 +635,8 @@ export default function AdminReturns() {
                   : partialAmount ? `RM ${parseFloat(partialAmount).toFixed(2)}` : ""
                 }`
               }
+                </>
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

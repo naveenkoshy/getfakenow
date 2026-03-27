@@ -1,0 +1,20 @@
+CREATE TABLE `refunds` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`orderId` int NOT NULL,
+	`orderNumber` varchar(64) NOT NULL,
+	`userId` int NOT NULL,
+	`adminId` int NOT NULL,
+	`stripeRefundId` varchar(255),
+	`stripePaymentIntentId` varchar(255),
+	`refundType` enum('full','partial') NOT NULL,
+	`refundAmount` int NOT NULL,
+	`orderTotal` int NOT NULL,
+	`reason` varchar(100) DEFAULT 'requested_by_customer',
+	`adminNote` text,
+	`customerEmail` varchar(320) NOT NULL,
+	`customerName` varchar(255),
+	`status` enum('succeeded','pending','failed') NOT NULL DEFAULT 'succeeded',
+	`failureReason` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `refunds_id` PRIMARY KEY(`id`)
+);
