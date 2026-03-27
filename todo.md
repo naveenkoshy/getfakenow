@@ -373,3 +373,27 @@
 - [x] Remove any hard-coded URLs (use env vars or relative paths)
 - [x] Ensure all config is environment-variable driven (VITE_SITE_URL)
 - [x] Verify standard Express/React patterns — no platform-specific dependencies
+
+## Invite Admin Feature
+- [x] Add admin_invites table to schema (token, email, invitedBy, expiresAt, usedAt)
+- [x] Create admin invite procedure (generate secure token, send email with setup link)
+- [x] Create accept-invite procedure (validate token, set password, create admin account)
+- [x] Build "Invite Admin" UI in admin settings page with email input
+- [x] Build /admin/setup page for invited admins to set their password
+- [x] List pending/used invites in admin settings with revoke capability
+
+## Returns Management Dashboard
+- [x] Add dedicated /admin/orders/returns page with filter tabs
+- [x] Show only return_requested orders with customer reason and order details
+- [x] Add "Approve Return" action button with confirmation dialog and admin note
+- [x] Show return timeline (requested date, processed date)
+- [x] Add return stats cards (pending returns, processed returns)
+
+## Admin Activity Audit Log
+- [x] Enhanced activityLog table with ipAddress field
+- [x] Create audit logging helper function (logAdminAction, getClientIp)
+- [x] Log admin login/logout events with IP tracking
+- [x] Log admin order status changes, invite create/revoke, customer anonymization
+- [x] Build admin audit log page with filterable table (by action type, admin user, search)
+- [x] Add pagination and color-coded action icons
+- [x] Write tests for audit log, invite admin, and returns dashboard (117 tests passing)

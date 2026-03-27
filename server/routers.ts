@@ -223,13 +223,39 @@ export const appRouter = router({
       }))
       .mutation(async ({ input, ctx }) => {
         const result = await adminAuth.authenticateAdmin(input.email, input.password, ctx.req, ctx.res);
+        const { logAdminAction, getClientIp } = await import('./auditLog');
         if (!result.success) {
+          // Log failed login attempt
+          await logAdminAction({
+            userId: 0,
+            action: 'admin.login.failed',
+            entityType: 'session',
+            details: JSON.stringify({ email: input.email, reason: result.error }),
+            ipAddress: getClientIp(ctx.req),
+          });
           throw new TRPCError({ code: 'UNAUTHORIZED', message: result.error || 'Invalid credentials' });
         }
+        // Log successful login
+        await logAdminAction({
+          userId: result.user!.id,
+          action: 'admin.login.success',
+          entityType: 'session',
+          details: JSON.stringify({ email: input.email }),
+          ipAddress: getClientIp(ctx.req),
+        });
         return { success: true, user: result.user };
       }),
 
-    logout: publicProcedure.mutation(({ ctx }) => {
+    logout: publicProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user && ctx.isAdminSession) {
+        const { logAdminAction, getClientIp } = await import('./auditLog');
+        await logAdminAction({
+          userId: ctx.user.id,
+          action: 'admin.logout',
+          entityType: 'session',
+          ipAddress: getClientIp(ctx.req),
+        });
+      }
       adminAuth.clearAdminSession(ctx.req, ctx.res);
       return { success: true } as const;
     }),
@@ -1882,6 +1908,320 @@ export const appRouter = router({
             filename: `sales-report-${new Date().toISOString().slice(0,10)}.csv` 
           };
         }),
+    }),
+
+    // ---- Admin Invites ----
+    invites: router({
+      list: adminProcedure.query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        const { adminInvites, users } = await import('../drizzle/schema');
+        const { desc, eq } = await import('drizzle-orm');
+        const rows = await dbConn.select().from(adminInvites).orderBy(desc(adminInvites.createdAt)).limit(50);
+        // Enrich with inviter name
+        const enriched = await Promise.all(rows.map(async (inv) => {
+          const inviter = await db.getUserById(inv.invitedBy);
+          return { ...inv, inviterName: inviter?.name || inviter?.email || 'Unknown' };
+        }));
+        return enriched;
+      }),
+
+      create: adminProcedure
+        .input(z.object({ email: z.string().email() }))
+        .mutation(async ({ input, ctx }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { adminInvites, users } = await import('../drizzle/schema');
+          const { eq } = await import('drizzle-orm');
+          
+          // Check if email already has an admin account
+          const existing = await dbConn.select().from(users).where(eq(users.email, input.email)).limit(1);
+          if (existing.length > 0 && existing[0].role === 'admin') {
+            throw new TRPCError({ code: 'CONFLICT', message: 'This email already has an admin account' });
+          }
+          
+          // Check for pending invite
+          const pendingInvite = await dbConn.select().from(adminInvites)
+            .where(eq(adminInvites.email, input.email)).limit(1);
+          if (pendingInvite.length > 0 && pendingInvite[0].status === 'pending' && pendingInvite[0].expiresAt > new Date()) {
+            throw new TRPCError({ code: 'CONFLICT', message: 'A pending invite already exists for this email' });
+          }
+          
+          const token = nanoid(48);
+          const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+          
+          await dbConn.insert(adminInvites).values({
+            email: input.email,
+            token,
+            invitedBy: ctx.user.id,
+            expiresAt,
+          });
+          
+          // Send invite email
+          const { sendAdminInviteEmail } = await import('./email');
+          await sendAdminInviteEmail(input.email, token, ctx.user.name || ctx.user.email);
+          
+          // Audit log
+          const { logAdminAction, getClientIp } = await import('./auditLog');
+          await logAdminAction({
+            userId: ctx.user.id,
+            action: 'admin.invite.create',
+            entityType: 'invite',
+            details: JSON.stringify({ email: input.email }),
+            ipAddress: getClientIp(ctx.req),
+          });
+          
+          return { success: true, message: `Invite sent to ${input.email}` };
+        }),
+
+      revoke: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input, ctx }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { adminInvites } = await import('../drizzle/schema');
+          const { eq } = await import('drizzle-orm');
+          
+          await dbConn.update(adminInvites)
+            .set({ status: 'revoked' })
+            .where(eq(adminInvites.id, input.id));
+          
+          const { logAdminAction, getClientIp } = await import('./auditLog');
+          await logAdminAction({
+            userId: ctx.user.id,
+            action: 'admin.invite.revoke',
+            entityType: 'invite',
+            entityId: input.id,
+            ipAddress: getClientIp(ctx.req),
+          });
+          
+          return { success: true };
+        }),
+    }),
+
+    // ---- Accept Admin Invite (Public — token-based) ----
+    acceptInvite: router({
+      validate: publicProcedure
+        .input(z.object({ token: z.string() }))
+        .query(async ({ input }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { adminInvites } = await import('../drizzle/schema');
+          const { eq } = await import('drizzle-orm');
+          
+          const [invite] = await dbConn.select().from(adminInvites).where(eq(adminInvites.token, input.token)).limit(1);
+          if (!invite) return { valid: false, email: null, error: 'Invalid invite token' };
+          if (invite.status !== 'pending') return { valid: false, email: null, error: 'This invite has already been used or revoked' };
+          if (invite.expiresAt < new Date()) return { valid: false, email: null, error: 'This invite has expired' };
+          return { valid: true, email: invite.email, error: null };
+        }),
+
+      accept: publicProcedure
+        .input(z.object({
+          token: z.string(),
+          name: z.string().min(1, 'Name is required'),
+          password: z.string().min(12, 'Admin password must be at least 12 characters'),
+        }))
+        .mutation(async ({ input }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { adminInvites, users } = await import('../drizzle/schema');
+          const { eq } = await import('drizzle-orm');
+          
+          const [invite] = await dbConn.select().from(adminInvites).where(eq(adminInvites.token, input.token)).limit(1);
+          if (!invite) throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid invite token' });
+          if (invite.status !== 'pending') throw new TRPCError({ code: 'BAD_REQUEST', message: 'This invite has already been used or revoked' });
+          if (invite.expiresAt < new Date()) throw new TRPCError({ code: 'BAD_REQUEST', message: 'This invite has expired' });
+          
+          // Validate admin password strength
+          const validation = adminAuth.isValidAdminPassword(input.password);
+          if (!validation.valid) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: validation.message });
+          }
+          
+          const passwordHash = await auth.hashPassword(input.password);
+          
+          // Check if user already exists
+          const [existingUser] = await dbConn.select().from(users).where(eq(users.email, invite.email)).limit(1);
+          
+          if (existingUser) {
+            // Promote existing user to admin
+            await dbConn.update(users).set({
+              role: 'admin',
+              name: input.name,
+              passwordHash,
+            }).where(eq(users.id, existingUser.id));
+          } else {
+            // Create new admin user
+            await dbConn.insert(users).values({
+              email: invite.email,
+              name: input.name,
+              passwordHash,
+              role: 'admin',
+              loginMethod: 'email',
+              authProvider: 'email',
+              emailVerified: true,
+            });
+          }
+          
+          // Mark invite as accepted
+          await dbConn.update(adminInvites).set({
+            status: 'accepted',
+            acceptedAt: new Date(),
+          }).where(eq(adminInvites.id, invite.id));
+          
+          return { success: true, message: 'Admin account created. You can now log in.' };
+        }),
+    }),
+
+    // ---- Returns Management ----
+    returns: router({
+      list: adminProcedure
+        .input(z.object({
+          status: z.enum(['return_requested', 'returned', 'all']).default('return_requested'),
+          limit: z.number().default(50),
+          offset: z.number().default(0),
+        }).optional())
+        .query(async ({ input }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { orders, users } = await import('../drizzle/schema');
+          const { desc, eq, inArray, sql, and } = await import('drizzle-orm');
+          
+          const statusFilter = input?.status || 'return_requested';
+          const limit = input?.limit || 50;
+          const offset = input?.offset || 0;
+          
+          let whereClause;
+          if (statusFilter === 'all') {
+            whereClause = inArray(orders.status, ['return_requested', 'returned']);
+          } else {
+            whereClause = eq(orders.status, statusFilter);
+          }
+          
+          const returnOrders = await dbConn.select().from(orders)
+            .where(whereClause)
+            .orderBy(desc(orders.updatedAt))
+            .limit(limit)
+            .offset(offset);
+          
+          const [countResult] = await dbConn.select({ count: sql<number>`count(*)` }).from(orders).where(whereClause);
+          
+          // Enrich with user info and items
+          const enriched = await Promise.all(returnOrders.map(async (order) => {
+            const user = await db.getUserById(order.userId);
+            const items = await db.getOrderItems(order.id);
+            // Get the return request note from status history
+            const { orderStatusHistory } = await import('../drizzle/schema');
+            const history = await dbConn.select().from(orderStatusHistory)
+              .where(and(eq(orderStatusHistory.orderId, order.id), eq(orderStatusHistory.newStatus, 'return_requested')))
+              .orderBy(desc(orderStatusHistory.createdAt))
+              .limit(1);
+            return {
+              ...order,
+              user: user ? { id: user.id, name: user.name, email: user.email } : null,
+              items,
+              returnReason: history[0]?.note || null,
+              returnRequestedAt: history[0]?.createdAt || null,
+            };
+          }));
+          
+          return { returns: enriched, total: countResult?.count || 0 };
+        }),
+
+      stats: adminProcedure.query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        const { orders } = await import('../drizzle/schema');
+        const { eq, sql } = await import('drizzle-orm');
+        
+        const [pending] = await dbConn.select({ count: sql<number>`count(*)` }).from(orders).where(eq(orders.status, 'return_requested'));
+        const [processed] = await dbConn.select({ count: sql<number>`count(*)` }).from(orders).where(eq(orders.status, 'returned'));
+        
+        return {
+          pendingReturns: pending?.count || 0,
+          processedReturns: processed?.count || 0,
+        };
+      }),
+    }),
+
+    // ---- Audit Log ----
+    auditLog: router({
+      list: adminProcedure
+        .input(z.object({
+          action: z.string().optional(),
+          userId: z.number().optional(),
+          entityType: z.string().optional(),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          search: z.string().optional(),
+          limit: z.number().default(50),
+          offset: z.number().default(0),
+        }).optional())
+        .query(async ({ input }) => {
+          const dbConn = await db.getDb();
+          if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+          const { activityLog, users } = await import('../drizzle/schema');
+          const { desc, eq, and, gte, lte, like, sql } = await import('drizzle-orm');
+          
+          const conditions = [];
+          if (input?.action) conditions.push(like(activityLog.action, `%${input.action}%`));
+          if (input?.userId) conditions.push(eq(activityLog.userId, input.userId));
+          if (input?.entityType) conditions.push(eq(activityLog.entityType, input.entityType));
+          if (input?.startDate) conditions.push(gte(activityLog.createdAt, new Date(input.startDate)));
+          if (input?.endDate) conditions.push(lte(activityLog.createdAt, new Date(input.endDate)));
+          if (input?.search) {
+            conditions.push(like(activityLog.details, `%${input.search}%`));
+          }
+          
+          const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+          const limit = input?.limit || 50;
+          const offset = input?.offset || 0;
+          
+          const logs = await dbConn.select().from(activityLog)
+            .where(whereClause)
+            .orderBy(desc(activityLog.createdAt))
+            .limit(limit)
+            .offset(offset);
+          
+          const [countResult] = await dbConn.select({ count: sql<number>`count(*)` }).from(activityLog).where(whereClause);
+          
+          // Enrich with admin user names
+          const enriched = await Promise.all(logs.map(async (log) => {
+            const user = await db.getUserById(log.userId);
+            return {
+              ...log,
+              userName: user?.name || user?.email || 'Unknown',
+            };
+          }));
+          
+          return { logs: enriched, total: countResult?.count || 0 };
+        }),
+
+      actionTypes: adminProcedure.query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        const { activityLog } = await import('../drizzle/schema');
+        const { sql } = await import('drizzle-orm');
+        
+        const types = await dbConn.select({ action: activityLog.action, count: sql<number>`count(*)` })
+          .from(activityLog)
+          .groupBy(activityLog.action)
+          .orderBy(activityLog.action);
+        return types;
+      }),
+
+      adminUsers: adminProcedure.query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        const { users } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        const admins = await dbConn.select({ id: users.id, name: users.name, email: users.email })
+          .from(users)
+          .where(eq(users.role, 'admin'));
+        return admins;
+      }),
     }),
   }),
 });

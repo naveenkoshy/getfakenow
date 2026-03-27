@@ -152,3 +152,33 @@ export async function sendOrderConfirmationEmail(
     text: `Order Confirmed: ${orderNumber}\nTotal: RM ${(totalAmount / 100).toFixed(2)}\nView orders: ${orderUrl}`,
   });
 }
+
+/**
+ * Send admin invite email with a setup link
+ */
+export async function sendAdminInviteEmail(email: string, token: string, inviterName: string): Promise<boolean> {
+  const siteUrl = ENV.siteUrl || "http://localhost:3000";
+  const setupUrl = `${siteUrl}/admin/setup?token=${token}`;
+
+  return sendEmail({
+    to: email,
+    subject: "You've Been Invited as Admin — Fake by Freetown",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1a1a2e;">Admin Invitation</h2>
+        <p><strong>${inviterName}</strong> has invited you to join the Fake by Freetown admin team.</p>
+        <p>Click the link below to set up your admin account. This invite expires in 7 days.</p>
+        <p style="margin: 24px 0;">
+          <a href="${setupUrl}" style="background: #e63946; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Set Up Admin Account
+          </a>
+        </p>
+        <p style="color: #666; font-size: 14px;">If you weren't expecting this invite, you can safely ignore this email.</p>
+        <p style="color: #666; font-size: 14px;">Setup link: ${setupUrl}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 12px;">Fake by Freetown — Premium apparel for people who get the joke.</p>
+      </div>
+    `,
+    text: `You've been invited as an admin by ${inviterName}.\n\nSet up your account: ${setupUrl}\n\nThis invite expires in 7 days.`,
+  });
+}

@@ -49,6 +49,9 @@ import AdminAnalytics from "./pages/admin/Analytics";
 import AdminSettings from "./pages/admin/Settings";
 import AdminActivityLog from "./pages/admin/ActivityLog";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminTeam from "./pages/admin/Team";
+import AdminReturns from "./pages/admin/Returns";
+import AdminSetup from "./pages/admin/AdminSetup";
 import { AdminRoute } from "./components/AdminRoute";
 
 function Router() {
@@ -75,9 +78,12 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/verify-email" component={VerifyEmail} />
 
-      {/* Admin Login — separate from customer auth */}
+      {/* Admin Login & Setup — separate from customer auth */}
       <Route path="/admin/login">
         {() => <AdminLogin />}
+      </Route>
+      <Route path="/admin/setup">
+        {() => <AdminSetup />}
       </Route>
 
       {/* Admin — Seller Center (requires admin session) */}
@@ -96,6 +102,9 @@ function Router() {
       <Route path="/admin/products/:id/edit" component={(props: any) => <AdminRoute><EditProduct {...props.params} /></AdminRoute>} />
       <Route path="/admin/orders">
         {() => <AdminRoute><AdminOrders /></AdminRoute>}
+      </Route>
+      <Route path="/admin/orders/returns">
+        {() => <AdminRoute><AdminReturns /></AdminRoute>}
       </Route>
       <Route path="/admin/customers">
         {() => <AdminRoute><AdminCustomers /></AdminRoute>}
@@ -141,6 +150,9 @@ function Router() {
       </Route>
       <Route path="/admin/activity-log">
         {() => <AdminRoute><AdminActivityLog /></AdminRoute>}
+      </Route>
+      <Route path="/admin/settings/team">
+        {() => <AdminRoute><AdminTeam /></AdminRoute>}
       </Route>
 
       <Route path="/404" component={NotFound} />

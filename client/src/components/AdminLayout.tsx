@@ -140,8 +140,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       ]
     },
     { name: "Shipping", href: "/admin/shipping", icon: Truck },
-    { name: "Activity Log", href: "/admin/activity", icon: Activity },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Activity Log", href: "/admin/activity-log", icon: Activity },
+    { 
+      name: "Settings", 
+      icon: Settings,
+      children: [
+        { name: "General", href: "/admin/settings" },
+        { name: "Team & Invites", href: "/admin/settings/team" },
+      ]
+    },
   ];
 
   const isActive = (href: string) => location === href;

@@ -301,15 +301,34 @@ export type ShippingZone = typeof shippingZones.$inferSelect;
 export type InsertShippingZone = typeof shippingZones.$inferInsert;
 
 /**
+ * Admin invites - secure invite tokens for new admin users
+ */
+export const adminInvites = mysqlTable("adminInvites", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  invitedBy: int("invitedBy").notNull(), // FK to users (admin who sent invite)
+  role: mysqlEnum("role", ["admin"]).default("admin").notNull(),
+  status: mysqlEnum("status", ["pending", "accepted", "expired", "revoked"]).default("pending").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  acceptedAt: timestamp("acceptedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminInvite = typeof adminInvites.$inferSelect;
+export type InsertAdminInvite = typeof adminInvites.$inferInsert;
+
+/**
  * Activity log - admin action audit trail
  */
 export const activityLog = mysqlTable("activityLog", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(), // FK to users (admin)
-  action: varchar("action", { length: 100 }).notNull(), // e.g., product.create, order.status.update
-  entityType: varchar("entityType", { length: 50 }).notNull(), // product, order, user, etc.
+  action: varchar("action", { length: 100 }).notNull(), // e.g., admin.login, order.status.update
+  entityType: varchar("entityType", { length: 50 }).notNull(), // product, order, user, session, invite
   entityId: int("entityId"), // Entity ID
   details: text("details"), // JSON payload of changes
+  ipAddress: varchar("ipAddress", { length: 45 }), // Client IP for security audit
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
