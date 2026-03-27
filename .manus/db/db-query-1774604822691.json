@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, name, slug FROM categories ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38ghkvFwTNUtZpC.root --database mnC6672QxsyxZGLVMrqTHR --execute SELECT id, name, slug FROM categories ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "name": "Casual",
+      "slug": "casual"
+    },
+    {
+      "id": "30002",
+      "name": "Professional",
+      "slug": "professional"
+    },
+    {
+      "id": "30003",
+      "name": "Accessories",
+      "slug": "accessories"
+    },
+    {
+      "id": "30004",
+      "name": "Women",
+      "slug": "women"
+    },
+    {
+      "id": "90001",
+      "name": "CMS Cat 1774593939435",
+      "slug": "cms-cat-1774593939435"
+    },
+    {
+      "id": "90002",
+      "name": "CMS Cat 1774594021930",
+      "slug": "cms-cat-1774594021930"
+    },
+    {
+      "id": "90003",
+      "name": "CMS Cat 1774594112932",
+      "slug": "cms-cat-1774594112932"
+    },
+    {
+      "id": "90004",
+      "name": "CMS Cat 1774594205559",
+      "slug": "cms-cat-1774594205559"
+    },
+    {
+      "id": "90005",
+      "name": "CMS Cat 1774594258311",
+      "slug": "cms-cat-1774594258311"
+    },
+    {
+      "id": "90006",
+      "name": "CMS Cat 1774594309415",
+      "slug": "cms-cat-1774594309415"
+    },
+    {
+      "id": "90007",
+      "name": "CMS Cat 1774594879581",
+      "slug": "cms-cat-1774594879581"
+    },
+    {
+      "id": "90008",
+      "name": "CMS Cat 1774594913343",
+      "slug": "cms-cat-1774594913343"
+    },
+    {
+      "id": "90009",
+      "name": "CMS Cat 1774594941862",
+      "slug": "cms-cat-1774594941862"
+    },
+    {
+      "id": "90010",
+      "name": "CMS Cat 1774595017226",
+      "slug": "cms-cat-1774595017226"
+    },
+    {
+      "id": "90011",
+      "name": "CMS Cat 1774595045808",
+      "slug": "cms-cat-1774595045808"
+    },
+    {
+      "id": "90012",
+      "name": "CMS Cat 1774595089328",
+      "slug": "cms-cat-1774595089328"
+    },
+    {
+      "id": "120001",
+      "name": "CMS Cat 1774602666163",
+      "slug": "cms-cat-1774602666163"
+    },
+    {
+      "id": "120002",
+      "name": "CMS Cat 1774604466673",
+      "slug": "cms-cat-1774604466673"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\n30001\tCasual\tcasual\n30002\tProfessional\tprofessional\n30003\tAccessories\taccessories\n30004\tWomen\twomen\n90001\tCMS Cat 1774593939435\tcms-cat-1774593939435\n90002\tCMS Cat 1774594021930\tcms-cat-1774594021930\n90003\tCMS Cat 1774594112932\tcms-cat-1774594112932\n90004\tCMS Cat 1774594205559\tcms-cat-1774594205559\n90005\tCMS Cat 1774594258311\tcms-cat-1774594258311\n90006\tCMS Cat 1774594309415\tcms-cat-1774594309415\n90007\tCMS Cat 1774594879581\tcms-cat-1774594879581\n90008\tCMS Cat 1774594913343\tcms-cat-1774594913343\n90009\tCMS Cat 1774594941862\tcms-cat-1774594941862\n90010\tCMS Cat 1774595017226\tcms-cat-1774595017226\n90011\tCMS Cat 1774595045808\tcms-cat-1774595045808\n90012\tCMS Cat 1774595089328\tcms-cat-1774595089328\n120001\tCMS Cat 1774602666163\tcms-cat-1774602666163\n120002\tCMS Cat 1774604466673\tcms-cat-1774604466673\n",
+  "stderr": "",
+  "execution_time_ms": 1544
+}

@@ -573,3 +573,7 @@
 - [x] Update cart.add backend validation to accept flexible size strings
 - [x] Update guest cart type to accept flexible size/color strings
 - [x] All 226 tests passing
+
+## Bug Fix: Junk CMS Categories
+- [x] Remove 14 test categories named "CMS Cat ..." from database
+- [x] Verify shop page only shows real product categories (Casual, Professional, Accessories, Women)
