@@ -12,7 +12,7 @@ import * as auth from "./auth";
 import * as adminAuth from "./adminAuth";
 import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
-import { sendPasswordResetEmail, sendVerificationEmail, sendOrderConfirmationEmail } from "./email";
+import { sendPasswordResetEmail, sendVerificationEmail, sendOrderConfirmationEmail, sendReturnRequestAcknowledgmentEmail } from "./email";
 
 // Admin-only procedure — requires separate admin session cookie
 // Also refreshes the sliding-window timeout on every authenticated request
@@ -573,6 +573,22 @@ export const appRouter = router({
           changedBy: ctx.user.id,
           note: `Customer return request: ${input.reason}`,
         });
+
+        // Send acknowledgment email to customer
+        const orderItems = await db.getOrderItems(input.orderId);
+        const origin = ctx.req.headers.origin || ENV.siteUrl || 'http://localhost:3000';
+        sendReturnRequestAcknowledgmentEmail(
+          ctx.user.email,
+          order.orderNumber || `ORD-${order.id}`,
+          input.reason,
+          origin,
+          {
+            customerName: ctx.user.name || undefined,
+            items: orderItems.map(i => ({ name: i.productName || 'Item', quantity: i.quantity, price: i.productPrice })),
+            orderTotal: order.totalAmount,
+          }
+        ).catch(err => console.warn('[Email] Failed to send return acknowledgment:', err));
+
         return { success: true, message: 'Return request submitted. We will review it shortly.' };
       }),
   }),
@@ -2557,6 +2573,146 @@ export const appRouter = router({
           });
 
           return { csv, count: rows.length };
+        }),
+
+      exportPdf: adminProcedure
+        .input(z.object({
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          refundType: z.enum(['full', 'partial', 'all']).optional(),
+          status: z.enum(['succeeded', 'pending', 'failed', 'all']).optional(),
+        }).optional())
+        .mutation(async ({ ctx, input }) => {
+          const PDFDocument = (await import('pdfkit')).default;
+          const rows = await db.getAllRefundsForExport({
+            startDate: input?.startDate,
+            endDate: input?.endDate,
+            refundType: input?.refundType,
+            status: input?.status,
+          });
+          const stats = await db.getRefundStats(input?.startDate, input?.endDate);
+
+          // Generate PDF in memory
+          const chunks: Buffer[] = [];
+          const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 40 });
+          doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+          const pdfDone = new Promise<void>((resolve) => doc.on('end', resolve));
+
+          // Header
+          doc.fontSize(18).font('Helvetica-Bold').text('Refund History Report', { align: 'center' });
+          doc.moveDown(0.3);
+          doc.fontSize(10).font('Helvetica').fillColor('#666666')
+            .text(`Fake by Freetown — Generated ${new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' })}`, { align: 'center' });
+          if (input?.startDate || input?.endDate) {
+            doc.text(`Date range: ${input?.startDate || 'All'} to ${input?.endDate || 'Present'}`, { align: 'center' });
+          }
+          doc.moveDown(1);
+
+          // Stats summary
+          doc.fontSize(11).font('Helvetica-Bold').fillColor('#000000').text('Summary');
+          doc.moveDown(0.3);
+          doc.fontSize(9).font('Helvetica').fillColor('#333333');
+          doc.text(`Total Refunds: ${stats.refundCount}    |    Total Refunded: RM ${(stats.totalRefunded / 100).toFixed(2)}    |    Full: ${stats.fullRefunds}    |    Partial: ${stats.partialRefunds}    |    Failed: ${stats.failedRefunds}    |    Avg: RM ${(stats.avgRefundAmount / 100).toFixed(2)}`);
+          doc.moveDown(1);
+
+          // Table
+          const colWidths = [55, 70, 70, 90, 55, 65, 65, 60, 80, 100];
+          const headers = ['Date', 'Order #', 'Customer', 'Email', 'Type', 'Amount', 'Order Total', 'Status', 'Reason', 'Stripe Refund ID'];
+          const startX = 40;
+          let y = doc.y;
+
+          // Header row
+          doc.fontSize(7).font('Helvetica-Bold').fillColor('#ffffff');
+          doc.rect(startX, y, colWidths.reduce((a, b) => a + b, 0), 16).fill('#1a1a2e');
+          let x = startX;
+          headers.forEach((h, i) => {
+            doc.fillColor('#ffffff').text(h, x + 3, y + 4, { width: colWidths[i] - 6, lineBreak: false });
+            x += colWidths[i];
+          });
+          y += 16;
+
+          const reasonLabels: Record<string, string> = {
+            requested_by_customer: 'Customer Request',
+            defective_item: 'Defective',
+            wrong_item: 'Wrong Item',
+            not_as_described: 'Not As Described',
+            size_issue: 'Size Issue',
+            late_delivery: 'Late Delivery',
+            duplicate_order: 'Duplicate',
+            other: 'Other',
+          };
+
+          // Data rows
+          doc.font('Helvetica').fontSize(6.5).fillColor('#333333');
+          rows.forEach((r, idx) => {
+            if (y > 540) {
+              doc.addPage();
+              y = 40;
+              // Re-draw header on new page
+              doc.fontSize(7).font('Helvetica-Bold').fillColor('#ffffff');
+              doc.rect(startX, y, colWidths.reduce((a, b) => a + b, 0), 16).fill('#1a1a2e');
+              let hx = startX;
+              headers.forEach((h, i) => {
+                doc.fillColor('#ffffff').text(h, hx + 3, y + 4, { width: colWidths[i] - 6, lineBreak: false });
+                hx += colWidths[i];
+              });
+              y += 16;
+              doc.font('Helvetica').fontSize(6.5).fillColor('#333333');
+            }
+
+            const bg = idx % 2 === 0 ? '#ffffff' : '#f9fafb';
+            doc.rect(startX, y, colWidths.reduce((a, b) => a + b, 0), 14).fill(bg);
+
+            const vals = [
+              r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: '2-digit' }) : '',
+              r.orderNumber || '',
+              (r.customerName || '').slice(0, 15),
+              (r.customerEmail || '').slice(0, 18),
+              r.refundType === 'full' ? 'Full' : 'Partial',
+              `RM ${(r.refundAmount / 100).toFixed(2)}`,
+              `RM ${(r.orderTotal / 100).toFixed(2)}`,
+              r.status.charAt(0).toUpperCase() + r.status.slice(1),
+              reasonLabels[r.reason || ''] || r.reason || '',
+              (r.stripeRefundId || '').slice(0, 20),
+            ];
+
+            let rx = startX;
+            doc.fillColor('#333333');
+            vals.forEach((v, i) => {
+              doc.text(v, rx + 3, y + 4, { width: colWidths[i] - 6, lineBreak: false });
+              rx += colWidths[i];
+            });
+            y += 14;
+          });
+
+          // Footer
+          doc.moveDown(2);
+          doc.fontSize(8).fillColor('#999999').text(`${rows.length} refund record(s)`, startX, y + 10);
+
+          doc.end();
+          await pdfDone;
+
+          const pdfBuffer = Buffer.concat(chunks);
+          const base64 = pdfBuffer.toString('base64');
+
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'refund.export_pdf',
+            entityType: 'refund',
+            details: JSON.stringify({ count: rows.length, filters: input }),
+          });
+
+          return { pdf: base64, count: rows.length };
+        }),
+
+      // Refund trends for analytics chart
+      trends: adminProcedure
+        .input(z.object({
+          period: z.enum(['daily', 'weekly', 'monthly']).default('daily'),
+          days: z.number().default(30), // how many days back to look
+        }).optional())
+        .query(async ({ input }) => {
+          return db.getRefundTrends(input?.period || 'daily', input?.days || 30);
         }),
     }),
   }),

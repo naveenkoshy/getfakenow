@@ -462,6 +462,26 @@
 - [x] Build /admin/orders/refunds page with sortable table (Stripe ID, order number, amount, timestamp)
 - [x] Add refund stats cards (total refunded, count, average refund amount)
 - [x] Add CSV export for refund history
-- [ ] Add PDF export for refund history
+- [x] Add PDF export for refund history
 - [x] Add date range picker for filtering refunds
 - [x] Write tests for refund history and export features (25 tests passing)
+
+## PDF Export for Refund History
+- [x] Install PDF generation library (pdfkit)
+- [x] Create server-side PDF generation procedure for refund history
+- [x] Add PDF download button to admin refund history page
+- [x] Include refund stats summary, table with Stripe IDs, and date range in PDF
+
+## Return Request Acknowledgment Emails
+- [x] Create return request acknowledgment email template
+- [x] Trigger acknowledgment email when customer initiates a return
+- [x] Include order details, return reason, and next steps in email
+- [x] Write tests for acknowledgment email
+
+## Refund Analytics Chart on Admin Dashboard
+- [x] Build tRPC procedure for refund trend data with daily/weekly/monthly grouping
+- [x] Create RefundTrendsChart component with Recharts (ComposedChart + AreaChart)
+- [x] Add period toggle (daily/weekly/monthly) and count/amount toggle to chart
+- [x] Show refund count and total amount trends with summary stats
+- [x] Integrate chart into admin dashboard page
+- [x] Write tests for refund trends procedure (41 tests total, all passing)

@@ -1558,3 +1558,53 @@ export async function getAllRefundsForExport(params?: {
     .where(whereClause)
     .orderBy(desc(refunds.createdAt));
 }
+
+export async function getRefundTrends(period: 'daily' | 'weekly' | 'monthly' = 'daily', days: number = 30) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  let dateFormat: string;
+  switch (period) {
+    case 'daily':
+      dateFormat = '%Y-%m-%d';
+      break;
+    case 'weekly':
+      dateFormat = '%x-%v'; // ISO year-week
+      break;
+    case 'monthly':
+      dateFormat = '%Y-%m';
+      break;
+  }
+
+  // Use raw SQL to avoid Drizzle's column reference issue with only_full_group_by
+  const rows = await db.execute(sql`
+    SELECT
+      DATE_FORMAT(\`createdAt\`, ${dateFormat}) AS \`period\`,
+      COUNT(*) AS \`refundCount\`,
+      COALESCE(SUM(\`refundAmount\`), 0) AS \`totalAmount\`,
+      SUM(CASE WHEN \`refundType\` = 'full' THEN 1 ELSE 0 END) AS \`fullCount\`,
+      SUM(CASE WHEN \`refundType\` = 'partial' THEN 1 ELSE 0 END) AS \`partialCount\`,
+      SUM(CASE WHEN \`status\` = 'succeeded' THEN 1 ELSE 0 END) AS \`succeededCount\`,
+      SUM(CASE WHEN \`status\` = 'failed' THEN 1 ELSE 0 END) AS \`failedCount\`
+    FROM \`refunds\`
+    WHERE \`createdAt\` >= ${startDate}
+    GROUP BY DATE_FORMAT(\`createdAt\`, ${dateFormat})
+    ORDER BY DATE_FORMAT(\`createdAt\`, ${dateFormat})
+  `);
+
+  const data = (rows as any)[0] || rows;
+  const resultRows = Array.isArray(data) ? data : [];
+
+  return resultRows.map((r: any) => ({
+    period: String(r.period || ''),
+    refundCount: Number(r.refundCount) || 0,
+    totalAmount: Number(r.totalAmount) || 0,
+    fullCount: Number(r.fullCount) || 0,
+    partialCount: Number(r.partialCount) || 0,
+    succeededCount: Number(r.succeededCount) || 0,
+    failedCount: Number(r.failedCount) || 0,
+  }));
+}

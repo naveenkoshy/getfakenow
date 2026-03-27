@@ -8,6 +8,7 @@ import {
   AlertTriangle, ArrowRight, Clock, CheckCircle2, XCircle,
   Loader2
 } from "lucide-react";
+import { RefundTrendsChart } from "@/components/RefundTrendsChart";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = trpc.admin.dashboard.stats.useQuery();
@@ -216,6 +217,9 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Refund Trends Chart */}
+        <RefundTrendsChart />
 
         {/* Quick Actions */}
         <Card className="bg-white border-gray-200">

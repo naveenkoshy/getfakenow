@@ -321,3 +321,113 @@ export async function sendRefundEmail(
     text: `${greeting}\n\n${refundType} Processed\nOrder: ${orderNumber}\nRefund Amount: RM ${(refundAmount / 100).toFixed(2)}${reasonText ? `\nReason: ${reasonText}` : ''}\n\nWhat happens next:\n1. Refund initiated — Done!\n2. Processing — 1-3 business days via Stripe\n3. Back in your account — 5-10 business days total\n\nView orders: ${orderUrl}\n\nFake by Freetown — Premium apparel for people who get the joke.`,
   });
 }
+
+/**
+ * Send return request acknowledgment email to customer
+ * Triggered when a customer initiates a return request
+ */
+export async function sendReturnRequestAcknowledgmentEmail(
+  email: string,
+  orderNumber: string,
+  reason: string,
+  origin: string,
+  options?: {
+    customerName?: string;
+    items?: Array<{ name: string; quantity: number; price: number }>;
+    orderTotal?: number;
+  }
+): Promise<boolean> {
+  const orderUrl = `${origin}/orders`;
+  const greeting = options?.customerName ? `Hi ${options.customerName.split(' ')[0]},` : 'Hi there,';
+
+  let itemsHtml = '';
+  if (options?.items && options.items.length > 0) {
+    const rows = options.items.map(item =>
+      `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;">${item.name}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-size:13px;">x${item.quantity}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-size:13px;">RM ${(item.price / 100).toFixed(2)}</td></tr>`
+    ).join('');
+    itemsHtml = `
+      <p style="font-size:13px;font-weight:600;color:#374151;margin-bottom:4px;">Items in this order:</p>
+      <table style="width:100%;border-collapse:collapse;margin:12px 0;">
+        <thead><tr style="background:#f9fafb;"><th style="padding:6px 8px;text-align:left;font-size:12px;color:#6b7280;">Item</th><th style="padding:6px 8px;text-align:center;font-size:12px;color:#6b7280;">Qty</th><th style="padding:6px 8px;text-align:right;font-size:12px;color:#6b7280;">Price</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  return sendEmail({
+    to: email,
+    subject: `Return Request Received \u2014 Order ${orderNumber}`,
+    html: `
+      <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a2e;">
+        <!-- Header -->
+        <div style="text-align: center; padding: 24px 0 16px;">
+          <h1 style="font-size: 20px; font-weight: 700; margin: 0; letter-spacing: 2px;">FAKE <span style="font-weight: 400; font-size: 14px;">by Freetown</span></h1>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding: 0 24px;">
+          <p style="font-size: 15px; line-height: 1.6;">${greeting}</p>
+          <p style="font-size: 15px; line-height: 1.6;">
+            We've received your return request for order <strong>${orderNumber}</strong>. Our team will review it and get back to you shortly.
+          </p>
+
+          <!-- Request Details Card -->
+          <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <div style="text-align: center;">
+              <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #92400e;">Return Request</p>
+              <p style="margin: 0; font-weight: 700; font-size: 18px; color: #92400e;">Under Review</p>
+            </div>
+          </div>
+
+          <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; color: #374151;">Your reason for return:</p>
+            <p style="margin: 0; font-size: 13px; color: #6b7280; font-style: italic;">"${reason}"</p>
+          </div>
+
+          ${itemsHtml}
+
+          <!-- Timeline -->
+          <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; color: #374151;">What happens next?</p>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:4px 8px 4px 0;vertical-align:top;">
+                  <span style="display:inline-block;width:20px;height:20px;background:#16a34a;color:white;border-radius:50%;text-align:center;line-height:20px;font-size:11px;font-weight:bold;">1</span>
+                </td>
+                <td style="padding:4px 0;font-size:13px;color:#374151;"><strong>Request received</strong> \u2014 Done! We have your return request.</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px 4px 0;vertical-align:top;">
+                  <span style="display:inline-block;width:20px;height:20px;background:#d1d5db;color:white;border-radius:50%;text-align:center;line-height:20px;font-size:11px;font-weight:bold;">2</span>
+                </td>
+                <td style="padding:4px 0;font-size:13px;color:#374151;"><strong>Review</strong> \u2014 Our team reviews your request (1-2 business days).</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px 4px 0;vertical-align:top;">
+                  <span style="display:inline-block;width:20px;height:20px;background:#d1d5db;color:white;border-radius:50%;text-align:center;line-height:20px;font-size:11px;font-weight:bold;">3</span>
+                </td>
+                <td style="padding:4px 0;font-size:13px;color:#374151;"><strong>Decision</strong> \u2014 We'll email you with the outcome and next steps.</td>
+              </tr>
+            </table>
+          </div>
+
+          <p style="text-align: center; margin: 24px 0;">
+            <a href="${orderUrl}" style="background: #e63946; color: white; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">View Your Orders</a>
+          </p>
+
+          <p style="font-size: 13px; color: #6b7280; line-height: 1.5;">
+            Need to add more details? Just reply to this email or reach out to our support team. We're here to help.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <div style="text-align: center; padding: 0 24px 24px;">
+          <p style="color: #9ca3af; font-size: 11px; margin: 0;">Fake by Freetown \u2014 Premium apparel for people who get the joke.</p>
+          <p style="color: #9ca3af; font-size: 11px; margin: 4px 0 0;">We put 'Fake' on the label so you'd never have to question what's real.</p>
+        </div>
+      </div>
+    `,
+    text: `${greeting}\n\nReturn Request Received\nOrder: ${orderNumber}\nStatus: Under Review\n\nYour reason: "${reason}"\n\nWhat happens next:\n1. Request received \u2014 Done!\n2. Review \u2014 1-2 business days\n3. Decision \u2014 We'll email you with the outcome\n\nView orders: ${orderUrl}\n\nFake by Freetown \u2014 Premium apparel for people who get the joke.`,
+  });
+}

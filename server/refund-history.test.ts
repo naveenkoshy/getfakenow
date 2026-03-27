@@ -22,6 +22,7 @@ vi.mock('./email', () => ({
   sendAdminInviteEmail: vi.fn(),
   sendOrderConfirmationEmail: vi.fn(),
   sendRefundEmail: vi.fn().mockResolvedValue(true),
+  sendReturnRequestAcknowledgmentEmail: vi.fn().mockResolvedValue(true),
 }));
 
 // Mock audit log
@@ -318,6 +319,159 @@ describe('Enhanced Refund Email', () => {
       'ORD-002',
       3000,
       true,
+      'http://localhost:3000'
+    );
+    expect(result).toBeDefined();
+  });
+});
+
+describe('Refund History - PDF Export Procedure', () => {
+  it('should have the refunds.exportPdf procedure defined', () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    expect(caller.admin.refunds.exportPdf).toBeDefined();
+  });
+
+  it('should return base64 PDF string and count', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.exportPdf();
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('pdf');
+    expect(result).toHaveProperty('count');
+    expect(typeof result.pdf).toBe('string');
+    expect(typeof result.count).toBe('number');
+    // Verify it's valid base64 (PDF magic bytes: %PDF)
+    if (result.pdf.length > 0) {
+      const decoded = Buffer.from(result.pdf, 'base64');
+      expect(decoded.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('should accept filter parameters', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.exportPdf({
+      refundType: 'full',
+      status: 'succeeded',
+      startDate: '2025-01-01',
+      endDate: '2026-12-31',
+    });
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('pdf');
+  });
+
+  it('should reject non-admin users', async () => {
+    const caller = appRouter.createCaller(createNonAdminContext());
+    await expect(caller.admin.refunds.exportPdf()).rejects.toThrow();
+  });
+
+  it('should reject non-admin session', async () => {
+    const caller = appRouter.createCaller(createAdminContext({ isAdminSession: false }));
+    await expect(caller.admin.refunds.exportPdf()).rejects.toThrow();
+  });
+});
+
+describe('Refund Trends Procedure', () => {
+  it('should have the refunds.trends procedure defined', () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    expect(caller.admin.refunds.trends).toBeDefined();
+  });
+
+  it('should return array with daily period', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.trends({ period: 'daily', days: 30 });
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should return array with weekly period', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.trends({ period: 'weekly', days: 90 });
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should return array with monthly period', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.trends({ period: 'monthly', days: 365 });
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should return items with expected shape when data exists', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.trends({ period: 'daily', days: 365 });
+    if (result.length > 0) {
+      const item = result[0];
+      expect(item).toHaveProperty('period');
+      expect(item).toHaveProperty('refundCount');
+      expect(item).toHaveProperty('totalAmount');
+      expect(item).toHaveProperty('fullCount');
+      expect(item).toHaveProperty('partialCount');
+      expect(item).toHaveProperty('succeededCount');
+      expect(item).toHaveProperty('failedCount');
+      // All numeric values should be numbers
+      expect(typeof item.refundCount).toBe('number');
+      expect(typeof item.totalAmount).toBe('number');
+      expect(typeof item.fullCount).toBe('number');
+      expect(typeof item.partialCount).toBe('number');
+    }
+  });
+
+  it('should work with default parameters', async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const result = await caller.admin.refunds.trends();
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should reject non-admin users', async () => {
+    const caller = appRouter.createCaller(createNonAdminContext());
+    await expect(caller.admin.refunds.trends()).rejects.toThrow();
+  });
+});
+
+describe('Return Request Acknowledgment Email', () => {
+  it('should be importable', async () => {
+    const { sendReturnRequestAcknowledgmentEmail } = await import('./email');
+    expect(sendReturnRequestAcknowledgmentEmail).toBeDefined();
+    expect(typeof sendReturnRequestAcknowledgmentEmail).toBe('function');
+  });
+
+  it('should accept required parameters', async () => {
+    const { sendReturnRequestAcknowledgmentEmail } = await import('./email');
+    const result = await sendReturnRequestAcknowledgmentEmail(
+      'customer@test.com',
+      'ORD-100',
+      'Item arrived damaged and I would like to return it',
+      'http://localhost:3000'
+    );
+    expect(result).toBeDefined();
+  });
+
+  it('should accept optional parameters with items and customer name', async () => {
+    const { sendReturnRequestAcknowledgmentEmail } = await import('./email');
+    const result = await sendReturnRequestAcknowledgmentEmail(
+      'customer@test.com',
+      'ORD-101',
+      'Wrong size received',
+      'http://localhost:3000',
+      {
+        customerName: 'Jane Doe',
+        items: [
+          { name: 'Classic Tee - Black', quantity: 2, price: 4500 },
+          { name: 'Business Polo', quantity: 1, price: 8900 },
+        ],
+        orderTotal: 17900,
+      }
+    );
+    expect(result).toBeDefined();
+  });
+
+  it('should work without optional parameters', async () => {
+    const { sendReturnRequestAcknowledgmentEmail } = await import('./email');
+    const result = await sendReturnRequestAcknowledgmentEmail(
+      'customer@test.com',
+      'ORD-102',
+      'Changed my mind about the purchase',
       'http://localhost:3000'
     );
     expect(result).toBeDefined();

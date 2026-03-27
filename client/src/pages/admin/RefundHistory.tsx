@@ -80,8 +80,40 @@ export default function AdminRefundHistory() {
     onError: (e) => toast.error(e.message),
   });
 
+  const pdfExportMutation = trpc.admin.refunds.exportPdf.useMutation({
+    onSuccess: (result) => {
+      // Decode base64 and download PDF
+      const byteChars = atob(result.pdf);
+      const byteNumbers = new Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) {
+        byteNumbers[i] = byteChars.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `refund-history-${new Date().toISOString().split("T")[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${result.count} refund records as PDF`);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
   const handleExport = () => {
     exportMutation.mutate({
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+      refundType: refundType !== "all" ? refundType : undefined,
+      status: status !== "all" ? status : undefined,
+    });
+  };
+
+  const handlePdfExport = () => {
+    pdfExportMutation.mutate({
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       refundType: refundType !== "all" ? refundType : undefined,
@@ -152,6 +184,16 @@ export default function AdminRefundHistory() {
             >
               {exportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Export CSV
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handlePdfExport}
+              disabled={pdfExportMutation.isPending}
+              className="gap-1.5"
+            >
+              {pdfExportMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              Export PDF
             </Button>
           </div>
         </div>
