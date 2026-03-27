@@ -797,6 +797,8 @@ export const appRouter = router({
           id: z.number(),
           status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned']),
           note: z.string().optional(),
+          refundAmount: z.number().min(0).optional(), // Amount in sen to refund (only for 'returned' status)
+          refundType: z.enum(['full', 'partial', 'none']).optional(), // Refund type (only for 'returned' status)
         }))
         .mutation(async ({ ctx, input }) => {
           const order = await db.getOrderById(input.id);
@@ -805,12 +807,16 @@ export const appRouter = router({
           const previousStatus = order.status;
           await db.updateOrderStatus(input.id, input.status);
           
-          // When marking as "returned", restore stock for all items
+          let refundResult: { refundId: string; refundedAmount: number } | null = null;
+          
+          // When marking as "returned", restore stock and process refund
           if (input.status === 'returned') {
             const database = await db.getDb();
             if (database) {
-              const { orderItems: oiTable } = await import('../drizzle/schema');
+              const { orderItems: oiTable, orders: ordersTable } = await import('../drizzle/schema');
               const { eq: eqOp, sql: sqlOp } = await import('drizzle-orm');
+              
+              // Restore stock for all items
               const items = await database.select().from(oiTable).where(eqOp(oiTable.orderId, input.id));
               for (const item of items) {
                 await database.execute(
@@ -818,6 +824,82 @@ export const appRouter = router({
                 );
               }
               console.log(`[Admin] Restored stock for ${items.length} items from returned order ${input.id}`);
+              
+              // Process Stripe refund if order has a paymentIntentId and refund is requested
+              const shouldRefund = input.refundType && input.refundType !== 'none';
+              if (shouldRefund && order.paymentIntentId) {
+                try {
+                  const { createRefund } = await import('./stripe');
+                  
+                  const refundAmountSen = input.refundType === 'full'
+                    ? order.totalAmount + (order.shippingCost || 0)
+                    : (input.refundAmount || 0);
+                  
+                  if (refundAmountSen <= 0) {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'Refund amount must be greater than 0' });
+                  }
+                  
+                  const refund = await createRefund({
+                    paymentIntentId: order.paymentIntentId,
+                    amount: input.refundType === 'full' ? undefined : refundAmountSen,
+                    reason: 'requested_by_customer',
+                    metadata: {
+                      order_id: input.id.toString(),
+                      order_number: order.orderNumber,
+                      admin_id: ctx.user.id.toString(),
+                      refund_type: input.refundType || 'full',
+                    },
+                  });
+                  
+                  // Update order with refund info
+                  await database.update(ordersTable).set({
+                    paymentStatus: 'refunded',
+                    refundedAmount: refundAmountSen,
+                  }).where(eqOp(ordersTable.id, input.id));
+                  
+                  refundResult = {
+                    refundId: refund.id,
+                    refundedAmount: refundAmountSen,
+                  };
+                  
+                  console.log(`[Admin] Stripe refund ${refund.id} issued for order ${input.id}: RM ${(refundAmountSen / 100).toFixed(2)} (${input.refundType})`);
+                  
+                  // Send refund confirmation email to customer
+                  try {
+                    const { sendRefundEmail } = await import('./email');
+                    const origin = process.env.VITE_SITE_URL || 'http://localhost:3000';
+                    await sendRefundEmail(
+                      order.shippingEmail,
+                      order.orderNumber,
+                      refundAmountSen,
+                      input.refundType === 'partial',
+                      origin
+                    );
+                  } catch (emailErr) {
+                    console.warn('[Admin] Failed to send refund email:', emailErr);
+                  }
+                } catch (stripeErr: any) {
+                  console.error(`[Admin] Stripe refund failed for order ${input.id}:`, stripeErr);
+                  // Don't throw — the return status is already updated, log the failure
+                  // Admin can retry the refund manually via Stripe dashboard
+                  await db.addOrderStatusHistory({
+                    orderId: input.id,
+                    previousStatus: 'returned',
+                    newStatus: 'returned',
+                    changedBy: ctx.user.id,
+                    note: `Refund failed: ${stripeErr.message || 'Unknown error'}. Please process manually via Stripe dashboard.`,
+                  });
+                }
+              } else if (shouldRefund && !order.paymentIntentId) {
+                console.warn(`[Admin] Cannot refund order ${input.id}: no paymentIntentId found`);
+                await db.addOrderStatusHistory({
+                  orderId: input.id,
+                  previousStatus: 'returned',
+                  newStatus: 'returned',
+                  changedBy: ctx.user.id,
+                  note: 'Refund skipped: no Stripe payment intent found for this order.',
+                });
+              }
             }
           }
           
@@ -831,15 +913,21 @@ export const appRouter = router({
           });
           
           // Log activity
+          const activityDetails: Record<string, any> = { previousStatus, newStatus: input.status, note: input.note };
+          if (refundResult) {
+            activityDetails.refundId = refundResult.refundId;
+            activityDetails.refundedAmount = refundResult.refundedAmount;
+            activityDetails.refundType = input.refundType;
+          }
           await db.logActivity({
             userId: ctx.user.id,
             action: 'order.status.update',
             entityType: 'order',
             entityId: input.id,
-            details: JSON.stringify({ previousStatus, newStatus: input.status, note: input.note }),
+            details: JSON.stringify(activityDetails),
           });
           
-          return { success: true };
+          return { success: true, refund: refundResult };
         }),
       
       updateTracking: adminProcedure

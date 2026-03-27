@@ -62,6 +62,34 @@ export async function createCheckoutSession(params: {
 }
 
 /**
+ * Issue a refund via Stripe
+ * @param paymentIntentId - The Stripe PaymentIntent ID to refund
+ * @param amount - Amount in cents (sen) to refund. If omitted, full refund.
+ * @param reason - Reason for refund
+ * @returns Stripe Refund object
+ */
+export async function createRefund(params: {
+  paymentIntentId: string;
+  amount?: number;
+  reason?: 'requested_by_customer' | 'duplicate' | 'fraudulent';
+  metadata?: Record<string, string>;
+}) {
+  const refundParams: Stripe.RefundCreateParams = {
+    payment_intent: params.paymentIntentId,
+    reason: params.reason || 'requested_by_customer',
+    metadata: params.metadata,
+  };
+
+  // If amount is specified, it's a partial refund
+  if (params.amount !== undefined) {
+    refundParams.amount = params.amount;
+  }
+
+  const refund = await stripe.refunds.create(refundParams);
+  return refund;
+}
+
+/**
  * Verify webhook signature and construct event
  */
 export function constructWebhookEvent(payload: string | Buffer, signature: string) {

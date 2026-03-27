@@ -182,3 +182,39 @@ export async function sendAdminInviteEmail(email: string, token: string, inviter
     text: `You've been invited as an admin by ${inviterName}.\n\nSet up your account: ${setupUrl}\n\nThis invite expires in 7 days.`,
   });
 }
+
+/**
+ * Send refund confirmation email to customer
+ */
+export async function sendRefundEmail(
+  email: string,
+  orderNumber: string,
+  refundAmount: number,
+  isPartial: boolean,
+  origin: string
+): Promise<boolean> {
+  const orderUrl = `${origin}/orders`;
+  const refundType = isPartial ? "Partial Refund" : "Full Refund";
+
+  return sendEmail({
+    to: email,
+    subject: `${refundType} Processed — ${orderNumber}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1a1a2e;">${refundType} Processed</h2>
+        <p>We've processed a ${isPartial ? "partial" : "full"} refund for your order.</p>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="margin: 0; font-size: 14px; color: #666;">Order Number</p>
+          <p style="margin: 4px 0 12px; font-weight: bold; font-size: 18px;">${orderNumber}</p>
+          <p style="margin: 0; font-size: 14px; color: #666;">Refund Amount</p>
+          <p style="margin: 4px 0 0; font-weight: bold; font-size: 24px; color: #16a34a;">RM ${(refundAmount / 100).toFixed(2)}</p>
+        </div>
+        <p>The refund will appear on your original payment method within 5–10 business days, depending on your bank.</p>
+        <p><a href="${orderUrl}" style="color:#e63946;">View your orders</a></p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 12px;">Fake by Freetown — Premium apparel for people who get the joke.</p>
+      </div>
+    `,
+    text: `${refundType} Processed\nOrder: ${orderNumber}\nRefund Amount: RM ${(refundAmount / 100).toFixed(2)}\n\nThe refund will appear on your original payment method within 5-10 business days.\n\nView orders: ${orderUrl}`,
+  });
+}

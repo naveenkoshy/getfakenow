@@ -432,3 +432,13 @@
 - [x] Add cheeky status messages for each stage (confirmed → packing → shipped → delivered)
 - [x] Add tracking link integration for external courier tracking
 - [x] Write tests for promo codes, wishlist, and order tracking (142 tests passing)
+
+## Stripe Refund Integration for Returns
+- [x] Audit existing return approval procedure and Stripe payment intent storage
+- [x] Leverage existing refundedAmount field in orders schema (already present)
+- [x] Create Stripe refund helper function in stripe.ts (full and partial refund support)
+- [x] Update admin return approval procedure to issue Stripe refund automatically via createRefund
+- [x] Update Returns dashboard UI with refund type selector (full/partial/none) and amount input
+- [x] Add refund status badges on returns list (Full Refund, Partial Refund, Refunded)
+- [x] Send refund confirmation email to customer via sendRefundConfirmationEmail
+- [x] Write tests for refund flow (156 tests passing across 16 files)
