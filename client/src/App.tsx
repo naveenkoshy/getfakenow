@@ -26,6 +26,8 @@ import TermsOfService from "./pages/TermsOfService";
 import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/VerifyEmail";
+import Wishlist from "./pages/Wishlist";
+import OrderTracking from "./pages/OrderTracking";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -77,6 +79,8 @@ function Router() {
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/profile" component={Profile} />
       <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/wishlist" component={Wishlist} />
+      <Route path="/orders/:orderId" component={OrderTracking} />
 
       {/* Admin Login & Setup — separate from customer auth */}
       <Route path="/admin/login">

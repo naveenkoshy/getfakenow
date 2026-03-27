@@ -1,12 +1,50 @@
 import { SITE_URL } from "@/lib/seo";
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearch, useLocation } from 'wouter';
-import { ShoppingCart, Search, User, ArrowRight, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { Heart, ShoppingCart, Search, User, ArrowRight, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useCart } from '@/contexts/CartContext';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { updateMetaTags, injectStructuredData, generateBreadcrumbSchema, removeStructuredData } from '@/lib/seo';
+
+function WishlistButton({ productId }: { productId: number }) {
+  const { isAuthenticated } = useAuth();
+  const { data: wishlistIds } = trpc.wishlist.productIds.useQuery(undefined, { enabled: isAuthenticated });
+  const utils = trpc.useUtils();
+  const toggleWishlist = trpc.wishlist.toggle.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.wishlist.productIds.invalidate();
+      utils.wishlist.count.invalidate();
+    },
+  });
+  const isWishlisted = wishlistIds?.includes(productId) ?? false;
+
+  return (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isAuthenticated) {
+          toast.error("Sign in first to save your faves!");
+          return;
+        }
+        toggleWishlist.mutate({ productId });
+      }}
+      disabled={toggleWishlist.isPending}
+      className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-all z-10 ${
+        isWishlisted
+          ? 'bg-red-50 text-red-600 hover:bg-red-100'
+          : 'bg-white/90 text-gray-400 hover:bg-red-50 hover:text-red-600 opacity-0 group-hover:opacity-100'
+      }`}
+      aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+    >
+      <Heart size={14} className={isWishlisted ? 'fill-red-600' : ''} />
+    </button>
+  );
+}
 
 export default function Shop() {
   const search = useSearch();
@@ -244,31 +282,34 @@ export default function Shop() {
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
             {filteredProducts.map(product => (
-              <Link key={product.id} href={`/product/${product.slug}`} className="group block">
-                <div className="aspect-square bg-gray-50 overflow-hidden rounded-sm">
-                  {product.imageUrl ? (
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300">
-                      <ShoppingCart className="w-8 h-8" />
-                    </div>
-                  )}
-                </div>
-                <div className="mt-3">
-                  <h3 className="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors leading-tight">
-                    {product.name}
-                  </h3>
-                  <p className="mt-1 text-sm font-semibold text-gray-900">
-                    RM {(product.price / 100).toFixed(0)}
-                  </p>
-                  <p className="mt-0.5 text-[10px] text-gray-400 tracking-wider">{categories.find(c => c.id === product.categoryId)?.name?.toLowerCase() === 'women' ? 'XXS — 4XL' : 'S — 10XL'}</p>
-                </div>
-              </Link>
+              <div key={product.id} className="group relative">
+                <Link href={`/product/${product.slug}`} className="block">
+                  <div className="aspect-square bg-gray-50 overflow-hidden rounded-sm relative">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300">
+                        <ShoppingCart className="w-8 h-8" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <h3 className="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors leading-tight">
+                      {product.name}
+                    </h3>
+                    <p className="mt-1 text-sm font-semibold text-gray-900">
+                      RM {(product.price / 100).toFixed(0)}
+                    </p>
+                    <p className="mt-0.5 text-[10px] text-gray-400 tracking-wider">{categories.find(c => c.id === product.categoryId)?.name?.toLowerCase() === 'women' ? 'XXS — 4XL' : 'S — 10XL'}</p>
+                  </div>
+                </Link>
+                <WishlistButton productId={product.id} />
+              </div>
             ))}
           </div>
         ) : (

@@ -7,9 +7,9 @@ import { trpc } from "@/lib/trpc";
 import {
   ShoppingCart, Minus, Plus, Trash2, ArrowRight, ArrowLeft,
   Truck, Shield, RotateCcw, Sparkles, Flame, Gift, Zap, PartyPopper,
-  Search, User, Menu, X
+  Search, User, Menu, X, Tag, Check, AlertCircle, Loader2
 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 
 // ── Cheeky milestone messages for the free shipping progress bar ──
@@ -64,6 +64,54 @@ export default function Cart() {
     return relatedProducts.filter(p => !cartProductIds.has(p.id)).slice(0, 3);
   }, [relatedProducts, cartProductIds]);
 
+  // ── Promo code state ──
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState<{
+    valid: boolean;
+    discount: number;
+    type: string;
+    code: string;
+    description: string;
+    promotionId: number;
+    message: string;
+  } | null>(null);
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoInputFocused, setPromoInputFocused] = useState(false);
+
+  const utils = trpc.useUtils();
+
+  const handleApplyPromo = useCallback(async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Type something first, genius. 😏");
+      return;
+    }
+    setPromoLoading(true);
+    setPromoError('');
+    setPromoApplied(null);
+    try {
+      const result = await utils.promo.validate.fetch({ code: promoCode.trim(), orderTotal: total });
+      if (result.valid) {
+        setPromoApplied(result as any);
+        setPromoError('');
+      } else {
+        setPromoError(result.message || "Invalid code");
+        setPromoApplied(null);
+      }
+    } catch (err: any) {
+      setPromoError(err?.message || "Something went wrong. Try again?");
+      setPromoApplied(null);
+    } finally {
+      setPromoLoading(false);
+    }
+  }, [promoCode, total, utils]);
+
+  const handleRemovePromo = () => {
+    setPromoApplied(null);
+    setPromoCode('');
+    setPromoError('');
+  };
+
   const formatPrice = (cents: number) => `RM ${(cents / 100).toFixed(2)}`;
 
   const freeShippingThreshold = 7500; // RM75 in cents
@@ -73,8 +121,9 @@ export default function Cart() {
   const qualifiesForFreeShipping = total >= freeShippingThreshold;
 
   // Shipping cost display
-  const shippingCost = qualifiesForFreeShipping ? 0 : 800;
-  const estimatedTotal = total + shippingCost;
+  const shippingCost = (qualifiesForFreeShipping || promoApplied?.type === 'free_shipping') ? 0 : 800;
+  const promoDiscount = promoApplied?.discount || 0;
+  const estimatedTotal = Math.max(0, total + shippingCost - promoDiscount);
 
   // Animate removal
   const handleRemove = (productId: number) => {
@@ -404,6 +453,21 @@ export default function Cart() {
                         <span className="text-green-600">🎉</span>
                       </div>
                     )}
+                    {promoApplied && promoDiscount > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-green-600 font-medium flex items-center gap-1">
+                          <Tag size={12} />
+                          {promoApplied.description}
+                        </span>
+                        <span className="font-bold text-green-600">-{formatPrice(promoDiscount)}</span>
+                      </div>
+                    )}
+                    {promoApplied?.type === 'free_shipping' && !qualifiesForFreeShipping && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-green-600 italic">Promo code gave you FREE shipping!</span>
+                        <span className="text-green-600">🎉</span>
+                      </div>
+                    )}
                     <div className="border-t border-gray-200 pt-3 flex justify-between items-end">
                       <span className="font-bold text-gray-900">Estimated Total</span>
                       <div className="text-right">
@@ -438,6 +502,71 @@ export default function Cart() {
                   <Link href="/shop" className="w-full mt-3 text-center block text-sm font-medium text-gray-500 hover:text-red-600 transition-colors py-2">
                     ← Keep Shopping
                   </Link>
+                </div>
+
+                {/* ── Promo Code Field ── */}
+                <div className="bg-white rounded-xl p-5 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Tag size={14} className="text-red-600" />
+                    <p className="text-xs font-bold text-gray-700 tracking-wide">GOT A SECRET CODE?</p>
+                  </div>
+                  
+                  {promoApplied ? (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Check size={14} className="text-green-600" />
+                          <span className="text-sm font-bold text-green-700">{promoApplied.code}</span>
+                          <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">{promoApplied.description}</span>
+                        </div>
+                        <button onClick={handleRemovePromo} className="text-gray-400 hover:text-red-600 transition-colors">
+                          <X size={14} />
+                        </button>
+                      </div>
+                      <p className="text-xs text-green-600 mt-2 italic">{promoApplied.message}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={`flex border-2 rounded-lg overflow-hidden transition-colors ${
+                        promoInputFocused ? 'border-red-300' : promoError ? 'border-red-200' : 'border-gray-200'
+                      }`}>
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }}
+                          onFocus={() => setPromoInputFocused(true)}
+                          onBlur={() => setPromoInputFocused(false)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+                          placeholder="Enter code..."
+                          className="flex-1 px-3 py-2.5 text-sm font-mono font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal outline-none bg-transparent"
+                          disabled={promoLoading || !isAuthenticated}
+                        />
+                        <button
+                          onClick={handleApplyPromo}
+                          disabled={promoLoading || !promoCode.trim() || !isAuthenticated}
+                          className="px-4 bg-gray-900 text-white text-xs font-bold tracking-wider hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                        >
+                          {promoLoading ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            'APPLY'
+                          )}
+                        </button>
+                      </div>
+                      {promoError && (
+                        <div className="flex items-start gap-1.5 mt-2">
+                          <AlertCircle size={12} className="text-red-500 mt-0.5 flex-shrink-0" />
+                          <p className="text-xs text-red-500">{promoError}</p>
+                        </div>
+                      )}
+                      {!isAuthenticated && (
+                        <p className="text-[10px] text-gray-400 mt-2 italic">Sign in first to use promo codes.</p>
+                      )}
+                      <p className="text-[10px] text-gray-400 mt-2">
+                        Hint: Follow us on socials. Codes appear when you least expect them. 👀
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 {/* Trust Badges */}

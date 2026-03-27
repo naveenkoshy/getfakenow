@@ -55,6 +55,18 @@ export default function ProductDetail() {
     { enabled: !!product?.id }
   );
 
+  // Wishlist
+  const { data: wishlistIds } = trpc.wishlist.productIds.useQuery(undefined, { enabled: isAuthenticated });
+  const toggleWishlist = trpc.wishlist.toggle.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.wishlist.productIds.invalidate();
+      utils.wishlist.count.invalidate();
+    },
+  });
+  const utils = trpc.useUtils();
+  const isWishlisted = product?.id ? wishlistIds?.includes(product.id) : false;
+
   // Separate label images from color variant images
   const colorImages = product?.images?.filter((img: any) => img.color?.toLowerCase() !== 'label') || [];
   const labelImage = product?.images?.find((img: any) => img.color?.toLowerCase() === 'label');
@@ -251,8 +263,24 @@ export default function ProductDetail() {
               )}
             </div>
             {/* Wishlist button */}
-            <button className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-red-50 hover:text-red-600 transition-all" aria-label="Add to wishlist">
-              <Heart size={18} />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isAuthenticated) {
+                  toast.error("Sign in first to save your faves!");
+                  return;
+                }
+                if (product?.id) toggleWishlist.mutate({ productId: product.id });
+              }}
+              disabled={toggleWishlist.isPending}
+              className={`absolute top-4 right-4 w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all z-10 ${
+                isWishlisted
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                  : 'bg-white/90 text-gray-600 hover:bg-red-50 hover:text-red-600'
+              }`}
+              aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            >
+              <Heart size={18} className={isWishlisted ? 'fill-red-600' : ''} />
             </button>
             {/* Badge */}
             {product.featured && !collectionInfo && (

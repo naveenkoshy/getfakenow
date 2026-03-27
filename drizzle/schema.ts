@@ -635,6 +635,38 @@ export type OrderDownload = typeof orderDownloads.$inferSelect;
 export type InsertOrderDownload = typeof orderDownloads.$inferInsert;
 
 // ============================================
+// WISHLIST TABLE
+// ============================================
+
+/**
+ * Wishlists - saved products for later
+ */
+export const wishlists = mysqlTable("wishlists", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productId: int("productId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Wishlist = typeof wishlists.$inferSelect;
+export type InsertWishlist = typeof wishlists.$inferInsert;
+
+/**
+ * Promo code usage tracking - per-user redemption
+ */
+export const promoCodeUsages = mysqlTable("promoCodeUsages", {
+  id: int("id").autoincrement().primaryKey(),
+  promotionId: int("promotionId").notNull(),
+  userId: int("userId").notNull(),
+  orderId: int("orderId"),
+  discountAmount: int("discountAmount").notNull(), // Discount applied in sen
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PromoCodeUsage = typeof promoCodeUsages.$inferSelect;
+export type InsertPromoCodeUsage = typeof promoCodeUsages.$inferInsert;
+
+// ============================================
 // SITE SETTINGS TABLE
 // ============================================
 

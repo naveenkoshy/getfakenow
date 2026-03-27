@@ -409,3 +409,26 @@
 - [x] Add cheeky empty cart state with CTA to shop
 - [x] Ensure mobile-responsive checkout flow
 - [x] Write tests for checkout flow (126 tests passing)
+
+## Promo/Discount Code System
+- [x] Reuse existing promotions table + add promoCodeUsages table to schema
+- [x] Create tRPC procedures: promo.validate with cheeky success/error messages
+- [x] Integrate discount display into cart sidebar with animated success/error states
+- [x] Build promo code input field in cart sidebar with "You legend" / "Nice try" messages
+- [x] Promo validation checks: active, not expired, min order, max uses, per-user limit
+
+## Wishlist Feature
+- [x] Add wishlists table to schema (userId, productId, createdAt)
+- [x] Create tRPC procedures: wishlist.toggle, wishlist.list, wishlist.count, wishlist.productIds
+- [x] Add heart icon on product cards in Shop page (filled = in wishlist)
+- [x] Add heart icon on product detail page with toggle functionality
+- [x] Build /wishlist page with cheeky empty state and "Add to Cart" buttons
+- [x] Wishlist items show product images, prices, and quick-add to cart
+
+## Order Tracking Page
+- [x] Leverage existing trackingNumber and trackingUrl fields in orders schema
+- [x] Create tRPC procedures: tracking.getByOrderNumber (auth), tracking.publicTrack (guest)
+- [x] Build /orders/:orderId tracking page with visual timeline
+- [x] Add cheeky status messages for each stage (confirmed → packing → shipped → delivered)
+- [x] Add tracking link integration for external courier tracking
+- [x] Write tests for promo codes, wishlist, and order tracking (142 tests passing)

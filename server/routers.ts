@@ -577,6 +577,120 @@ export const appRouter = router({
       }),
   }),
 
+  // ============ WISHLIST (Customer) ============
+  wishlist: router({
+    list: protectedProcedure.query(async ({ ctx }) => db.getWishlistByUser(ctx.user.id)),
+    
+    productIds: protectedProcedure.query(async ({ ctx }) => db.getWishlistProductIds(ctx.user.id)),
+    
+    count: protectedProcedure.query(async ({ ctx }) => db.getWishlistCount(ctx.user.id)),
+    
+    toggle: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const ids = await db.getWishlistProductIds(ctx.user.id);
+        const isInList = ids.includes(input.productId);
+        if (isInList) {
+          await db.removeFromWishlist(ctx.user.id, input.productId);
+          return { added: false, message: "Removed from your stash. We won't judge... much." };
+        } else {
+          await db.addToWishlist(ctx.user.id, input.productId);
+          return { added: true, message: "Added to your stash! Good taste is never fake." };
+        }
+      }),
+  }),
+
+  // ============ PROMO CODE (Customer) ============
+  promo: router({
+    validate: protectedProcedure
+      .input(z.object({ code: z.string().min(1), orderTotal: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const promo = await db.getPromotionByCode(input.code.toUpperCase().trim());
+        if (!promo) return { valid: false, message: "Nice try, legend. That code doesn't exist. \uD83D\uDE0F" };
+        if (!promo.active) return { valid: false, message: "This code has retired. It lived a good life." };
+        
+        const now = new Date();
+        if (now < promo.startDate) return { valid: false, message: "Patience, grasshopper. This code isn't active yet." };
+        if (now > promo.endDate) return { valid: false, message: "Expired! Like milk, but less smelly. \uD83E\uDD27" };
+        if (promo.maxUsage && promo.usageCount >= promo.maxUsage) return { valid: false, message: "Everyone wanted this one. All used up!" };
+        
+        if (promo.perCustomerLimit) {
+          const userUsage = await db.getPromoUsageByUser(promo.id, ctx.user.id);
+          if (userUsage >= promo.perCustomerLimit) {
+            return { valid: false, message: "You've already used this one. Sharing is caring! \uD83D\uDE09" };
+          }
+        }
+        
+        if (promo.minOrderAmount && input.orderTotal < promo.minOrderAmount) {
+          return { valid: false, message: `Almost! Spend RM ${((promo.minOrderAmount - input.orderTotal) / 100).toFixed(2)} more to unlock this deal. You got this! \uD83D\uDCAA` };
+        }
+        
+        let discount = 0;
+        let description = '';
+        if (promo.type === 'percentage') {
+          discount = Math.round(input.orderTotal * promo.value / 100);
+          description = `${promo.value}% OFF`;
+        } else if (promo.type === 'fixed') {
+          discount = promo.value;
+          description = `RM ${(promo.value / 100).toFixed(2)} OFF`;
+        } else if (promo.type === 'free_shipping') {
+          discount = 0;
+          description = 'FREE SHIPPING';
+        }
+        
+        return { 
+          valid: true, 
+          discount, 
+          type: promo.type, 
+          value: promo.value, 
+          code: promo.code,
+          description,
+          promotionId: promo.id,
+          message: `YOU LEGEND! ${description} applied. You just saved RM ${(discount / 100).toFixed(2)}! \uD83C\uDF89`,
+        };
+      }),
+  }),
+
+  // ============ ORDER TRACKING (Customer + Public) ============
+  tracking: router({
+    getByOrderNumber: protectedProcedure
+      .input(z.object({ orderNumber: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const order = await db.getOrderByNumber(input.orderNumber);
+        if (!order) throw new TRPCError({ code: 'NOT_FOUND', message: 'Order not found' });
+        if (order.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        const items = await db.getOrderItems(order.id);
+        const history = await db.getOrderStatusHistory(order.id);
+        return { ...order, items, statusHistory: history };
+      }),
+    
+    publicTrack: publicProcedure
+      .input(z.object({ orderNumber: z.string(), email: z.string().email() }))
+      .query(async ({ input }) => {
+        const order = await db.getOrderByNumber(input.orderNumber);
+        if (!order) throw new TRPCError({ code: 'NOT_FOUND', message: "Hmm, we can't find that order. Double-check the number?" });
+        const user = await db.getUserById(order.userId);
+        if (!user || user.email.toLowerCase() !== input.email.toLowerCase()) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: "Order number and email don't match. Try again?" });
+        }
+        const items = await db.getOrderItems(order.id);
+        const history = await db.getOrderStatusHistory(order.id);
+        return {
+          orderNumber: order.orderNumber,
+          status: order.status,
+          trackingNumber: order.trackingNumber,
+          trackingUrl: order.trackingUrl,
+          shippingAddress: order.shippingAddress,
+          totalAmount: order.totalAmount,
+          createdAt: order.createdAt,
+          items: items.map(i => ({ productName: i.productName, quantity: i.quantity, size: i.size, color: i.color })),
+          statusHistory: history,
+        };
+      }),
+  }),
+
   // ============ CMS (Public) ============
   cms: router({
     banners: publicProcedure.query(async () => db.getActiveBannerSlides()),

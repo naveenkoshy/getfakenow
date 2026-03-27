@@ -1339,3 +1339,97 @@ export async function getSalesReportForExport(startDate?: Date, endDate?: Date) 
     },
   };
 }
+
+
+// ============================================
+// WISHLIST HELPERS
+// ============================================
+
+export async function getWishlistByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const { wishlists, products: productsTable, productImages: productImagesTable } = await import('../drizzle/schema');
+  const items = await db.select()
+    .from(wishlists)
+    .innerJoin(productsTable, eq(wishlists.productId, productsTable.id))
+    .where(eq(wishlists.userId, userId))
+    .orderBy(desc(wishlists.createdAt));
+  
+  const productIds = items.map(i => i.products.id);
+  let images: any[] = [];
+  if (productIds.length > 0) {
+    images = await db.select().from(productImagesTable).where(inArray(productImagesTable.productId, productIds));
+  }
+  
+  return items.map(item => ({
+    id: item.wishlists.id,
+    productId: item.products.id,
+    product: {
+      ...item.products,
+      images: images.filter(img => img.productId === item.products.id),
+    },
+    createdAt: item.wishlists.createdAt,
+  }));
+}
+
+export async function getWishlistProductIds(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const { wishlists } = await import('../drizzle/schema');
+  const items = await db.select({ productId: wishlists.productId })
+    .from(wishlists)
+    .where(eq(wishlists.userId, userId));
+  return items.map(i => i.productId);
+}
+
+export async function addToWishlist(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { wishlists } = await import('../drizzle/schema');
+  const existing = await db.select().from(wishlists)
+    .where(and(eq(wishlists.userId, userId), eq(wishlists.productId, productId)));
+  if (existing.length > 0) return { alreadyExists: true };
+  await db.insert(wishlists).values({ userId, productId });
+  return { alreadyExists: false };
+}
+
+export async function removeFromWishlist(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { wishlists } = await import('../drizzle/schema');
+  await db.delete(wishlists)
+    .where(and(eq(wishlists.userId, userId), eq(wishlists.productId, productId)));
+}
+
+export async function getWishlistCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const { wishlists } = await import('../drizzle/schema');
+  const [result] = await db.select({ count: count() })
+    .from(wishlists)
+    .where(eq(wishlists.userId, userId));
+  return result?.count || 0;
+}
+
+// ============================================
+// PROMO CODE USAGE HELPERS
+// ============================================
+
+export async function getPromoUsageByUser(promotionId: number, userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const { promoCodeUsages } = await import('../drizzle/schema');
+  const [result] = await db.select({ count: count() }).from(promoCodeUsages)
+    .where(and(eq(promoCodeUsages.promotionId, promotionId), eq(promoCodeUsages.userId, userId)));
+  return result?.count || 0;
+}
+
+export async function recordPromoUsage(promotionId: number, userId: number, orderId: number, discountAmount: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { promoCodeUsages, promotions: promosTable } = await import('../drizzle/schema');
+  await db.insert(promoCodeUsages).values({ promotionId, userId, orderId, discountAmount });
+  await db.update(promosTable)
+    .set({ usageCount: sql`${promosTable.usageCount} + 1` })
+    .where(eq(promosTable.id, promotionId));
+}
