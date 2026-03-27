@@ -1,4 +1,4 @@
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, ADMIN_COOKIE_NAME, ADMIN_SESSION_MAX_AGE_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
@@ -9,15 +9,23 @@ import * as db from "./db";
 import { storagePut } from "./storage";
 import { createCheckoutSession } from "./stripe";
 import * as auth from "./auth";
+import * as adminAuth from "./adminAuth";
 import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
 import { sendPasswordResetEmail, sendVerificationEmail, sendOrderConfirmationEmail } from "./email";
 
-// Admin-only procedure
+// Admin-only procedure — requires separate admin session cookie
+// Also refreshes the sliding-window timeout on every authenticated request
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== 'admin') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
+  // Require the dedicated admin session (not just a customer session with admin role)
+  if (!ctx.isAdminSession) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin session required. Please log in at /admin/login' });
+  }
+  // Sliding window: refresh admin session on each authenticated request
+  adminAuth.refreshAdminSession(ctx.req, ctx.res, ctx.user.id, ctx.user.email);
   return next({ ctx });
 });
 
@@ -87,7 +95,7 @@ export const appRouter = router({
         if (!user) return { success: true, message: 'If email exists, reset link sent' };
         const token = auth.generateResetToken();
         await auth.setResetToken(input.email, token);
-        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        const origin = ctx.req.headers.origin || ENV.siteUrl;
         await sendPasswordResetEmail(input.email, token, origin);
         return { success: true, message: 'If email exists, reset link sent' };
       }),
@@ -129,7 +137,7 @@ export const appRouter = router({
           emailVerificationToken: token,
           emailVerificationExpiry: expiry,
         }).where(eq(users.id, ctx.user.id));
-        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        const origin = ctx.req.headers.origin || ENV.siteUrl;
         await sendVerificationEmail(ctx.user.email || '', token, origin);
         return { success: true, message: 'Verification email sent' };
       }),
@@ -204,6 +212,68 @@ export const appRouter = router({
       facebook: !!ENV.facebookAppId,
       email: true,
     })),
+  }),
+
+  // ============ ADMIN AUTH (Separate from customer auth) ============
+  adminAuthRouter: router({
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const result = await adminAuth.authenticateAdmin(input.email, input.password, ctx.req, ctx.res);
+        if (!result.success) {
+          throw new TRPCError({ code: 'UNAUTHORIZED', message: result.error || 'Invalid credentials' });
+        }
+        return { success: true, user: result.user };
+      }),
+
+    logout: publicProcedure.mutation(({ ctx }) => {
+      adminAuth.clearAdminSession(ctx.req, ctx.res);
+      return { success: true } as const;
+    }),
+
+    me: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.isAdminSession || !ctx.user || ctx.user.role !== 'admin') {
+        return null;
+      }
+      // Refresh session on activity
+      adminAuth.refreshAdminSession(ctx.req, ctx.res, ctx.user.id, ctx.user.email);
+      return {
+        id: ctx.user.id,
+        email: ctx.user.email,
+        name: ctx.user.name,
+        role: ctx.user.role,
+      };
+    }),
+
+    changePassword: adminProcedure
+      .input(z.object({
+        currentPassword: z.string(),
+        newPassword: z.string().min(12, 'Admin password must be at least 12 characters'),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await auth.getUserByEmail(ctx.user.email);
+        if (!user || !user.passwordHash) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No password set for this account' });
+        }
+        const isValid = await auth.verifyPassword(input.currentPassword, user.passwordHash);
+        if (!isValid) {
+          throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Current password is incorrect' });
+        }
+        const validation = adminAuth.isValidAdminPassword(input.newPassword);
+        if (!validation.valid) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: validation.message });
+        }
+        const newHash = await auth.hashPassword(input.newPassword);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        const { users } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        await dbConn.update(users).set({ passwordHash: newHash }).where(eq(users.id, ctx.user.id));
+        return { success: true, message: 'Password updated successfully' };
+      }),
   }),
 
   // ============ CATEGORIES (Public) ============
@@ -398,7 +468,7 @@ export const appRouter = router({
         });
 
         // Create Stripe session outside the DB transaction
-        const origin = ctx.req.headers.origin || 'https://getfakenow.com';
+        const origin = ctx.req.headers.origin || ENV.siteUrl;
         const stripeItems = cartItems.map(item => ({
           name: item.product!.name, description: item.product!.description || undefined,
           price: item.product!.price, quantity: item.quantity,

@@ -1,57 +1,49 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { useToast } from "@/hooks/use-toast";
+import { trpc } from "@/lib/trpc";
+import { Loader2 } from "lucide-react";
 
 interface AdminRouteProps {
   children: React.ReactNode;
 }
 
 /**
- * Wrapper component for admin-only routes
- * Redirects non-admin users to home page
+ * Wrapper component for admin-only routes.
+ * Uses the separate admin session (adminAuthRouter.me) instead of customer auth.
+ * Redirects to /admin/login if no valid admin session exists.
  */
 export function AdminRoute({ children }: AdminRouteProps) {
-  const { user, loading } = useAuth();
+  const { data: adminUser, isLoading } = trpc.adminAuthRouter.me.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: true,
+    // Re-check every 5 minutes to catch session expiry
+    refetchInterval: 5 * 60 * 1000,
+  });
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        // Not logged in - redirect to home
-        toast({
-          title: "Authentication Required",
-          description: "Please log in to access the admin panel",
-          variant: "destructive",
-        });
-        setLocation("/");
-      } else if (user.role !== "admin") {
-        // Logged in but not admin - redirect to home
-        toast({
-          title: "Access Denied",
-          description: "You do not have permission to access the admin panel",
-          variant: "destructive",
-        });
-        setLocation("/");
-      }
+    if (!isLoading && !adminUser) {
+      setLocation("/admin/login");
     }
-  }, [user, loading, setLocation, toast]);
+  }, [adminUser, isLoading, setLocation]);
 
-  // Show loading state while checking auth
-  if (loading) {
+  // Show loading state while checking admin session
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-3" />
+          <p className="text-sm text-gray-500">Verifying admin session...</p>
+        </div>
       </div>
     );
   }
 
-  // Show nothing if not authorized (will redirect)
-  if (!user || user.role !== "admin") {
+  // No admin session — will redirect
+  if (!adminUser) {
     return null;
   }
 
-  // User is admin - render children
+  // Valid admin session — render children
   return <>{children}</>;
 }

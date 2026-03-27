@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearch, useLocation } from 'wouter';
 import { ShoppingCart, Search, User, ArrowRight, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
@@ -79,9 +80,9 @@ export default function Shop() {
     const desc = activeCategory
       ? `Browse our ${activeCategory.name.toLowerCase()} collection. Premium apparel from Fake by Freetown. S to 10XL. One price. One quality.`
       : 'Shop the full Fake by Freetown collection. Streetwear, casual, women\'s, and business apparel. S to 10XL. One price. One quality. Zero fine print.';
-    updateMetaTags({ title, description: desc, url: `https://getfakenow.com/shop${activeCategory ? `?category=${activeCategory.slug}` : ''}`, type: 'website' });
-    const breadcrumbs = [{ name: 'Home', url: 'https://getfakenow.com' }, { name: 'Shop', url: 'https://getfakenow.com/shop' }];
-    if (activeCategory) breadcrumbs.push({ name: activeCategory.name, url: `https://getfakenow.com/shop?category=${activeCategory.slug}` });
+    updateMetaTags({ title, description: desc, url: `${SITE_URL}/shop${activeCategory ? `?category=${activeCategory.slug}` : ''}`, type: 'website' });
+    const breadcrumbs = [{ name: 'Home', url: SITE_URL }, { name: 'Shop', url: '${SITE_URL}/shop' }];
+    if (activeCategory) breadcrumbs.push({ name: activeCategory.name, url: `${SITE_URL}/shop?category=${activeCategory.slug}` });
     injectStructuredData(generateBreadcrumbSchema(breadcrumbs), 'shop-breadcrumb');
     return () => { removeStructuredData('shop-breadcrumb'); };
   }, [activeCategory]);

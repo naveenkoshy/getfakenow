@@ -2,6 +2,9 @@
  * SEO utility functions for meta tags and structured data
  */
 
+/** Portable site URL — reads from env at build time, falls back to production domain */
+export const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://getfakenow.com').replace(/\/$/, '');
+
 export interface SEOConfig {
   title: string;
   description: string;
@@ -146,7 +149,7 @@ export function generateOrganizationSchema(): string {
     '@type': 'Organization',
     name: 'Fake by Freetown',
     alternateName: 'Fake',
-    url: 'https://getfakenow.com',
+    url: SITE_URL,
     logo: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
     description: 'Malaysian apparel brand offering quality streetwear and professional workwear. Made to last, designed to move.',
     address: {
@@ -191,12 +194,12 @@ export function generateWebSiteSchema(): string {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Fake by Freetown',
-    url: 'https://getfakenow.com',
+    url: SITE_URL,
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://getfakenow.com/shop?search={search_term_string}',
+        urlTemplate: `${SITE_URL}/shop?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

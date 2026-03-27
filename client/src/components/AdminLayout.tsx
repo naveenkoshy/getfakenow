@@ -1,6 +1,6 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 import { 
   LayoutDashboard, 
   Package, 
@@ -44,21 +44,27 @@ interface NavItem {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, logout } = useAuth();
+  const { data: user } = trpc.adminAuthRouter.me.useQuery(undefined, { retry: false });
+  const adminLogout = trpc.adminAuthRouter.logout.useMutation({
+    onSuccess: () => {
+      toast.success("Logged out of Seller Center");
+      window.location.href = "/admin/login";
+    },
+  });
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["Orders", "Products"]);
 
-  if (!user || user.role !== "admin") {
+  if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
           <p className="text-muted-foreground mb-4">
-            You don't have permission to access the admin panel.
+            Please log in to the admin panel.
           </p>
           <Button asChild>
-            <Link href="/">Go Home</Link>
+            <Link href="/admin/login">Admin Login</Link>
           </Button>
         </div>
       </div>
@@ -66,9 +72,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const handleLogout = async () => {
-    await logout();
-    toast.success("Logged out successfully");
-    window.location.href = "/";
+    adminLogout.mutate();
   };
 
   const toggleSection = (name: string) => {

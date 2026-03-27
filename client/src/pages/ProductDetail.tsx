@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useCart } from "@/contexts/CartContext";
 import { trpc } from "@/lib/trpc";
@@ -78,7 +79,7 @@ export default function ProductDetail() {
       title: `${product.name} | Fake by Freetown`,
       description: seoDesc,
       image: product.imageUrl || undefined,
-      url: `https://getfakenow.com/product/${product.slug}`,
+      url: `${SITE_URL}/product/${product.slug}`,
       type: 'product',
       price: product.price,
       currency: 'MYR',
@@ -95,13 +96,13 @@ export default function ProductDetail() {
       availability: product.stockQuantity > 0 ? 'in stock' : 'out of stock',
       brand: 'Fake by Freetown',
       sku: product.id.toString(),
-      url: `https://getfakenow.com/product/${product.slug}`,
+      url: `${SITE_URL}/product/${product.slug}`,
     });
     injectStructuredData(productSchema, 'product-schema');
     const breadcrumbSchema = generateBreadcrumbSchema([
-      { name: 'Home', url: 'https://getfakenow.com' },
-      { name: 'Shop', url: 'https://getfakenow.com/shop' },
-      { name: product.name, url: `https://getfakenow.com/product/${product.slug}` },
+      { name: 'Home', url: SITE_URL },
+      { name: 'Shop', url: '${SITE_URL}/shop' },
+      { name: product.name, url: `${SITE_URL}/product/${product.slug}` },
     ]);
     injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
     return () => {

@@ -1,5 +1,6 @@
 export const ENV = {
   appId: process.env.VITE_APP_ID ?? "",
+  siteUrl: process.env.VITE_SITE_URL || process.env.SITE_URL || "https://getfakenow.com",
   cookieSecret: process.env.JWT_SECRET ?? "",
   jwtSecret: process.env.JWT_SECRET ?? "",
   databaseUrl: process.env.DATABASE_URL ?? "",

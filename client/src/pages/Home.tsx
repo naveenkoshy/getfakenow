@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { ShoppingCart, Search, User, Truck, RotateCcw, Lock, MessageCircle, Star, ArrowRight, Menu, X } from 'lucide-react';
@@ -19,7 +20,7 @@ export default function Home() {
     updateMetaTags({
       title: 'Fake by Freetown | Authentically Fake Streetwear',
       description: "We put 'Fake' on the label so you'd never have to question what's real. Premium streetwear and business apparel. S to 10XL. One price. One quality. Zero fine print.",
-      url: 'https://getfakenow.com',
+      url: SITE_URL,
       type: 'website',
     });
     injectStructuredData(generateOrganizationSchema(), 'org-schema');

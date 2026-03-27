@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -43,13 +44,13 @@ export default function Products() {
       title: 'Shop',
       description: "Browse the full collection. Graphic tees with attitude. Hoodies that last. Shirts that work. It's all here.",
       image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
-      url: 'https://getfakenow.com/shop',
+      url: '${SITE_URL}/shop',
       type: 'website',
     });
 
     const breadcrumbSchema = generateBreadcrumbSchema([
-      { name: 'Home', url: 'https://getfakenow.com' },
-      { name: 'Shop', url: 'https://getfakenow.com/shop' },
+      { name: 'Home', url: SITE_URL },
+      { name: 'Shop', url: '${SITE_URL}/shop' },
     ]);
     injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
 

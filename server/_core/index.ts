@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { generateSitemapXml } from "../sitemap";
+import { ENV } from "./env";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -63,7 +64,7 @@ async function startServer() {
     const robotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: https://getfakenow.com/sitemap.xml`;
+Sitemap: ${ENV.siteUrl.replace(/\/$/, '')}/sitemap.xml`;
     res.header("Content-Type", "text/plain");
     res.send(robotsTxt);
   });

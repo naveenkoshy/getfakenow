@@ -21,6 +21,7 @@ function createMockContext(overrides?: Partial<AuthenticatedUser>): TrpcContext 
 
   return {
     user,
+    isAdminSession: user.role === "admin",
     req: {
       protocol: "https",
       headers: { origin: "https://getfakenow.com" },
@@ -35,6 +36,7 @@ function createMockContext(overrides?: Partial<AuthenticatedUser>): TrpcContext 
 function createPublicContext(): TrpcContext {
   return {
     user: null,
+    isAdminSession: false,
     req: {
       protocol: "https",
       headers: { origin: "https://getfakenow.com" },

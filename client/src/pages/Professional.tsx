@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,13 +34,13 @@ export default function Professional() {
       title: 'Professional Collection',
       description: 'Refined workwear. Oxford button-downs. Chambray shirts. Nordic minimalism meets Malaysian craft. Clothes that work.',
       image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
-      url: 'https://getfakenow.com/professional',
+      url: '${SITE_URL}/professional',
       type: 'website',
     });
 
     const breadcrumbSchema = generateBreadcrumbSchema([
-      { name: 'Home', url: 'https://getfakenow.com' },
-      { name: 'Professional', url: 'https://getfakenow.com/professional' },
+      { name: 'Home', url: SITE_URL },
+      { name: 'Professional', url: '${SITE_URL}/professional' },
     ]);
     injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
 

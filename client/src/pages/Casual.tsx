@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,13 +34,13 @@ export default function Casual() {
       title: 'Casual Collection',
       description: "Streetwear that doesn't try too hard. Graphic tees with one-liners. Hoodies with embroidered logos. Joggers and caps. Wear it your way.",
       image: 'https://fake-store-images.s3.ap-southeast-1.amazonaws.com/fake-logo-red.png',
-      url: 'https://getfakenow.com/casual',
+      url: '${SITE_URL}/casual',
       type: 'website',
     });
 
     const breadcrumbSchema = generateBreadcrumbSchema([
-      { name: 'Home', url: 'https://getfakenow.com' },
-      { name: 'Casual', url: 'https://getfakenow.com/casual' },
+      { name: 'Home', url: SITE_URL },
+      { name: 'Casual', url: '${SITE_URL}/casual' },
     ]);
     injectStructuredData(breadcrumbSchema, 'breadcrumb-schema');
 

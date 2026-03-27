@@ -3,6 +3,7 @@
  */
 import { getDb } from './db';
 import { products } from '../drizzle/schema';
+import { ENV } from './_core/env';
 
 export interface SitemapUrl {
   loc: string;
@@ -15,7 +16,7 @@ export interface SitemapUrl {
  * Generate sitemap URLs for all pages
  */
 export async function generateSitemapUrls(): Promise<SitemapUrl[]> {
-  const baseUrl = 'https://getfakenow.com';
+  const baseUrl = ENV.siteUrl.replace(/\/$/, '');
   const urls: SitemapUrl[] = [];
 
   // Static pages

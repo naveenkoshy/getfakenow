@@ -19,6 +19,7 @@ function createAdminContext(): TrpcContext {
 
   const ctx: TrpcContext = {
     user,
+    isAdminSession: true,
     req: {
       protocol: "https",
       headers: { origin: "https://fakebyfreetown.com" },
@@ -26,6 +27,7 @@ function createAdminContext(): TrpcContext {
     } as TrpcContext["req"],
     res: {
       clearCookie: () => {},
+      cookie: () => {},
     } as TrpcContext["res"],
   };
 
@@ -47,12 +49,14 @@ function createUserContext(): TrpcContext {
 
   const ctx: TrpcContext = {
     user,
+    isAdminSession: false,
     req: {
       protocol: "https",
       headers: {},
     } as TrpcContext["req"],
     res: {
       clearCookie: () => {},
+      cookie: () => {},
     } as TrpcContext["res"],
   };
 

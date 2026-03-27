@@ -359,3 +359,17 @@
 - [x] Add "Anonymize Customer" button on admin customer detail page
 - [x] Build confirmation dialog with warning about irreversible action
 - [x] Call admin.customers.anonymize procedure and handle success/error
+
+## Separate Admin Login System
+- [x] Create admin-specific login tRPC procedure with stronger password validation (min 12 chars)
+- [x] Create separate admin session cookie (admin_session) with 30-min inactivity timeout
+- [x] Build dedicated /admin/login page with email+password form (no OAuth/social)
+- [x] Update admin route guards to check admin session cookie instead of customer OAuth
+- [x] Admin accounts created only via DB promotion or admin invite — no self-registration
+- [x] Add admin session refresh on activity (sliding window timeout)
+- [x] Write tests for admin login, session timeout, and access control
+
+## Portability Audit
+- [x] Remove any hard-coded URLs (use env vars or relative paths)
+- [x] Ensure all config is environment-variable driven (VITE_SITE_URL)
+- [x] Verify standard Express/React patterns — no platform-specific dependencies

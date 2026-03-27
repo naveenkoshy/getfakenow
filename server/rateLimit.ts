@@ -42,6 +42,24 @@ export const apiRateLimiter = rateLimit({
 });
 
 /**
+ * Admin login rate limiter: 5 requests per 15 minutes per IP
+ * Stricter than customer auth to protect admin panel.
+ */
+export const adminAuthRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window (stricter than customer)
+  message: {
+    error: {
+      message: "Too many admin login attempts. Please try again in 15 minutes.",
+      code: "RATE_LIMITED",
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
+
+/**
  * Register rate limiters on the Express app.
  * Must be called AFTER body parsers but BEFORE tRPC middleware.
  */
@@ -51,6 +69,9 @@ export function registerRateLimiters(app: Express) {
   app.use("/api/trpc/auth.login", authRateLimiter);
   app.use("/api/trpc/auth.register", authRateLimiter);
   app.use("/api/trpc/auth.requestPasswordReset", authRateLimiter);
+
+  // Stricter limiter on admin login
+  app.use("/api/trpc/adminAuthRouter.login", adminAuthRateLimiter);
 
   // General rate limiter on all API endpoints
   app.use("/api/trpc", apiRateLimiter);

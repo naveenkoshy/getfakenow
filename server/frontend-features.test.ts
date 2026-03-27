@@ -59,6 +59,7 @@ function createMockUser(overrides: Partial<AuthenticatedUser> = {}): Authenticat
 function createContext(user: AuthenticatedUser | null = null): TrpcContext {
   return {
     user,
+    isAdminSession: user?.role === "admin",
     req: {
       protocol: "https",
       headers: { origin: "https://test.example.com" },

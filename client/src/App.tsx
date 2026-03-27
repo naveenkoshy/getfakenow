@@ -48,6 +48,7 @@ import AdminSEO from "./pages/admin/SEO";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminSettings from "./pages/admin/Settings";
 import AdminActivityLog from "./pages/admin/ActivityLog";
+import AdminLogin from "./pages/admin/AdminLogin";
 import { AdminRoute } from "./components/AdminRoute";
 
 function Router() {
@@ -74,7 +75,12 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/verify-email" component={VerifyEmail} />
 
-      {/* Admin — Seller Center */}
+      {/* Admin Login — separate from customer auth */}
+      <Route path="/admin/login">
+        {() => <AdminLogin />}
+      </Route>
+
+      {/* Admin — Seller Center (requires admin session) */}
       <Route path="/admin">
         {() => <AdminRoute><AdminDashboard /></AdminRoute>}
       </Route>

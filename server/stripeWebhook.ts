@@ -102,7 +102,7 @@ async function handleCheckoutCompleted(
         .from(orderItems)
         .where(eq(orderItems.orderId, parseInt(orderId)));
 
-      const origin = session.success_url?.split("/order-confirmation")[0] || "https://getfakenow.com";
+      const origin = session.success_url?.split("/order-confirmation")[0] || (process.env.VITE_SITE_URL || "https://getfakenow.com");
       await sendOrderConfirmationEmail(
         order.shippingEmail,
         order.orderNumber,
