@@ -274,6 +274,21 @@ export const appRouter = router({
       };
     }),
 
+    forgotPassword: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await auth.getUserByEmail(input.email);
+        // Always return success to prevent email enumeration
+        if (!user || user.role !== 'admin') {
+          return { success: true, message: 'If an admin account exists with that email, a reset link has been sent.' };
+        }
+        const token = auth.generateResetToken();
+        await auth.setResetToken(input.email, token);
+        const origin = ctx.req.headers.origin || ENV.siteUrl;
+        await sendPasswordResetEmail(input.email, token, origin);
+        return { success: true, message: 'If an admin account exists with that email, a reset link has been sent.' };
+      }),
+
     changePassword: adminProcedure
       .input(z.object({
         currentPassword: z.string(),

@@ -133,6 +133,15 @@ export default function AdminLogin() {
                 </div>
               </div>
 
+              <div className="flex items-center justify-end">
+                <a
+                  href="/admin/forgot-password"
+                  className="text-xs text-red-600 hover:text-red-700 hover:underline"
+                >
+                  Forgot password?
+                </a>
+              </div>
+
               <Button
                 type="submit"
                 className="w-full bg-red-600 hover:bg-red-700 text-white"

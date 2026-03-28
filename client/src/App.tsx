@@ -55,6 +55,8 @@ import AdminTeam from "./pages/admin/Team";
 import AdminReturns from "./pages/admin/Returns";
 import AdminRefundHistory from "./pages/admin/RefundHistory";
 import AdminSetup from "./pages/admin/AdminSetup";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import { AdminRoute } from "./components/AdminRoute";
 
 function Router() {
@@ -89,6 +91,12 @@ function Router() {
       </Route>
       <Route path="/admin/setup">
         {() => <AdminSetup />}
+      </Route>
+      <Route path="/admin/forgot-password">
+        {() => <AdminForgotPassword />}
+      </Route>
+      <Route path="/reset-password">
+        {() => <ResetPassword />}
       </Route>
 
       {/* Admin — Seller Center (requires admin session) */}

@@ -577,3 +577,15 @@
 ## Bug Fix: Junk CMS Categories
 - [x] Remove 14 test categories named "CMS Cat ..." from database
 - [x] Verify shop page only shows real product categories (Casual, Professional, Accessories, Women)
+
+## Admin Email/Password Authentication
+- [x] Add password hash and reset token fields to users schema
+- [x] Create admin login procedure (email + password)
+- [x] Create forgot password procedure (send reset email)
+- [x] Create reset password procedure (validate token + set new password)
+- [x] Set default admin password for owner account (FakeAdmin2024! for naveen.koshy@gmail.com)
+- [x] Build forgot password email template
+- [x] Update AdminLogin page with working email/password form
+- [x] Add forgot password page with email input
+- [x] Add reset password page with new password form
+- [x] Write tests for admin auth flow (all 226 tests passing)
