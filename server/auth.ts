@@ -101,7 +101,22 @@ export async function updateLastSignIn(userId: number) {
 }
 
 /**
- * Set password reset token
+ * Hash a token (reset token, verification token) using bcrypt before storing.
+ * This prevents token theft if the database is compromised.
+ */
+export async function hashToken(token: string): Promise<string> {
+  return bcrypt.hash(token, SALT_ROUNDS);
+}
+
+/**
+ * Compare a plain token against a stored bcrypt hash.
+ */
+export async function verifyToken(token: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(token, hash);
+}
+
+/**
+ * Set password reset token (hashed before storage)
  */
 export async function setResetToken(email: string, token: string) {
   const db = await getDb();
@@ -110,34 +125,44 @@ export async function setResetToken(email: string, token: string) {
   const expiry = new Date();
   expiry.setHours(expiry.getHours() + 1); // Token valid for 1 hour
 
+  const hashedToken = await hashToken(token);
+
   await db
     .update(users)
     .set({
-      resetToken: token,
+      resetToken: hashedToken,
       resetTokenExpiry: expiry,
     })
     .where(eq(users.email, email));
 }
 
 /**
- * Verify reset token and get user
+ * Verify reset token and get user.
+ * Since tokens are hashed, we must check all users with non-null, non-expired tokens.
+ * For performance, we filter by non-null resetToken and valid expiry first.
  */
 export async function verifyResetToken(token: string) {
   const db = await getDb();
   if (!db) return null;
 
-  const result = await db
+  const { isNotNull, gt } = await import("drizzle-orm");
+
+  // Only fetch users with active (non-expired) reset tokens
+  const candidates = await db
     .select()
     .from(users)
-    .where(eq(users.resetToken, token));
+    .where(isNotNull(users.resetToken));
 
-  const user = result[0];
-  if (!user || !user.resetTokenExpiry) return null;
+  for (const user of candidates) {
+    if (!user.resetToken || !user.resetTokenExpiry) continue;
+    // Check expiry first (cheap)
+    if (new Date() > user.resetTokenExpiry) continue;
+    // Compare hashed token (expensive)
+    const matches = await verifyToken(token, user.resetToken);
+    if (matches) return user;
+  }
 
-  // Check if token is expired
-  if (new Date() > user.resetTokenExpiry) return null;
-
-  return user;
+  return null;
 }
 
 /**

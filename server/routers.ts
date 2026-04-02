@@ -14,6 +14,14 @@ import jwt from "jsonwebtoken";
 import { ENV } from "./_core/env";
 import { sendPasswordResetEmail, sendVerificationEmail, sendOrderConfirmationEmail, sendReturnRequestAcknowledgmentEmail } from "./email";
 
+/** Compute the Cartesian product of N arrays of items */
+function cartesian<T>(arrays: T[][]): T[][] {
+  return arrays.reduce<T[][]>(
+    (acc, curr) => acc.flatMap((combo) => curr.map((item) => [...combo, item])),
+    [[]],
+  );
+}
+
 // Admin-only procedure — requires separate admin session cookie
 // Also refreshes the sliding-window timeout on every authenticated request
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -79,10 +87,10 @@ export const appRouter = router({
         if (!isValid) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid email or password' });
         
         await auth.updateLastSignIn(user.id);
-        const expiresIn = input.rememberMe ? '30d' : '7d';
+        const expiresIn = input.rememberMe ? '7d' : '24h';
         const token = jwt.sign({ userId: user.id, email: user.email }, ENV.jwtSecret, { expiresIn });
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        const maxAge = input.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
+        const maxAge = input.rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge });
         
         return { success: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } };
@@ -127,6 +135,7 @@ export const appRouter = router({
           return { success: true, message: 'Email already verified' };
         }
         const token = auth.generateResetToken(); // reuse secure token generator
+        const hashedToken = await auth.hashToken(token); // hash before storage
         const expiry = new Date();
         expiry.setHours(expiry.getHours() + 24); // 24 hour validity
         const dbConn = await db.getDb();
@@ -134,33 +143,42 @@ export const appRouter = router({
         const { users } = await import('../drizzle/schema');
         const { eq } = await import('drizzle-orm');
         await dbConn.update(users).set({
-          emailVerificationToken: token,
+          emailVerificationToken: hashedToken,
           emailVerificationExpiry: expiry,
         }).where(eq(users.id, ctx.user.id));
         const origin = ctx.req.headers.origin || ENV.siteUrl;
-        await sendVerificationEmail(ctx.user.email || '', token, origin);
+        await sendVerificationEmail(ctx.user.email || '', token, origin); // send plain token in email
         return { success: true, message: 'Verification email sent' };
       }),
 
-    // Verify email with token
+    // Verify email with token (compares plain token against bcrypt hash)
     verifyEmail: publicProcedure
       .input(z.object({ token: z.string() }))
       .mutation(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
         const { users } = await import('../drizzle/schema');
-        const { eq } = await import('drizzle-orm');
-        const [user] = await dbConn.select().from(users)
-          .where(eq(users.emailVerificationToken, input.token)).limit(1);
-        if (!user) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid verification token' });
-        if (user.emailVerificationExpiry && new Date() > user.emailVerificationExpiry) {
+        const { isNotNull } = await import('drizzle-orm');
+        // Tokens are hashed — must iterate candidates with non-null verification tokens
+        const candidates = await dbConn.select().from(users)
+          .where(isNotNull(users.emailVerificationToken));
+        let matchedUser = null;
+        for (const user of candidates) {
+          if (!user.emailVerificationToken) continue;
+          if (user.emailVerificationExpiry && new Date() > user.emailVerificationExpiry) continue;
+          const matches = await auth.verifyToken(input.token, user.emailVerificationToken);
+          if (matches) { matchedUser = user; break; }
+        }
+        if (!matchedUser) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid verification token' });
+        if (matchedUser.emailVerificationExpiry && new Date() > matchedUser.emailVerificationExpiry) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'Verification token has expired. Please request a new one.' });
         }
+        const { eq } = await import('drizzle-orm');
         await dbConn.update(users).set({
           emailVerified: true,
           emailVerificationToken: null,
           emailVerificationExpiry: null,
-        }).where(eq(users.id, user.id));
+        }).where(eq(users.id, matchedUser.id));
         return { success: true, message: 'Email verified successfully' };
       }),
 
@@ -366,6 +384,323 @@ export const appRouter = router({
         if (!product) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
         const relatedProducts = await db.getAllProducts({ categoryId: product.categoryId });
         return relatedProducts.filter(p => p.id !== input.productId).slice(0, input.limit);
+      }),
+  }),
+
+  // ============ REVIEWS (Public) ============
+  reviews: router({
+    /** Get approved reviews for a product */
+    byProduct: publicProcedure
+      .input(z.object({ productId: z.number(), limit: z.number().default(20), offset: z.number().default(0) }))
+      .query(async ({ input }) => {
+        const result = await db.getReviewsByProduct(input.productId, { status: "approved", limit: input.limit, offset: input.offset });
+        // Enrich with user name and images
+        const enriched = await Promise.all(result.reviews.map(async (r) => {
+          const user = await db.getUserById(r.userId);
+          const images = await db.getReviewImages(r.id);
+          return { ...r, userName: user?.name || "Anonymous", userAvatar: user?.avatarUrl, images };
+        }));
+        return { reviews: enriched, total: result.total };
+      }),
+
+    /** Get rating summary (average, count, distribution) */
+    ratingSummary: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => db.getProductRatingSummary(input.productId)),
+
+    /** Submit a review (must be logged in) */
+    submit: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        rating: z.number().min(1).max(5),
+        title: z.string().max(255).optional(),
+        body: z.string().max(5000).optional(),
+        imageUrls: z.array(z.string().url()).max(5).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Check if already reviewed
+        const alreadyReviewed = await db.hasUserReviewedProduct(ctx.user.id, input.productId);
+        if (alreadyReviewed) throw new TRPCError({ code: "BAD_REQUEST", message: "You have already reviewed this product" });
+
+        // Check if purchased (for verified badge)
+        const hasPurchased = await db.hasUserPurchasedProduct(ctx.user.id, input.productId);
+
+        // Find the order ID for verified purchase linking
+        let orderId: number | undefined;
+        if (hasPurchased) {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            const { orderItems, orders } = await import("../drizzle/schema");
+            const { eq, and } = await import("drizzle-orm");
+            const result = await dbConn.select({ orderId: orders.id })
+              .from(orderItems)
+              .innerJoin(orders, eq(orderItems.orderId, orders.id))
+              .where(and(eq(orders.userId, ctx.user.id), eq(orderItems.productId, input.productId), eq(orders.status, "delivered")))
+              .limit(1);
+            orderId = result[0]?.orderId;
+          }
+        }
+
+        const review = await db.createReview({
+          productId: input.productId,
+          userId: ctx.user.id,
+          orderId: orderId || null,
+          rating: input.rating,
+          title: input.title || null,
+          body: input.body || null,
+          verifiedPurchase: hasPurchased,
+          status: "pending", // Requires admin approval
+        });
+
+        // Add images
+        if (input.imageUrls?.length) {
+          for (let i = 0; i < input.imageUrls.length; i++) {
+            await db.addReviewImage({ reviewId: review.id, imageUrl: input.imageUrls[i], sortOrder: i });
+          }
+        }
+
+        return { id: review.id, message: "Review submitted for moderation" };
+      }),
+
+    /** Vote a review helpful/not helpful */
+    vote: protectedProcedure
+      .input(z.object({ reviewId: z.number(), helpful: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.upsertReviewVote(input.reviewId, ctx.user.id, input.helpful);
+        return { success: true };
+      }),
+
+    /** Check if current user can review a product */
+    canReview: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const alreadyReviewed = await db.hasUserReviewedProduct(ctx.user.id, input.productId);
+        const hasPurchased = await db.hasUserPurchasedProduct(ctx.user.id, input.productId);
+        return { canReview: !alreadyReviewed, alreadyReviewed, hasPurchased };
+      }),
+  }),
+
+  // ============ ADDRESSES (User) ============
+  addresses: router({
+    list: protectedProcedure.query(async ({ ctx }) => db.getAddressesByUser(ctx.user.id)),
+
+    create: protectedProcedure
+      .input(z.object({
+        label: z.string().max(50).default("Home"),
+        fullName: z.string().min(1).max(255),
+        phone: z.string().min(1).max(50),
+        line1: z.string().min(1).max(500),
+        line2: z.string().max(500).optional(),
+        city: z.string().min(1).max(100),
+        state: z.string().min(1).max(100),
+        postalCode: z.string().min(1).max(20),
+        country: z.string().max(100).default("Malaysia"),
+        isDefault: z.boolean().default(false),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const addressCount = await db.countUserAddresses(ctx.user.id);
+        if (addressCount >= 10) throw new TRPCError({ code: "BAD_REQUEST", message: "Maximum 10 addresses allowed" });
+        // First address auto-defaults
+        const isDefault = addressCount === 0 ? true : input.isDefault;
+        return db.createAddress({ ...input, line2: input.line2 || null, userId: ctx.user.id, isDefault });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        label: z.string().max(50).optional(),
+        fullName: z.string().min(1).max(255).optional(),
+        phone: z.string().min(1).max(50).optional(),
+        line1: z.string().min(1).max(500).optional(),
+        line2: z.string().max(500).optional(),
+        city: z.string().min(1).max(100).optional(),
+        state: z.string().min(1).max(100).optional(),
+        postalCode: z.string().min(1).max(20).optional(),
+        country: z.string().max(100).optional(),
+        isDefault: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...updates } = input;
+        await db.updateAddress(id, ctx.user.id, updates);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteAddress(input.id, ctx.user.id);
+        return { success: true };
+      }),
+
+    getDefault: protectedProcedure.query(async ({ ctx }) => db.getDefaultAddress(ctx.user.id)),
+  }),
+
+  // ============ NOTIFICATIONS (User) ============
+  notifications: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().default(20), offset: z.number().default(0) }).optional())
+      .query(async ({ ctx, input }) => db.getUserNotifications(ctx.user.id, input?.limit || 20, input?.offset || 0)),
+
+    unreadCount: protectedProcedure.query(async ({ ctx }) => db.getUnreadNotificationCount(ctx.user.id)),
+
+    markRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.markNotificationRead(input.id, ctx.user.id);
+        return { success: true };
+      }),
+
+    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.markAllNotificationsRead(ctx.user.id);
+      return { success: true };
+    }),
+  }),
+
+  // ============ FLASH SALES (Public) ============
+  flashSales: router({
+    active: publicProcedure.query(async () => {
+      const sales = await db.getActiveFlashSales();
+      const enriched = await Promise.all(sales.map(async (s) => {
+        const products = await db.getFlashSaleProducts(s.id);
+        const enrichedProducts = await Promise.all(products.map(async (fp) => {
+          const product = await db.getProductById(fp.productId);
+          return { ...fp, product };
+        }));
+        return { ...s, products: enrichedProducts };
+      }));
+      return enriched;
+    }),
+  }),
+
+  // ============ VOUCHERS (Public) ============
+  vouchers: router({
+    claim: protectedProcedure
+      .input(z.object({ code: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const voucher = await db.getVoucherByCode(input.code);
+        if (!voucher) throw new TRPCError({ code: "NOT_FOUND", message: "Voucher not found" });
+        if (!voucher.active) throw new TRPCError({ code: "BAD_REQUEST", message: "Voucher is no longer active" });
+        if (new Date() < voucher.startDate || new Date() > voucher.endDate) throw new TRPCError({ code: "BAD_REQUEST", message: "Voucher has expired" });
+        if (voucher.maxClaims && voucher.totalClaimed >= voucher.maxClaims) throw new TRPCError({ code: "BAD_REQUEST", message: "Voucher fully claimed" });
+        const alreadyClaimed = await db.hasUserClaimedVoucher(ctx.user.id, voucher.id);
+        if (alreadyClaimed) throw new TRPCError({ code: "BAD_REQUEST", message: "You have already claimed this voucher" });
+        await db.claimVoucher(voucher.id, ctx.user.id);
+        return { success: true, voucher: { name: voucher.name, type: voucher.type, value: voucher.value } };
+      }),
+
+    myClaims: protectedProcedure.query(async ({ ctx }) => db.getUserVoucherClaims(ctx.user.id)),
+  }),
+
+  // ============ STOCK ALERTS (Public) ============
+  stockAlerts: router({
+    subscribe: protectedProcedure
+      .input(z.object({ productId: z.number(), variantId: z.number().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        const user = await db.getUserById(ctx.user.id);
+        if (!user) throw new TRPCError({ code: "NOT_FOUND" });
+        await db.createStockAlert({
+          productId: input.productId,
+          variantId: input.variantId || null,
+          userId: ctx.user.id,
+          email: user.email,
+          notified: false,
+        });
+        return { success: true };
+      }),
+
+    myAlerts: protectedProcedure.query(async ({ ctx }) => db.getUserStockAlerts(ctx.user.id)),
+  }),
+
+  // ============ LOYALTY POINTS (User) ============
+  loyalty: router({
+    balance: protectedProcedure.query(async ({ ctx }) => db.getLoyaltyPoints(ctx.user.id)),
+    transactions: protectedProcedure.query(async ({ ctx }) => db.getLoyaltyTransactions(ctx.user.id)),
+  }),
+
+  // ============ GIFT CARDS (Public) ============
+  giftCards: router({
+    checkBalance: publicProcedure
+      .input(z.object({ code: z.string() }))
+      .query(async ({ input }) => {
+        const card = await db.getGiftCardByCode(input.code);
+        if (!card) throw new TRPCError({ code: "NOT_FOUND", message: "Gift card not found" });
+        return { balance: card.currentBalance, active: card.active, expiresAt: card.expiresAt };
+      }),
+  }),
+
+  // ============ PRODUCT Q&A (Public) ============
+  productQA: router({
+    byProduct: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        const questions = await db.getProductQuestions(input.productId, "published");
+        const enriched = await Promise.all(questions.map(async (q) => {
+          const user = await db.getUserById(q.userId);
+          const answers = await db.getProductAnswers(q.id);
+          const enrichedAnswers = await Promise.all(answers.map(async (a) => {
+            const aUser = await db.getUserById(a.userId);
+            return { ...a, userName: a.isAdmin ? "Store" : (aUser?.name || "Customer") };
+          }));
+          return { ...q, userName: user?.name || "Customer", answers: enrichedAnswers };
+        }));
+        return enriched;
+      }),
+
+    ask: protectedProcedure
+      .input(z.object({ productId: z.number(), question: z.string().min(5).max(1000) }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createProductQuestion({ ...input, userId: ctx.user.id, status: "pending" });
+      }),
+  }),
+
+  // ============ CONVERSATIONS (User) ============
+  chat: router({
+    myConversations: protectedProcedure.query(async ({ ctx }) => db.getConversationsByUser(ctx.user.id)),
+
+    start: protectedProcedure
+      .input(z.object({ subject: z.string().min(1).max(255), message: z.string().min(1) }))
+      .mutation(async ({ ctx, input }) => {
+        const conv = await db.createConversation({
+          userId: ctx.user.id,
+          subject: input.subject,
+          status: "open",
+          priority: "normal",
+          assignedTo: null,
+          lastMessageAt: new Date(),
+        });
+        await db.addChatMessage({
+          conversationId: conv.id,
+          senderId: ctx.user.id,
+          senderRole: "user",
+          body: input.message,
+          attachmentUrl: null,
+          readAt: null,
+        });
+        return conv;
+      }),
+
+    messages: protectedProcedure
+      .input(z.object({ conversationId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // Verify ownership
+        const convs = await db.getConversationsByUser(ctx.user.id);
+        if (!convs.find(c => c.id === input.conversationId)) throw new TRPCError({ code: "FORBIDDEN" });
+        return db.getChatMessages(input.conversationId);
+      }),
+
+    reply: protectedProcedure
+      .input(z.object({ conversationId: z.number(), body: z.string().min(1) }))
+      .mutation(async ({ ctx, input }) => {
+        const convs = await db.getConversationsByUser(ctx.user.id);
+        if (!convs.find(c => c.id === input.conversationId)) throw new TRPCError({ code: "FORBIDDEN" });
+        return db.addChatMessage({
+          conversationId: input.conversationId,
+          senderId: ctx.user.id,
+          senderRole: "user",
+          body: input.body,
+          attachmentUrl: null,
+          readAt: null,
+        });
       }),
   }),
 
@@ -777,6 +1112,121 @@ export const appRouter = router({
         .query(async ({ input }) => db.getActivityLog({ limit: input?.limit || 20 })),
     }),
 
+    // ---- Reviews (Admin Moderation) ----
+    reviews: router({
+      list: adminProcedure
+        .input(z.object({
+          status: z.string().optional(),
+          productId: z.number().optional(),
+          limit: z.number().default(50),
+          offset: z.number().default(0),
+        }).optional())
+        .query(async ({ input }) => {
+          const result = await db.getAllReviewsAdmin(input);
+          const enriched = await Promise.all(result.reviews.map(async (r) => {
+            const user = await db.getUserById(r.userId);
+            const product = await db.getProductById(r.productId);
+            const images = await db.getReviewImages(r.id);
+            return { ...r, userName: user?.name || "Unknown", userEmail: user?.email, productName: product?.name || "Unknown", productSlug: product?.slug, images };
+          }));
+          return { reviews: enriched, total: result.total };
+        }),
+
+      approve: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const review = await db.getReviewById(input.id);
+          if (!review) throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+          await db.updateReview(input.id, { status: "approved" });
+          await db.refreshProductRatingCache(review.productId);
+          return { success: true };
+        }),
+
+      reject: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const review = await db.getReviewById(input.id);
+          if (!review) throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+          await db.updateReview(input.id, { status: "rejected" });
+          await db.refreshProductRatingCache(review.productId);
+          return { success: true };
+        }),
+
+      respond: adminProcedure
+        .input(z.object({ id: z.number(), response: z.string().min(1).max(2000) }))
+        .mutation(async ({ input }) => {
+          const review = await db.getReviewById(input.id);
+          if (!review) throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+          await db.updateReview(input.id, { adminResponse: input.response, adminRespondedAt: new Date() });
+          // Notify the reviewer
+          await db.createNotification({
+            userId: review.userId,
+            type: "review_reply",
+            title: "Your review received a response",
+            message: `The seller responded to your review.`,
+            link: `/product/${review.productId}`,
+          });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const review = await db.getReviewById(input.id);
+          if (!review) throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+          await db.deleteReview(input.id);
+          await db.refreshProductRatingCache(review.productId);
+          return { success: true };
+        }),
+
+      stats: adminProcedure.query(async () => {
+        const pending = await db.getAllReviewsAdmin({ status: "pending", limit: 1 });
+        const approved = await db.getAllReviewsAdmin({ status: "approved", limit: 1 });
+        const rejected = await db.getAllReviewsAdmin({ status: "rejected", limit: 1 });
+        return { pending: pending.total, approved: approved.total, rejected: rejected.total, total: pending.total + approved.total + rejected.total };
+      }),
+    }),
+
+    // ---- Inventory Ledger (Admin) ----
+    stockLedger: router({
+      history: adminProcedure
+        .input(z.object({ productId: z.number(), variantId: z.number().optional(), limit: z.number().default(50), offset: z.number().default(0) }))
+        .query(async ({ input }) => db.getStockHistory(input.productId, input)),
+
+      adjust: adminProcedure
+        .input(z.object({
+          productId: z.number(),
+          variantId: z.number().optional(),
+          quantity: z.number(), // Signed: positive = add, negative = remove
+          reason: z.string().min(1).max(500),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          // Get current stock
+          const product = await db.getProductById(input.productId);
+          if (!product) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+
+          const newBalance = product.stockQuantity + input.quantity;
+          if (newBalance < 0) throw new TRPCError({ code: "BAD_REQUEST", message: "Stock cannot go below zero" });
+
+          // Update product stock
+          await db.updateProduct(input.productId, { stockQuantity: newBalance });
+
+          // Log to ledger
+          await db.addStockLedgerEntry({
+            productId: input.productId,
+            variantId: input.variantId || null,
+            type: "adjusted",
+            quantity: input.quantity,
+            balanceAfter: newBalance,
+            reference: `Manual adjustment`,
+            reason: input.reason,
+            createdBy: ctx.user.id,
+          });
+
+          return { success: true, newBalance };
+        }),
+    }),
+
     // ---- Orders ----
     orders: router({
       list: adminProcedure
@@ -1168,6 +1618,142 @@ export const appRouter = router({
           await db.deleteProductImage(input.id);
           return { success: true };
         }),
+
+      reorderImages: adminProcedure
+        .input(z.object({
+          productId: z.number(),
+          imageIds: z.array(z.number()),
+        }))
+        .mutation(async ({ input }) => {
+          await db.reorderProductImages(input.productId, input.imageIds);
+          return { success: true };
+        }),
+
+      listImages: adminProcedure
+        .input(z.object({ productId: z.number() }))
+        .query(async ({ input }) => db.getProductImages(input.productId)),
+    }),
+
+    // ---- Product Variants ----
+    variants: router({
+      list: adminProcedure
+        .input(z.object({ productId: z.number() }))
+        .query(async ({ input }) => db.getVariantsByProduct(input.productId)),
+
+      create: adminProcedure
+        .input(z.object({
+          productId: z.number(),
+          name: z.string().min(1),
+          sku: z.string().optional(),
+          size: z.string().optional(),
+          color: z.string().optional(),
+          price: z.number().optional(),
+          compareAtPrice: z.number().optional(),
+          stockQuantity: z.number().min(0).default(0),
+          weight: z.number().optional(),
+          imageUrl: z.string().optional(),
+          barcode: z.string().optional(),
+          active: z.boolean().default(true),
+          sortOrder: z.number().default(0),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const result = await db.createVariant(input);
+          await db.syncProductStockFromVariants(input.productId);
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'variant.create',
+            entityType: 'product',
+            entityId: input.productId,
+            details: JSON.stringify({ name: input.name, size: input.size, color: input.color }),
+          });
+          return result;
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          productId: z.number(),
+          name: z.string().optional(),
+          sku: z.string().nullable().optional(),
+          size: z.string().nullable().optional(),
+          color: z.string().nullable().optional(),
+          price: z.number().nullable().optional(),
+          compareAtPrice: z.number().nullable().optional(),
+          stockQuantity: z.number().min(0).optional(),
+          weight: z.number().nullable().optional(),
+          imageUrl: z.string().nullable().optional(),
+          barcode: z.string().nullable().optional(),
+          active: z.boolean().optional(),
+          sortOrder: z.number().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const { id, productId, ...updates } = input;
+          await db.updateVariant(id, updates);
+          await db.syncProductStockFromVariants(productId);
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'variant.update',
+            entityType: 'product',
+            entityId: productId,
+            details: JSON.stringify({ variantId: id, ...updates }),
+          });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number(), productId: z.number() }))
+        .mutation(async ({ ctx, input }) => {
+          await db.deleteVariant(input.id);
+          await db.syncProductStockFromVariants(input.productId);
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'variant.delete',
+            entityType: 'product',
+            entityId: input.productId,
+            details: JSON.stringify({ variantId: input.id }),
+          });
+          return { success: true };
+        }),
+
+      bulkGenerate: adminProcedure
+        .input(z.object({
+          productId: z.number(),
+          attributes: z.array(z.object({
+            name: z.string(),
+            values: z.array(z.string()),
+          })),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          // Save attribute options
+          await db.setAttributeOptions(input.productId, input.attributes);
+          // Generate Cartesian product of all attribute value combinations
+          const combos = cartesian(input.attributes.map(a => a.values.map(v => ({ name: a.name, value: v }))));
+          const product = await db.getProductById(input.productId);
+          const variants = combos.map((combo, i) => ({
+            productId: input.productId,
+            name: combo.map(c => c.value).join(" / "),
+            size: combo.find(c => c.name === "size")?.value || null,
+            color: combo.find(c => c.name === "color")?.value || null,
+            price: product?.price ?? 0,
+            stockQuantity: 0,
+            active: true,
+            sortOrder: i,
+          }));
+          await db.bulkCreateVariants(variants as any);
+          await db.syncProductStockFromVariants(input.productId);
+          await db.logActivity({
+            userId: ctx.user.id,
+            action: 'variant.bulkGenerate',
+            entityType: 'product',
+            entityId: input.productId,
+            details: JSON.stringify({ attributes: input.attributes, count: variants.length }),
+          });
+          return { success: true, count: variants.length };
+        }),
+
+      getAttributes: adminProcedure
+        .input(z.object({ productId: z.number() }))
+        .query(async ({ input }) => db.getAttributeOptions(input.productId)),
     }),
 
     // ---- Categories ----
@@ -1801,6 +2387,8 @@ export const appRouter = router({
           key: z.string().min(1),
           title: z.string().min(1),
           body: z.string().min(1),
+          blocksJson: z.string().optional(),
+          templateId: z.string().optional(),
           metaTitle: z.string().optional(),
           metaDescription: z.string().optional(),
           published: z.boolean().default(true),
@@ -1809,12 +2397,14 @@ export const appRouter = router({
           await db.createStaticPage(input);
           return { success: true };
         }),
-      
+
       update: adminProcedure
         .input(z.object({
           id: z.number(),
           title: z.string().optional(),
           body: z.string().optional(),
+          blocksJson: z.string().nullable().optional(),
+          templateId: z.string().nullable().optional(),
           metaTitle: z.string().optional(),
           metaDescription: z.string().optional(),
           published: z.boolean().optional(),
@@ -2310,16 +2900,17 @@ export const appRouter = router({
           }
           
           const token = nanoid(48);
+          const hashedToken = await auth.hashToken(token); // hash before storage
           const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-          
+
           await dbConn.insert(adminInvites).values({
             email: input.email,
-            token,
+            token: hashedToken,
             invitedBy: ctx.user.id,
             expiresAt,
           });
-          
-          // Send invite email
+
+          // Send invite email (plain token — user receives this in email link)
           const { sendAdminInviteEmail } = await import('./email');
           await sendAdminInviteEmail(input.email, token, ctx.user.name || ctx.user.email);
           
@@ -2370,12 +2961,20 @@ export const appRouter = router({
           if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
           const { adminInvites } = await import('../drizzle/schema');
           const { eq } = await import('drizzle-orm');
-          
-          const [invite] = await dbConn.select().from(adminInvites).where(eq(adminInvites.token, input.token)).limit(1);
-          if (!invite) return { valid: false, email: null, error: 'Invalid invite token' };
-          if (invite.status !== 'pending') return { valid: false, email: null, error: 'This invite has already been used or revoked' };
-          if (invite.expiresAt < new Date()) return { valid: false, email: null, error: 'This invite has expired' };
-          return { valid: true, email: invite.email, error: null };
+
+          // Tokens are hashed — iterate pending invites and compare
+          const pendingInvites = await dbConn.select().from(adminInvites).where(eq(adminInvites.status, 'pending'));
+          let matchedInvite = null;
+          for (const invite of pendingInvites) {
+            if (!invite.token) continue;
+            if (invite.expiresAt < new Date()) continue;
+            const matches = await auth.verifyToken(input.token, invite.token);
+            if (matches) { matchedInvite = invite; break; }
+          }
+          if (!matchedInvite) return { valid: false, email: null, error: 'Invalid invite token' };
+          if (matchedInvite.status !== 'pending') return { valid: false, email: null, error: 'This invite has already been used or revoked' };
+          if (matchedInvite.expiresAt < new Date()) return { valid: false, email: null, error: 'This invite has expired' };
+          return { valid: true, email: matchedInvite.email, error: null };
         }),
 
       accept: publicProcedure
@@ -2389,8 +2988,16 @@ export const appRouter = router({
           if (!dbConn) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
           const { adminInvites, users } = await import('../drizzle/schema');
           const { eq } = await import('drizzle-orm');
-          
-          const [invite] = await dbConn.select().from(adminInvites).where(eq(adminInvites.token, input.token)).limit(1);
+
+          // Tokens are hashed — iterate pending invites and compare
+          const pendingInvites = await dbConn.select().from(adminInvites).where(eq(adminInvites.status, 'pending'));
+          let invite = null;
+          for (const inv of pendingInvites) {
+            if (!inv.token) continue;
+            if (inv.expiresAt < new Date()) continue;
+            const matches = await auth.verifyToken(input.token, inv.token);
+            if (matches) { invite = inv; break; }
+          }
           if (!invite) throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid invite token' });
           if (invite.status !== 'pending') throw new TRPCError({ code: 'BAD_REQUEST', message: 'This invite has already been used or revoked' });
           if (invite.expiresAt < new Date()) throw new TRPCError({ code: 'BAD_REQUEST', message: 'This invite has expired' });
@@ -2584,6 +3191,391 @@ export const appRouter = router({
           .where(eq(users.role, 'admin'));
         return admins;
       }),
+    }),
+
+    // ---- Shipments (Partial Fulfillment) ----
+    shipments: router({
+      byOrder: adminProcedure
+        .input(z.object({ orderId: z.number() }))
+        .query(async ({ input }) => db.getShipmentsByOrder(input.orderId)),
+
+      create: adminProcedure
+        .input(z.object({
+          orderId: z.number(),
+          carrier: z.string().max(100).optional(),
+          trackingNumber: z.string().max(255).optional(),
+          trackingUrl: z.string().url().optional(),
+          items: z.string().optional(), // JSON
+          notes: z.string().max(500).optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const result = await db.createShipment({
+            ...input,
+            carrier: input.carrier || null,
+            trackingNumber: input.trackingNumber || null,
+            trackingUrl: input.trackingUrl || null,
+            items: input.items || null,
+            notes: input.notes || null,
+            shippedAt: new Date(),
+          });
+          // Notify customer
+          const order = await db.getOrderById(input.orderId);
+          if (order) {
+            await db.createNotification({
+              userId: order.userId,
+              type: "order_update",
+              title: "Your order has been shipped!",
+              message: input.trackingNumber ? `Tracking: ${input.trackingNumber}` : "Your order is on its way.",
+              link: `/orders/${order.orderNumber}`,
+            });
+          }
+          return result;
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          status: z.enum(["pending", "picked_up", "in_transit", "out_for_delivery", "delivered", "failed"]).optional(),
+          trackingNumber: z.string().max(255).optional(),
+          trackingUrl: z.string().url().optional(),
+          deliveredAt: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, deliveredAt, ...updates } = input;
+          await db.updateShipment(id, {
+            ...updates,
+            trackingNumber: updates.trackingNumber || undefined,
+            trackingUrl: updates.trackingUrl || undefined,
+            deliveredAt: deliveredAt ? new Date(deliveredAt) : undefined,
+          });
+          return { success: true };
+        }),
+    }),
+
+    // ---- Tax Rules ----
+    taxRules: router({
+      list: adminProcedure.query(async () => db.getAllTaxRules()),
+
+      create: adminProcedure
+        .input(z.object({
+          name: z.string().min(1).max(100),
+          rate: z.string(), // Decimal as string
+          country: z.string().default("Malaysia"),
+          state: z.string().optional(),
+          categoryId: z.number().optional(),
+          priority: z.number().default(0),
+        }))
+        .mutation(async ({ input }) => {
+          return db.createTaxRule({
+            ...input,
+            state: input.state || null,
+            categoryId: input.categoryId || null,
+            active: true,
+          });
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().min(1).max(100).optional(),
+          rate: z.string().optional(),
+          active: z.boolean().optional(),
+          priority: z.number().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, ...updates } = input;
+          await db.updateTaxRule(id, updates);
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteTaxRule(input.id);
+          return { success: true };
+        }),
+    }),
+
+    // ---- Flash Sales ----
+    flashSales: router({
+      list: adminProcedure.query(async () => db.getAllFlashSales()),
+
+      create: adminProcedure
+        .input(z.object({
+          name: z.string().min(1).max(255),
+          description: z.string().optional(),
+          startTime: z.string(),
+          endTime: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+          return db.createFlashSale({
+            ...input,
+            description: input.description || null,
+            startTime: new Date(input.startTime),
+            endTime: new Date(input.endTime),
+            active: true,
+          });
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().optional(),
+          description: z.string().optional(),
+          startTime: z.string().optional(),
+          endTime: z.string().optional(),
+          active: z.boolean().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, startTime, endTime, ...rest } = input;
+          await db.updateFlashSale(id, {
+            ...rest,
+            description: rest.description || undefined,
+            startTime: startTime ? new Date(startTime) : undefined,
+            endTime: endTime ? new Date(endTime) : undefined,
+          });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteFlashSale(input.id);
+          return { success: true };
+        }),
+
+      products: adminProcedure
+        .input(z.object({ flashSaleId: z.number() }))
+        .query(async ({ input }) => db.getFlashSaleProducts(input.flashSaleId)),
+
+      addProduct: adminProcedure
+        .input(z.object({
+          flashSaleId: z.number(),
+          productId: z.number(),
+          salePrice: z.number().min(0),
+          stockLimit: z.number().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return db.addFlashSaleProduct({
+            ...input,
+            stockLimit: input.stockLimit || null,
+            soldCount: 0,
+            sortOrder: 0,
+          });
+        }),
+
+      removeProduct: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.removeFlashSaleProduct(input.id);
+          return { success: true };
+        }),
+    }),
+
+    // ---- Vouchers ----
+    vouchers: router({
+      list: adminProcedure.query(async () => db.getAllVouchers()),
+
+      create: adminProcedure
+        .input(z.object({
+          code: z.string().min(3).max(50),
+          name: z.string().min(1).max(255),
+          type: z.enum(["percentage", "fixed", "free_shipping"]),
+          value: z.number().min(0),
+          minOrderAmount: z.number().default(0),
+          maxDiscountAmount: z.number().optional(),
+          maxClaims: z.number().optional(),
+          perUserLimit: z.number().default(1),
+          startDate: z.string(),
+          endDate: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+          return db.createVoucher({
+            ...input,
+            maxDiscountAmount: input.maxDiscountAmount || null,
+            maxClaims: input.maxClaims || null,
+            startDate: new Date(input.startDate),
+            endDate: new Date(input.endDate),
+            active: true,
+            totalClaimed: 0,
+            totalUsed: 0,
+          });
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().optional(),
+          active: z.boolean().optional(),
+          maxClaims: z.number().optional(),
+          endDate: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, endDate, ...rest } = input;
+          await db.updateVoucher(id, {
+            ...rest,
+            endDate: endDate ? new Date(endDate) : undefined,
+          });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteVoucher(input.id);
+          return { success: true };
+        }),
+    }),
+
+    // ---- Admin Roles & Permissions ----
+    roles: router({
+      list: adminProcedure.query(async () => db.getAllAdminRoles()),
+
+      create: adminProcedure
+        .input(z.object({
+          name: z.string().min(1).max(100),
+          description: z.string().optional(),
+          permissions: z.array(z.string()),
+        }))
+        .mutation(async ({ input }) => {
+          return db.createAdminRole({
+            ...input,
+            description: input.description || null,
+            permissions: JSON.stringify(input.permissions),
+          });
+        }),
+
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          name: z.string().optional(),
+          description: z.string().optional(),
+          permissions: z.array(z.string()).optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, permissions, ...rest } = input;
+          await db.updateAdminRole(id, {
+            ...rest,
+            description: rest.description || undefined,
+            permissions: permissions ? JSON.stringify(permissions) : undefined,
+          });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteAdminRole(input.id);
+          return { success: true };
+        }),
+    }),
+
+    // ---- Gift Cards ----
+    giftCards: router({
+      list: adminProcedure.query(async () => db.getAllGiftCardsAdmin()),
+
+      create: adminProcedure
+        .input(z.object({
+          code: z.string().min(6).max(50),
+          initialBalance: z.number().min(100), // At least RM1
+          recipientEmail: z.string().email().optional(),
+          recipientName: z.string().optional(),
+          message: z.string().optional(),
+          expiresAt: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return db.createGiftCard({
+            ...input,
+            currentBalance: input.initialBalance,
+            purchasedBy: null,
+            recipientEmail: input.recipientEmail || null,
+            recipientName: input.recipientName || null,
+            message: input.message || null,
+            expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+            active: true,
+          });
+        }),
+    }),
+
+    // ---- Conversations (Admin side) ----
+    conversations: router({
+      list: adminProcedure
+        .input(z.object({ status: z.string().optional(), limit: z.number().default(50) }).optional())
+        .query(async ({ input }) => {
+          const convs = await db.getAllConversationsAdmin(input);
+          const enriched = await Promise.all(convs.map(async (c) => {
+            const user = await db.getUserById(c.userId);
+            return { ...c, userName: user?.name || user?.email || "Unknown" };
+          }));
+          return enriched;
+        }),
+
+      messages: adminProcedure
+        .input(z.object({ conversationId: z.number(), limit: z.number().default(50) }))
+        .query(async ({ input }) => db.getChatMessages(input.conversationId, input.limit)),
+
+      reply: adminProcedure
+        .input(z.object({ conversationId: z.number(), body: z.string().min(1) }))
+        .mutation(async ({ ctx, input }) => {
+          const result = await db.addChatMessage({
+            conversationId: input.conversationId,
+            senderId: ctx.user.id,
+            senderRole: "admin",
+            body: input.body,
+            attachmentUrl: null,
+            readAt: null,
+          });
+          await db.updateConversationStatus(input.conversationId, "waiting");
+          return result;
+        }),
+
+      updateStatus: adminProcedure
+        .input(z.object({ id: z.number(), status: z.enum(["open", "waiting", "resolved", "closed"]) }))
+        .mutation(async ({ input }) => {
+          await db.updateConversationStatus(input.id, input.status);
+          return { success: true };
+        }),
+    }),
+
+    // ---- Product Q&A (Admin) ----
+    productQA: router({
+      list: adminProcedure
+        .input(z.object({ status: z.string().optional(), limit: z.number().default(50) }).optional())
+        .query(async ({ input }) => {
+          const questions = await db.getAllQuestionsAdmin(input);
+          const enriched = await Promise.all(questions.map(async (q) => {
+            const user = await db.getUserById(q.userId);
+            const product = await db.getProductById(q.productId);
+            const answers = await db.getProductAnswers(q.id);
+            return { ...q, userName: user?.name || "Unknown", productName: product?.name || "Unknown", answerCount: answers.length };
+          }));
+          return enriched;
+        }),
+
+      approve: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.updateProductQuestion(input.id, { status: "published" });
+          return { success: true };
+        }),
+
+      reject: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.updateProductQuestion(input.id, { status: "rejected" });
+          return { success: true };
+        }),
+
+      answer: adminProcedure
+        .input(z.object({ questionId: z.number(), answer: z.string().min(1) }))
+        .mutation(async ({ ctx, input }) => {
+          return db.createProductAnswer({
+            questionId: input.questionId,
+            userId: ctx.user.id,
+            isAdmin: true,
+            answer: input.answer,
+          });
+        }),
     }),
 
     // ---- Refund History ----

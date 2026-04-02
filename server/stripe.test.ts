@@ -26,6 +26,7 @@ vi.mock("./_core/env", () => ({
   ENV: {
     stripeSecretKey: "sk_test_fake_key",
     stripeWebhookSecret: "whsec_test_fake_secret",
+    siteUrl: "https://example.com",
   },
 }));
 

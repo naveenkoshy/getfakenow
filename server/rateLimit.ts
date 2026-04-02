@@ -60,6 +60,60 @@ export const adminAuthRateLimiter = rateLimit({
 });
 
 /**
+ * Upload rate limiter: 20 uploads per 15 minutes per IP
+ * Prevents abuse of the image upload endpoint.
+ */
+export const uploadRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: {
+    error: {
+      message: "Too many uploads. Please try again later.",
+      code: "RATE_LIMITED",
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
+
+/**
+ * Password reset rate limiter: 3 requests per 15 minutes per IP
+ * Prevents email enumeration and abuse.
+ */
+export const passwordResetRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  message: {
+    error: {
+      message: "Too many password reset requests. Please try again in 15 minutes.",
+      code: "RATE_LIMITED",
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
+
+/**
+ * Email verification rate limiter: 3 requests per 15 minutes per IP
+ * Prevents verification email spam.
+ */
+export const verificationRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  message: {
+    error: {
+      message: "Too many verification requests. Please try again later.",
+      code: "RATE_LIMITED",
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
+
+/**
  * Register rate limiters on the Express app.
  * Must be called AFTER body parsers but BEFORE tRPC middleware.
  */
@@ -70,8 +124,15 @@ export function registerRateLimiters(app: Express) {
   app.use("/api/trpc/auth.register", authRateLimiter);
   app.use("/api/trpc/auth.requestPasswordReset", authRateLimiter);
 
+  // Password reset and verification — stricter limits
+  app.use("/api/trpc/adminAuthRouter.forgotPassword", passwordResetRateLimiter);
+  app.use("/api/trpc/auth.sendVerificationEmail", verificationRateLimiter);
+
   // Stricter limiter on admin login
   app.use("/api/trpc/adminAuthRouter.login", adminAuthRateLimiter);
+
+  // Upload endpoint rate limiting
+  app.use("/api/upload-image", uploadRateLimiter);
 
   // General rate limiter on all API endpoints
   app.use("/api/trpc", apiRateLimiter);

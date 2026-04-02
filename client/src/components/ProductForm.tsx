@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -167,14 +167,13 @@ export function ProductForm({ productId, initialData, onSuccess }: ProductFormPr
         {/* Description */}
         <div>
           <Label htmlFor="description">Description <span className="text-red-500">*</span></Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => { setDescription(e.target.value); if (touched.description) setErrors(prev => ({ ...prev, description: "" })); }}
-            onBlur={() => setTouched(prev => ({ ...prev, description: true }))}
-            placeholder="Describe your product in detail — materials, sizing, care instructions..."
-            rows={4}
-            className={errors.description && touched.description ? "border-red-500" : ""}
+          <RichTextEditor
+            content={description}
+            onChange={(html) => { setDescription(html); if (touched.description) setErrors(prev => ({ ...prev, description: "" })); }}
+            placeholder="Describe your product in detail — materials, sizing, care instructions…"
+            minHeight={160}
+            compact
+            error={!!(errors.description && touched.description)}
           />
           {errors.description && touched.description ? (
             <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3" />{errors.description}</p>

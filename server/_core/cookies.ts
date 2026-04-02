@@ -39,10 +39,13 @@ export function getSessionCookieOptions(
   //       ? hostname
   //       : undefined;
 
+  const secure = isSecureRequest(req);
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    // "lax" prevents CSRF while allowing top-level navigations (OAuth redirects)
+    // "none" requires secure=true and exposes to CSRF — only use for cross-origin APIs
+    sameSite: secure ? "lax" : "lax",
+    secure,
   };
 }

@@ -52,6 +52,7 @@ import AdminSettings from "./pages/admin/Settings";
 import AdminActivityLog from "./pages/admin/ActivityLog";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminTeam from "./pages/admin/Team";
+import AdminReviews from "./pages/admin/Reviews";
 import AdminReturns from "./pages/admin/Returns";
 import AdminRefundHistory from "./pages/admin/RefundHistory";
 import AdminSetup from "./pages/admin/AdminSetup";
@@ -115,6 +116,9 @@ function Router() {
       <Route path="/admin/products/:id/edit" component={(props: any) => <AdminRoute><EditProduct {...props.params} /></AdminRoute>} />
       <Route path="/admin/orders">
         {() => <AdminRoute><AdminOrders /></AdminRoute>}
+      </Route>
+      <Route path="/admin/reviews">
+        {() => <AdminRoute><AdminReviews /></AdminRoute>}
       </Route>
       <Route path="/admin/orders/returns">
         {() => <AdminRoute><AdminReturns /></AdminRoute>}

@@ -5,10 +5,51 @@
 import type { Express, Request, Response } from "express";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { randomBytes } from "crypto";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { ENV } from "./_core/env";
 import * as db from "./db";
+
+const OAUTH_STATE_COOKIE = "oauth_state";
+const OAUTH_STATE_MAX_AGE = 10 * 60 * 1000; // 10 minutes
+
+/**
+ * Generate a cryptographically secure OAuth state parameter
+ * and set it as an httpOnly cookie for validation in the callback.
+ */
+function setOAuthState(res: Response, req: Request): string {
+  const state = randomBytes(32).toString("hex");
+  const cookieOpts = getSessionCookieOptions(req);
+  res.cookie(OAUTH_STATE_COOKIE, state, {
+    ...cookieOpts,
+    maxAge: OAUTH_STATE_MAX_AGE,
+  });
+  return state;
+}
+
+/**
+ * Validate the OAuth state parameter from the callback against the stored cookie.
+ * Clears the state cookie after validation.
+ */
+function validateOAuthState(req: Request, res: Response): boolean {
+  const stateFromQuery = req.query.state as string | undefined;
+  const cookieHeader = req.headers.cookie || "";
+  const stateMatch = cookieHeader.match(new RegExp(`(?:^|;\\s*)${OAUTH_STATE_COOKIE}=([^;]+)`));
+  const stateFromCookie = stateMatch?.[1];
+
+  // Clear the state cookie regardless
+  const cookieOpts = getSessionCookieOptions(req);
+  res.clearCookie(OAUTH_STATE_COOKIE, cookieOpts);
+
+  if (!stateFromQuery || !stateFromCookie) return false;
+  // Constant-time comparison to prevent timing attacks
+  if (stateFromQuery.length !== stateFromCookie.length) return false;
+  const a = Buffer.from(stateFromQuery);
+  const b = Buffer.from(stateFromCookie);
+  const { timingSafeEqual } = require("crypto");
+  return timingSafeEqual(a, b);
+}
 
 // ============================================
 // GOOGLE OAUTH
@@ -84,7 +125,7 @@ function createSessionToken(userId: number, email: string): string {
   return jwt.sign(
     { userId, email },
     ENV.jwtSecret,
-    { expiresIn: "365d" }
+    { expiresIn: "7d" } // Align with session security policy (was 365d)
   );
 }
 
@@ -102,8 +143,8 @@ export function registerSocialAuthRoutes(app: Express) {
     }
 
     const redirectUri = getGoogleRedirectUri(req);
-    const state = Math.random().toString(36).substring(2, 15);
-    
+    const state = setOAuthState(res, req);
+
     const params = new URLSearchParams({
       client_id: ENV.googleClientId,
       redirect_uri: redirectUri,
@@ -121,6 +162,12 @@ export function registerSocialAuthRoutes(app: Express) {
   app.get("/api/auth/google/callback", async (req: Request, res: Response) => {
     const code = req.query.code as string;
     if (!code) {
+      return res.redirect("/?error=google_auth_failed");
+    }
+
+    // Validate state parameter to prevent CSRF
+    if (!validateOAuthState(req, res)) {
+      console.error("[Google OAuth] State parameter mismatch — possible CSRF attack");
       return res.redirect("/?error=google_auth_failed");
     }
 
@@ -177,7 +224,7 @@ export function registerSocialAuthRoutes(app: Express) {
     }
 
     const redirectUri = getFacebookRedirectUri(req);
-    const state = Math.random().toString(36).substring(2, 15);
+    const state = setOAuthState(res, req);
 
     const params = new URLSearchParams({
       client_id: ENV.facebookAppId,
@@ -194,6 +241,12 @@ export function registerSocialAuthRoutes(app: Express) {
   app.get("/api/auth/facebook/callback", async (req: Request, res: Response) => {
     const code = req.query.code as string;
     if (!code) {
+      return res.redirect("/?error=facebook_auth_failed");
+    }
+
+    // Validate state parameter to prevent CSRF
+    if (!validateOAuthState(req, res)) {
+      console.error("[Facebook OAuth] State parameter mismatch — possible CSRF attack");
       return res.redirect("/?error=facebook_auth_failed");
     }
 

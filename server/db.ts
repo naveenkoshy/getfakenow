@@ -26,6 +26,30 @@ import {
   siteSettings, InsertSiteSetting,
   customerTags, customerTagAssignments,
   refunds, InsertRefund,
+  productVariants, InsertProductVariant,
+  productAttributeOptions, InsertProductAttributeOption,
+  reviews, InsertReview,
+  reviewImages, InsertReviewImage,
+  reviewVotes, InsertReviewVote,
+  addresses, InsertAddress,
+  stockLedger, InsertStockLedgerEntry,
+  notifications, InsertNotification,
+  shipments, InsertShipment,
+  taxRules, InsertTaxRule,
+  stockAlerts, InsertStockAlert,
+  flashSales, InsertFlashSale,
+  flashSaleProducts, InsertFlashSaleProduct,
+  vouchers, InsertVoucher,
+  voucherClaims, InsertVoucherClaim,
+  adminRoles, InsertAdminRole,
+  loyaltyPoints, InsertLoyaltyPoint,
+  loyaltyTransactions, InsertLoyaltyTransaction,
+  giftCards, InsertGiftCard,
+  giftCardTransactions, InsertGiftCardTransaction,
+  conversations, InsertConversation,
+  chatMessages, InsertChatMessage,
+  productQuestions, InsertProductQuestion,
+  productAnswers, InsertProductAnswer,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1607,4 +1631,775 @@ export async function getRefundTrends(period: 'daily' | 'weekly' | 'monthly' = '
     succeededCount: Number(r.succeededCount) || 0,
     failedCount: Number(r.failedCount) || 0,
   }));
+}
+
+// ============ Product Image Reordering ============
+
+export async function reorderProductImages(productId: number, imageIds: number[]) {
+  const db = await getDb();
+  if (!db) return;
+  for (let i = 0; i < imageIds.length; i++) {
+    await db.update(productImages)
+      .set({ sortOrder: i })
+      .where(and(eq(productImages.id, imageIds[i]), eq(productImages.productId, productId)));
+  }
+}
+
+// ============ Product Variants ============
+
+export async function getVariantsByProduct(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(productVariants)
+    .where(eq(productVariants.productId, productId))
+    .orderBy(asc(productVariants.sortOrder));
+}
+
+export async function createVariant(variant: Omit<InsertProductVariant, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(productVariants).values(variant);
+  return result;
+}
+
+export async function updateVariant(id: number, updates: Partial<InsertProductVariant>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(productVariants).set(updates).where(eq(productVariants.id, id));
+}
+
+export async function deleteVariant(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(productVariants).where(eq(productVariants.id, id));
+}
+
+export async function bulkCreateVariants(variants: Omit<InsertProductVariant, "id">[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  if (variants.length === 0) return;
+  await db.insert(productVariants).values(variants);
+}
+
+/**
+ * Sync the parent product's stockQuantity to the sum of its variant stocks.
+ * Called after any variant CRUD operation.
+ */
+export async function syncProductStockFromVariants(productId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const variants = await db.select({ total: sum(productVariants.stockQuantity) })
+    .from(productVariants)
+    .where(and(eq(productVariants.productId, productId), eq(productVariants.active, true)));
+  const totalStock = Number(variants[0]?.total) || 0;
+  await db.update(products).set({ stockQuantity: totalStock }).where(eq(products.id, productId));
+}
+
+// ============ Product Attribute Options ============
+
+export async function getAttributeOptions(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(productAttributeOptions)
+    .where(eq(productAttributeOptions.productId, productId))
+    .orderBy(asc(productAttributeOptions.attributeName), asc(productAttributeOptions.sortOrder));
+}
+
+export async function setAttributeOptions(
+  productId: number,
+  attributes: Array<{ name: string; values: string[] }>,
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Clear existing options for this product
+  await db.delete(productAttributeOptions).where(eq(productAttributeOptions.productId, productId));
+  // Insert new options
+  const rows: Omit<InsertProductAttributeOption, "id">[] = [];
+  for (const attr of attributes) {
+    attr.values.forEach((val, i) => {
+      rows.push({ productId, attributeName: attr.name, attributeValue: val, sortOrder: i });
+    });
+  }
+  if (rows.length > 0) {
+    await db.insert(productAttributeOptions).values(rows);
+  }
+}
+
+// ============ Phase 1: Reviews & Ratings ============
+
+export async function getReviewsByProduct(productId: number, filters?: { status?: string; limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { reviews: [], total: 0 };
+
+  const conditions = [eq(reviews.productId, productId)];
+  if (filters?.status) conditions.push(eq(reviews.status, filters.status as any));
+
+  const [countResult] = await db.select({ count: count() }).from(reviews).where(and(...conditions));
+  const results = await db.select().from(reviews)
+    .where(and(...conditions))
+    .orderBy(desc(reviews.createdAt))
+    .limit(filters?.limit || 50)
+    .offset(filters?.offset || 0);
+
+  return { reviews: results, total: countResult?.count || 0 };
+}
+
+export async function getReviewById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(reviews).where(eq(reviews.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createReview(review: Omit<InsertReview, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(reviews).values(review).$returningId();
+  return result;
+}
+
+export async function updateReview(id: number, updates: Partial<InsertReview>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(reviews).set(updates).where(eq(reviews.id, id));
+}
+
+export async function deleteReview(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(reviewImages).where(eq(reviewImages.reviewId, id));
+  await db.delete(reviewVotes).where(eq(reviewVotes.reviewId, id));
+  await db.delete(reviews).where(eq(reviews.id, id));
+}
+
+export async function getReviewImages(reviewId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(reviewImages).where(eq(reviewImages.reviewId, reviewId)).orderBy(asc(reviewImages.sortOrder));
+}
+
+export async function addReviewImage(image: Omit<InsertReviewImage, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(reviewImages).values(image).$returningId();
+  return result;
+}
+
+export async function upsertReviewVote(reviewId: number, userId: number, helpful: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await db.select().from(reviewVotes)
+    .where(and(eq(reviewVotes.reviewId, reviewId), eq(reviewVotes.userId, userId))).limit(1);
+  if (existing.length > 0) {
+    await db.update(reviewVotes).set({ helpful }).where(eq(reviewVotes.id, existing[0].id));
+  } else {
+    await db.insert(reviewVotes).values({ reviewId, userId, helpful });
+  }
+  const [helpfulResult] = await db.select({ count: count() }).from(reviewVotes)
+    .where(and(eq(reviewVotes.reviewId, reviewId), eq(reviewVotes.helpful, true)));
+  await db.update(reviews).set({ helpfulCount: helpfulResult?.count || 0 }).where(eq(reviews.id, reviewId));
+}
+
+export async function getProductRatingSummary(productId: number) {
+  const db = await getDb();
+  if (!db) return { average: 0, count: 0, distribution: {} };
+
+  const approved = and(eq(reviews.productId, productId), eq(reviews.status, "approved"));
+  const [summary] = await db.select({
+    average: sql`COALESCE(AVG(${reviews.rating}), 0)`,
+    count: count(),
+  }).from(reviews).where(approved);
+
+  const dist = await db.select({
+    rating: reviews.rating,
+    count: count(),
+  }).from(reviews).where(approved).groupBy(reviews.rating);
+
+  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  dist.forEach(d => { distribution[d.rating] = d.count; });
+
+  return { average: Number(summary?.average || 0), count: summary?.count || 0, distribution };
+}
+
+export async function refreshProductRatingCache(productId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  const [summary] = await db.select({
+    avg: sql`COALESCE(AVG(${reviews.rating}), 0)`,
+    cnt: count(),
+  }).from(reviews).where(and(eq(reviews.productId, productId), eq(reviews.status, "approved")));
+
+  await db.update(products).set({
+    averageRating: Number(summary?.avg || 0).toFixed(2),
+    reviewCount: summary?.cnt || 0,
+  }).where(eq(products.id, productId));
+}
+
+export async function hasUserReviewedProduct(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db.select({ id: reviews.id }).from(reviews)
+    .where(and(eq(reviews.userId, userId), eq(reviews.productId, productId))).limit(1);
+  return result.length > 0;
+}
+
+export async function hasUserPurchasedProduct(userId: number, productId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db.select({ id: orderItems.id })
+    .from(orderItems)
+    .innerJoin(orders, eq(orderItems.orderId, orders.id))
+    .where(and(
+      eq(orders.userId, userId),
+      eq(orderItems.productId, productId),
+      eq(orders.status, "delivered"),
+    )).limit(1);
+  return result.length > 0;
+}
+
+export async function getAllReviewsAdmin(filters?: { status?: string; productId?: number; limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { reviews: [], total: 0 };
+
+  const conditions: any[] = [];
+  if (filters?.status) conditions.push(eq(reviews.status, filters.status as any));
+  if (filters?.productId) conditions.push(eq(reviews.productId, filters.productId));
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const [countResult] = await db.select({ count: count() }).from(reviews).where(whereClause);
+  const results = await db.select().from(reviews)
+    .where(whereClause)
+    .orderBy(desc(reviews.createdAt))
+    .limit(filters?.limit || 50)
+    .offset(filters?.offset || 0);
+
+  return { reviews: results, total: countResult?.count || 0 };
+}
+
+// ============ Phase 2: Address Book ============
+
+export async function getAddressesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(addresses).where(eq(addresses.userId, userId)).orderBy(desc(addresses.isDefault), desc(addresses.createdAt));
+}
+
+export async function getAddressById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(addresses).where(eq(addresses.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createAddress(address: Omit<InsertAddress, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  if (address.isDefault) {
+    await db.update(addresses).set({ isDefault: false }).where(eq(addresses.userId, address.userId));
+  }
+  const [result] = await db.insert(addresses).values(address).$returningId();
+  return result;
+}
+
+export async function updateAddress(id: number, userId: number, updates: Partial<InsertAddress>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  if (updates.isDefault) {
+    await db.update(addresses).set({ isDefault: false }).where(eq(addresses.userId, userId));
+  }
+  await db.update(addresses).set(updates).where(and(eq(addresses.id, id), eq(addresses.userId, userId)));
+}
+
+export async function deleteAddress(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(addresses).where(and(eq(addresses.id, id), eq(addresses.userId, userId)));
+}
+
+export async function getDefaultAddress(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(addresses)
+    .where(and(eq(addresses.userId, userId), eq(addresses.isDefault, true))).limit(1);
+  return result[0];
+}
+
+export async function countUserAddresses(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const [result] = await db.select({ count: count() }).from(addresses).where(eq(addresses.userId, userId));
+  return result?.count || 0;
+}
+
+// ============ Phase 4: Inventory Ledger ============
+
+export async function addStockLedgerEntry(entry: Omit<InsertStockLedgerEntry, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(stockLedger).values(entry).$returningId();
+  return result;
+}
+
+export async function getStockHistory(productId: number, filters?: { variantId?: number; limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { entries: [], total: 0 };
+
+  const conditions = [eq(stockLedger.productId, productId)];
+  if (filters?.variantId) conditions.push(eq(stockLedger.variantId, filters.variantId));
+
+  const [countResult] = await db.select({ count: count() }).from(stockLedger).where(and(...conditions));
+  const entries = await db.select().from(stockLedger)
+    .where(and(...conditions))
+    .orderBy(desc(stockLedger.createdAt))
+    .limit(filters?.limit || 50)
+    .offset(filters?.offset || 0);
+
+  return { entries, total: countResult?.count || 0 };
+}
+
+// ============ Phase 5: Notifications ============
+
+export async function createNotification(notification: Omit<InsertNotification, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(notifications).values(notification).$returningId();
+  return result;
+}
+
+export async function getUserNotifications(userId: number, limit: number = 20, offset: number = 0) {
+  const db = await getDb();
+  if (!db) return { notifications: [], total: 0, unread: 0 };
+
+  const [countResult] = await db.select({ count: count() }).from(notifications).where(eq(notifications.userId, userId));
+  const [unreadResult] = await db.select({ count: count() }).from(notifications)
+    .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+  const results = await db.select().from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(limit).offset(offset);
+
+  return { notifications: results, total: countResult?.count || 0, unread: unreadResult?.count || 0 };
+}
+
+export async function markNotificationRead(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ read: true }).where(and(eq(notifications.id, id), eq(notifications.userId, userId)));
+}
+
+export async function markAllNotificationsRead(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ read: true }).where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+}
+
+export async function getUnreadNotificationCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const [result] = await db.select({ count: count() }).from(notifications)
+    .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+  return result?.count || 0;
+}
+
+// ============ Phase 7: Shipments ============
+
+export async function createShipment(shipment: Omit<InsertShipment, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(shipments).values(shipment).$returningId();
+  return result;
+}
+
+export async function getShipmentsByOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(shipments).where(eq(shipments.orderId, orderId)).orderBy(desc(shipments.createdAt));
+}
+
+export async function updateShipment(id: number, updates: Partial<InsertShipment>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(shipments).set(updates).where(eq(shipments.id, id));
+}
+
+// ============ Phase 8: Tax Rules ============
+
+export async function getAllTaxRules() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(taxRules).orderBy(desc(taxRules.priority), asc(taxRules.name));
+}
+
+export async function createTaxRule(rule: Omit<InsertTaxRule, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(taxRules).values(rule).$returningId();
+  return result;
+}
+
+export async function updateTaxRule(id: number, updates: Partial<InsertTaxRule>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(taxRules).set(updates).where(eq(taxRules.id, id));
+}
+
+export async function deleteTaxRule(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(taxRules).where(eq(taxRules.id, id));
+}
+
+export async function getApplicableTaxRate(country: string, state?: string, categoryId?: number) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const rules = await db.select().from(taxRules)
+    .where(and(eq(taxRules.active, true), eq(taxRules.country, country)))
+    .orderBy(desc(taxRules.priority));
+
+  for (const rule of rules) {
+    if (rule.categoryId && rule.categoryId !== categoryId) continue;
+    if (rule.state && rule.state !== state) continue;
+    return Number(rule.rate);
+  }
+  return 0;
+}
+
+// ============ Phase 10: Stock Alerts ============
+
+export async function createStockAlert(alert: Omit<InsertStockAlert, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(stockAlerts).values(alert).$returningId();
+  return result;
+}
+
+export async function getStockAlertsByProduct(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(stockAlerts)
+    .where(and(eq(stockAlerts.productId, productId), eq(stockAlerts.notified, false)));
+}
+
+export async function markStockAlertsNotified(productId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(stockAlerts)
+    .set({ notified: true, notifiedAt: new Date() })
+    .where(and(eq(stockAlerts.productId, productId), eq(stockAlerts.notified, false)));
+}
+
+export async function getUserStockAlerts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(stockAlerts).where(eq(stockAlerts.userId, userId)).orderBy(desc(stockAlerts.createdAt));
+}
+
+// ============ Phase 11: Flash Sales ============
+
+export async function getAllFlashSales() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(flashSales).orderBy(desc(flashSales.startTime));
+}
+
+export async function getActiveFlashSales() {
+  const db = await getDb();
+  if (!db) return [];
+  const now = new Date();
+  return db.select().from(flashSales)
+    .where(and(eq(flashSales.active, true), lte(flashSales.startTime, now), gte(flashSales.endTime, now)));
+}
+
+export async function createFlashSale(sale: Omit<InsertFlashSale, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(flashSales).values(sale).$returningId();
+  return result;
+}
+
+export async function updateFlashSale(id: number, updates: Partial<InsertFlashSale>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(flashSales).set(updates).where(eq(flashSales.id, id));
+}
+
+export async function deleteFlashSale(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(flashSaleProducts).where(eq(flashSaleProducts.flashSaleId, id));
+  await db.delete(flashSales).where(eq(flashSales.id, id));
+}
+
+export async function getFlashSaleProducts(flashSaleId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(flashSaleProducts)
+    .where(eq(flashSaleProducts.flashSaleId, flashSaleId))
+    .orderBy(asc(flashSaleProducts.sortOrder));
+}
+
+export async function addFlashSaleProduct(item: Omit<InsertFlashSaleProduct, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(flashSaleProducts).values(item).$returningId();
+  return result;
+}
+
+export async function removeFlashSaleProduct(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(flashSaleProducts).where(eq(flashSaleProducts.id, id));
+}
+
+// ============ Phase 11: Vouchers ============
+
+export async function getAllVouchers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(vouchers).orderBy(desc(vouchers.createdAt));
+}
+
+export async function getVoucherByCode(code: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(vouchers).where(eq(vouchers.code, code)).limit(1);
+  return result[0];
+}
+
+export async function createVoucher(voucher: Omit<InsertVoucher, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(vouchers).values(voucher).$returningId();
+  return result;
+}
+
+export async function updateVoucher(id: number, updates: Partial<InsertVoucher>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(vouchers).set(updates).where(eq(vouchers.id, id));
+}
+
+export async function deleteVoucher(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(voucherClaims).where(eq(voucherClaims.voucherId, id));
+  await db.delete(vouchers).where(eq(vouchers.id, id));
+}
+
+export async function claimVoucher(voucherId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(voucherClaims).values({ voucherId, userId }).$returningId();
+  await db.update(vouchers).set({ totalClaimed: sql`totalClaimed + 1` }).where(eq(vouchers.id, voucherId));
+  return result;
+}
+
+export async function getUserVoucherClaims(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(voucherClaims).where(eq(voucherClaims.userId, userId)).orderBy(desc(voucherClaims.claimedAt));
+}
+
+export async function hasUserClaimedVoucher(userId: number, voucherId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db.select({ id: voucherClaims.id }).from(voucherClaims)
+    .where(and(eq(voucherClaims.userId, userId), eq(voucherClaims.voucherId, voucherId))).limit(1);
+  return result.length > 0;
+}
+
+// ============ Phase 13: Admin Roles ============
+
+export async function getAllAdminRoles() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(adminRoles).orderBy(asc(adminRoles.name));
+}
+
+export async function createAdminRole(role: Omit<InsertAdminRole, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(adminRoles).values(role).$returningId();
+  return result;
+}
+
+export async function updateAdminRole(id: number, updates: Partial<InsertAdminRole>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(adminRoles).set(updates).where(eq(adminRoles.id, id));
+}
+
+export async function deleteAdminRole(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(adminRoles).where(and(eq(adminRoles.id, id), eq(adminRoles.isSystem, false)));
+}
+
+// ============ Phase 15: Loyalty Points ============
+
+export async function getLoyaltyPoints(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(loyaltyPoints).where(eq(loyaltyPoints.userId, userId)).limit(1);
+  return result[0] || null;
+}
+
+export async function addLoyaltyTransaction(tx: Omit<InsertLoyaltyTransaction, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Upsert loyalty points record
+  const existing = await db.select().from(loyaltyPoints).where(eq(loyaltyPoints.userId, tx.userId)).limit(1);
+  if (existing.length === 0) {
+    await db.insert(loyaltyPoints).values({
+      userId: tx.userId,
+      balance: Math.max(0, tx.points),
+      lifetimeEarned: tx.points > 0 ? tx.points : 0,
+    });
+  } else {
+    const newBalance = Math.max(0, existing[0].balance + tx.points);
+    const newLifetime = tx.points > 0 ? existing[0].lifetimeEarned + tx.points : existing[0].lifetimeEarned;
+    // Update tier based on lifetime
+    let tier: "bronze" | "silver" | "gold" | "platinum" = "bronze";
+    if (newLifetime >= 10000) tier = "platinum";
+    else if (newLifetime >= 5000) tier = "gold";
+    else if (newLifetime >= 2000) tier = "silver";
+    await db.update(loyaltyPoints).set({ balance: newBalance, lifetimeEarned: newLifetime, tier }).where(eq(loyaltyPoints.userId, tx.userId));
+  }
+
+  const [result] = await db.insert(loyaltyTransactions).values(tx).$returningId();
+  return result;
+}
+
+export async function getLoyaltyTransactions(userId: number, limit: number = 20) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(loyaltyTransactions).where(eq(loyaltyTransactions.userId, userId)).orderBy(desc(loyaltyTransactions.createdAt)).limit(limit);
+}
+
+// ============ Phase 15: Gift Cards ============
+
+export async function getGiftCardByCode(code: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(giftCards).where(eq(giftCards.code, code)).limit(1);
+  return result[0];
+}
+
+export async function createGiftCard(card: Omit<InsertGiftCard, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(giftCards).values(card).$returningId();
+  return result;
+}
+
+export async function useGiftCard(code: string, amount: number, orderId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const card = await getGiftCardByCode(code);
+  if (!card || !card.active || card.currentBalance < amount) throw new Error("Invalid gift card or insufficient balance");
+  await db.update(giftCards).set({ currentBalance: card.currentBalance - amount }).where(eq(giftCards.id, card.id));
+  await db.insert(giftCardTransactions).values({ giftCardId: card.id, amount: -amount, orderId });
+  return { remainingBalance: card.currentBalance - amount };
+}
+
+export async function getAllGiftCardsAdmin(limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(giftCards).orderBy(desc(giftCards.createdAt)).limit(limit);
+}
+
+// ============ Phase 16: Conversations ============
+
+export async function createConversation(conv: Omit<InsertConversation, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(conversations).values(conv).$returningId();
+  return result;
+}
+
+export async function getConversationsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(conversations).where(eq(conversations.userId, userId)).orderBy(desc(conversations.lastMessageAt));
+}
+
+export async function getAllConversationsAdmin(filters?: { status?: string; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions: any[] = [];
+  if (filters?.status) conditions.push(eq(conversations.status, filters.status as any));
+  return db.select().from(conversations)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(conversations.lastMessageAt))
+    .limit(filters?.limit || 50);
+}
+
+export async function addChatMessage(msg: Omit<InsertChatMessage, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(chatMessages).values(msg).$returningId();
+  await db.update(conversations).set({ lastMessageAt: new Date() }).where(eq(conversations.id, msg.conversationId));
+  return result;
+}
+
+export async function getChatMessages(conversationId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(chatMessages).where(eq(chatMessages.conversationId, conversationId)).orderBy(asc(chatMessages.createdAt)).limit(limit);
+}
+
+export async function updateConversationStatus(id: number, status: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(conversations).set({ status: status as any }).where(eq(conversations.id, id));
+}
+
+// ============ Phase 17: Product Q&A ============
+
+export async function getProductQuestions(productId: number, status?: string) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [eq(productQuestions.productId, productId)];
+  if (status) conditions.push(eq(productQuestions.status, status as any));
+  return db.select().from(productQuestions).where(and(...conditions)).orderBy(desc(productQuestions.createdAt));
+}
+
+export async function createProductQuestion(q: Omit<InsertProductQuestion, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(productQuestions).values(q).$returningId();
+  return result;
+}
+
+export async function updateProductQuestion(id: number, updates: Partial<InsertProductQuestion>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(productQuestions).set(updates).where(eq(productQuestions.id, id));
+}
+
+export async function getProductAnswers(questionId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(productAnswers).where(eq(productAnswers.questionId, questionId)).orderBy(asc(productAnswers.createdAt));
+}
+
+export async function createProductAnswer(a: Omit<InsertProductAnswer, "id">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(productAnswers).values(a).$returningId();
+  return result;
+}
+
+export async function getAllQuestionsAdmin(filters?: { status?: string; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions: any[] = [];
+  if (filters?.status) conditions.push(eq(productQuestions.status, filters.status as any));
+  return db.select().from(productQuestions)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(productQuestions.createdAt))
+    .limit(filters?.limit || 50);
 }

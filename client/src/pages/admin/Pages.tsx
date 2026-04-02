@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { PageBuilder } from "@/components/admin/PageBuilder";
+import { TemplateSelector } from "@/components/admin/TemplateSelector";
+import { LivePreview } from "@/components/admin/LivePreview";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
@@ -16,13 +20,16 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import {
   Plus, Pencil, Trash2, Loader2, FileText, Blocks, HelpCircle, Eye, Globe,
-  EyeOff, Search, ExternalLink, Image, Copy, CheckCircle2, AlertTriangle
+  EyeOff, Search, ExternalLink, Image, Copy, CheckCircle2, AlertTriangle,
+  LayoutTemplate, PanelLeftClose, PanelLeftOpen, Code2, Wand2
 } from "lucide-react";
 import { PageHeader, HelpText } from "@/components/admin/CmsUI";
+import type { PageBlock } from "@shared/pageBlocks";
+import type { LayoutTemplate as LayoutTemplateType } from "@shared/layoutTemplates";
 
 function FieldLabel({ label, required, hint }: { label: string; required?: boolean; hint?: string }) {
   return (
@@ -57,12 +64,32 @@ export default function AdminPages() {
   // Pages state
   const [pageDialog, setPageDialog] = useState(false);
   const [editingPage, setEditingPage] = useState<any>(null);
-  const [pageForm, setPageForm] = useState({ key: "", title: "", body: "", metaTitle: "", metaDescription: "", published: true });
+  const [pageForm, setPageForm] = useState({ key: "", title: "", body: "", metaTitle: "", metaDescription: "", published: true, blocksJson: "", templateId: "" });
   const [pageErrors, setPageErrors] = useState<Record<string, string>>({});
   const [deleteTarget, setDeleteTarget] = useState<{ type: "page" | "block"; item: any } | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const [mediaPickerTarget, setMediaPickerTarget] = useState<"page" | "block">("page");
+
+  // Visual page builder state
+  const [editorMode, setEditorMode] = useState<"rich" | "blocks">("rich");
+  const [pageBlocks, setPageBlocks] = useState<PageBlock[]>([]);
+  const [showPreviewPanel, setShowPreviewPanel] = useState(true);
+  const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
+
+  const handleBlocksChange = useCallback((blocks: PageBlock[]) => {
+    setPageBlocks(blocks);
+    setPageForm(prev => ({ ...prev, blocksJson: JSON.stringify(blocks) }));
+  }, []);
+
+  const handleTemplateSelect = useCallback((template: LayoutTemplateType) => {
+    const blocks = template.blocks.map(b => ({ ...b, id: `${b.id}-${Date.now()}` }));
+    setPageBlocks(blocks);
+    setPageForm(prev => ({ ...prev, blocksJson: JSON.stringify(blocks), templateId: template.id }));
+    setEditorMode("blocks");
+    setTemplateSelectorOpen(false);
+    setPageDialog(true);
+  }, []);
 
   const createPage = trpc.admin.pages.create.useMutation({ onSuccess: () => { toast.success("Page created"); refetchPages(); setPageDialog(false); resetPageForm(); }, onError: (e: any) => toast.error(e.message) });
   const updatePage = trpc.admin.pages.update.useMutation({ onSuccess: () => { toast.success("Page updated"); refetchPages(); setPageDialog(false); resetPageForm(); }, onError: (e: any) => toast.error(e.message) });
@@ -80,7 +107,7 @@ export default function AdminPages() {
 
   const autoSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-  const resetPageForm = () => { setPageForm({ key: "", title: "", body: "", metaTitle: "", metaDescription: "", published: true }); setPageErrors({}); setEditingPage(null); };
+  const resetPageForm = () => { setPageForm({ key: "", title: "", body: "", metaTitle: "", metaDescription: "", published: true, blocksJson: "", templateId: "" }); setPageErrors({}); setEditingPage(null); setPageBlocks([]); setEditorMode("rich"); };
   const resetBlockForm = () => { setBlockForm({ pageKey: "home", blockType: "text", title: "", content: "", sortOrder: 0 }); setBlockErrors({}); setEditingBlock(null); };
 
   const validatePageForm = (): boolean => {
@@ -88,7 +115,8 @@ export default function AdminPages() {
     if (!pageForm.title.trim()) errors.title = "Title is required";
     if (!pageForm.key.trim()) errors.key = "URL key is required";
     else if (!/^[a-z0-9-]+$/.test(pageForm.key)) errors.key = "URL key must be lowercase letters, numbers, and hyphens only";
-    if (!pageForm.body.trim()) errors.body = "Body content is required";
+    if (editorMode === "rich" && !pageForm.body.trim()) errors.body = "Body content is required";
+    if (editorMode === "blocks" && pageBlocks.length === 0) errors.body = "Add at least one block";
     if (pageForm.metaTitle && pageForm.metaTitle.length > 70) errors.metaTitle = "Meta title should be under 70 characters for SEO";
     if (pageForm.metaDescription && pageForm.metaDescription.length > 160) errors.metaDescription = "Meta description should be under 160 characters for SEO";
     setPageErrors(errors);
@@ -138,8 +166,9 @@ export default function AdminPages() {
             <p className="font-medium flex items-center gap-1"><HelpCircle className="h-4 w-4" /> How Pages & Content Blocks Work</p>
             <p className="mt-1 text-blue-700">
               <strong>Static Pages</strong> are standalone pages (e.g., About Us, Terms, Contact) accessible via their URL key.
-              <strong> Content Blocks</strong> are reusable sections you can place on any page — hero banners, text sections, CTAs, and more.
-              Use the body editor to write HTML content, and insert media from your library using the media picker button.
+              Use the <strong>Block Editor</strong> to visually build pages with drag-and-drop blocks, or the <strong>Rich Text</strong> editor for simple HTML content.
+              Click <strong>"New from Template"</strong> to start with a pre-built layout.
+              <strong> Content Blocks</strong> are reusable sections you can place on any page.
             </p>
           </CardContent>
         </Card>
@@ -158,9 +187,12 @@ export default function AdminPages() {
 
           {/* ===== Static Pages Tab ===== */}
           <TabsContent value="pages" className="space-y-4 mt-4">
-            <div className="flex justify-end">
-              <Button onClick={() => { resetPageForm(); setPageDialog(true); }} className="bg-red-600 hover:bg-red-700 text-white">
-                <Plus className="h-4 w-4 mr-2" /> New Page
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => { resetPageForm(); setPageDialog(true); }}>
+                <Plus className="h-4 w-4 mr-2" /> Blank Page
+              </Button>
+              <Button onClick={() => { resetPageForm(); setTemplateSelectorOpen(true); }} className="bg-red-600 hover:bg-red-700 text-white">
+                <LayoutTemplate className="h-4 w-4 mr-2" /> New from Template
               </Button>
             </div>
             <Card className="bg-white border-gray-200">
@@ -183,6 +215,11 @@ export default function AdminPages() {
                             <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${p.published ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
                               {p.published ? <><Globe className="h-3 w-3" /> Published</> : <><EyeOff className="h-3 w-3" /> Draft</>}
                             </span>
+                            {p.blocksJson && (
+                              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium bg-purple-100 text-purple-700">
+                                <Wand2 className="h-3 w-3" /> Block Editor
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-gray-500 font-mono mt-0.5">/{p.key}</p>
                           {p.metaTitle && <p className="text-xs text-gray-400 mt-0.5 truncate">SEO: {p.metaTitle}</p>}
@@ -193,7 +230,10 @@ export default function AdminPages() {
                           </Button>
                           <Button variant="ghost" size="sm" title="Edit" onClick={() => {
                             setEditingPage(p);
-                            setPageForm({ key: p.key, title: p.title, body: p.body, metaTitle: p.metaTitle || "", metaDescription: p.metaDescription || "", published: p.published });
+                            const blocks = p.blocksJson ? (() => { try { return JSON.parse(p.blocksJson); } catch { return []; } })() : [];
+                            setPageBlocks(blocks);
+                            setEditorMode(blocks.length > 0 ? "blocks" : "rich");
+                            setPageForm({ key: p.key, title: p.title, body: p.body || "", metaTitle: p.metaTitle || "", metaDescription: p.metaDescription || "", published: p.published, blocksJson: p.blocksJson || "", templateId: p.templateId || "" });
                             setPageErrors({});
                             setPageDialog(true);
                           }}>
@@ -268,113 +308,226 @@ export default function AdminPages() {
         </Tabs>
       </div>
 
+      {/* ===== Template Selector ===== */}
+      <TemplateSelector
+        open={templateSelectorOpen}
+        onClose={() => setTemplateSelectorOpen(false)}
+        onSelect={handleTemplateSelect}
+      />
+
       {/* ===== Page Dialog ===== */}
       <Dialog open={pageDialog} onOpenChange={(o) => { if (!o) { setPageDialog(false); resetPageForm(); } }}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingPage ? "Edit Page" : "Create New Page"}</DialogTitle>
-            <DialogDescription>
-              {editingPage ? "Update the page content, SEO metadata, and publishing status." : "Create a new static page for your storefront. Pages are accessible via their URL key."}
-            </DialogDescription>
+        <DialogContent className={editorMode === "blocks" ? "max-w-[95vw] w-full max-h-[95vh] h-[95vh] flex flex-col" : "max-w-3xl max-h-[90vh] overflow-y-auto"}>
+          <DialogHeader className="flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>{editingPage ? "Edit Page" : "Create New Page"}</DialogTitle>
+                <DialogDescription>
+                  {editorMode === "blocks"
+                    ? "Drag and drop blocks to build your page layout. Toggle the preview panel to see changes in real time."
+                    : editingPage ? "Update the page content, SEO metadata, and publishing status." : "Create a new static page for your storefront."}
+                </DialogDescription>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant={editorMode === "rich" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setEditorMode("rich")}
+                  title="Rich text editor"
+                >
+                  <Code2 className="h-3.5 w-3.5 mr-1.5" /> Rich Text
+                </Button>
+                <Button
+                  variant={editorMode === "blocks" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setEditorMode("blocks")}
+                  title="Visual block editor"
+                >
+                  <Wand2 className="h-3.5 w-3.5 mr-1.5" /> Block Editor
+                </Button>
+                {editorMode === "blocks" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPreviewPanel(!showPreviewPanel)}
+                    title={showPreviewPanel ? "Hide preview" : "Show preview"}
+                  >
+                    {showPreviewPanel ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+                  </Button>
+                )}
+              </div>
+            </div>
           </DialogHeader>
-          <div className="space-y-5">
-            {/* Title & Key */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <FieldLabel label="Page Title" required hint="The main heading displayed on the page." />
-                <Input
-                  value={pageForm.title}
-                  onChange={(e) => { setPageForm({ ...pageForm, title: e.target.value, key: editingPage ? pageForm.key : autoSlug(e.target.value) }); setPageErrors(prev => ({ ...prev, title: "" })); }}
-                  className={`mt-1 ${pageErrors.title ? "border-red-500" : ""}`}
-                  placeholder="e.g., About Us"
-                />
-                {pageErrors.title && <p className="text-xs text-red-500 mt-1">{pageErrors.title}</p>}
-              </div>
-              <div>
-                <FieldLabel label="URL Key" required hint="The URL path for this page (e.g., /about-us). Auto-generated from title." />
-                <Input
-                  value={pageForm.key}
-                  onChange={(e) => { setPageForm({ ...pageForm, key: e.target.value }); setPageErrors(prev => ({ ...prev, key: "" })); }}
-                  className={`mt-1 font-mono ${pageErrors.key ? "border-red-500" : ""}`}
-                  disabled={!!editingPage}
-                  placeholder="about-us"
-                />
-                {pageErrors.key && <p className="text-xs text-red-500 mt-1">{pageErrors.key}</p>}
-              </div>
-            </div>
 
-            {/* Body */}
-            <div>
-              <div className="flex items-center justify-between">
-                <FieldLabel label="Body Content" required hint="Write HTML content. Use the media picker to insert images and videos from your library." />
-                <Button variant="outline" size="sm" onClick={() => { setMediaPickerTarget("page"); setMediaPickerOpen(true); }}>
-                  <Image className="h-3.5 w-3.5 mr-1.5" /> Insert Media
-                </Button>
+          {editorMode === "blocks" ? (
+            /* ===== Block Editor Mode ===== */
+            <div className="flex-1 flex flex-col gap-4 overflow-hidden">
+              {/* Title & Key row */}
+              <div className="grid grid-cols-3 gap-4 flex-shrink-0">
+                <div>
+                  <FieldLabel label="Page Title" required />
+                  <Input
+                    value={pageForm.title}
+                    onChange={(e) => { setPageForm({ ...pageForm, title: e.target.value, key: editingPage ? pageForm.key : autoSlug(e.target.value) }); setPageErrors(prev => ({ ...prev, title: "" })); }}
+                    className={`mt-1 ${pageErrors.title ? "border-red-500" : ""}`}
+                    placeholder="e.g., About Us"
+                  />
+                  {pageErrors.title && <p className="text-xs text-red-500 mt-1">{pageErrors.title}</p>}
+                </div>
+                <div>
+                  <FieldLabel label="URL Key" required />
+                  <Input
+                    value={pageForm.key}
+                    onChange={(e) => { setPageForm({ ...pageForm, key: e.target.value }); setPageErrors(prev => ({ ...prev, key: "" })); }}
+                    className={`mt-1 font-mono ${pageErrors.key ? "border-red-500" : ""}`}
+                    disabled={!!editingPage}
+                    placeholder="about-us"
+                  />
+                  {pageErrors.key && <p className="text-xs text-red-500 mt-1">{pageErrors.key}</p>}
+                </div>
+                <div className="flex items-end gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-medium ${pageForm.published ? "text-green-600" : "text-gray-500"}`}>
+                      {pageForm.published ? "Published" : "Draft"}
+                    </span>
+                    <Switch checked={pageForm.published} onCheckedChange={(v) => setPageForm({ ...pageForm, published: v })} />
+                  </div>
+                </div>
               </div>
-              <Textarea
-                value={pageForm.body}
-                onChange={(e) => { setPageForm({ ...pageForm, body: e.target.value }); setPageErrors(prev => ({ ...prev, body: "" })); }}
-                rows={12}
-                className={`mt-1 font-mono text-xs ${pageErrors.body ? "border-red-500" : ""}`}
-                placeholder="<h2>Welcome</h2>\n<p>Your content here...</p>"
-              />
-              {pageErrors.body && <p className="text-xs text-red-500 mt-1">{pageErrors.body}</p>}
-              <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-gray-400">{pageForm.body.length} characters</p>
-                <Button variant="ghost" size="sm" onClick={() => setPreviewHtml(pageForm.body)} className="text-xs">
-                  <Eye className="h-3 w-3 mr-1" /> Preview
-                </Button>
-              </div>
-            </div>
 
-            {/* SEO */}
-            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-              <h3 className="text-sm font-semibold text-gray-700">SEO Settings</h3>
-              <div>
-                <FieldLabel label="Meta Title" hint={`${pageForm.metaTitle.length}/70 characters. Appears in search engine results.`} />
-                <Input
-                  value={pageForm.metaTitle}
-                  onChange={(e) => { setPageForm({ ...pageForm, metaTitle: e.target.value }); setPageErrors(prev => ({ ...prev, metaTitle: "" })); }}
-                  className={`mt-1 ${pageErrors.metaTitle ? "border-amber-500" : ""}`}
-                  placeholder="Page title for search engines"
-                />
-                {pageErrors.metaTitle && <p className="text-xs text-amber-600 mt-1">{pageErrors.metaTitle}</p>}
+              {/* Builder + Preview split */}
+              <div className="flex-1 flex gap-4 overflow-hidden">
+                <div className={`${showPreviewPanel ? "w-1/2" : "w-full"} overflow-y-auto`}>
+                  <PageBuilder blocks={pageBlocks} onChange={handleBlocksChange} />
+                </div>
+                {showPreviewPanel && (
+                  <div className="w-1/2 overflow-hidden">
+                    <LivePreview blocks={pageBlocks} />
+                  </div>
+                )}
               </div>
-              <div>
-                <FieldLabel label="Meta Description" hint={`${pageForm.metaDescription.length}/160 characters. Shown below the title in search results.`} />
-                <Textarea
-                  value={pageForm.metaDescription}
-                  onChange={(e) => { setPageForm({ ...pageForm, metaDescription: e.target.value }); setPageErrors(prev => ({ ...prev, metaDescription: "" })); }}
-                  className={`mt-1 ${pageErrors.metaDescription ? "border-amber-500" : ""}`}
-                  rows={2}
-                  placeholder="Brief description for search engines"
-                />
-                {pageErrors.metaDescription && <p className="text-xs text-amber-600 mt-1">{pageErrors.metaDescription}</p>}
-              </div>
-            </div>
 
-            {/* Publishing */}
-            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
-              <div>
-                <p className="text-sm font-medium text-gray-700">Publishing Status</p>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {pageForm.published ? "This page is live and visible to visitors." : "This page is saved as a draft and not visible to visitors."}
-                </p>
+              {/* SEO collapsible */}
+              <details className="flex-shrink-0 bg-gray-50 rounded-lg p-4">
+                <summary className="text-sm font-semibold text-gray-700 cursor-pointer">SEO Settings</summary>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <FieldLabel label="Meta Title" hint={`${pageForm.metaTitle.length}/70`} />
+                    <Input value={pageForm.metaTitle} onChange={(e) => setPageForm({ ...pageForm, metaTitle: e.target.value })} className="mt-1" placeholder="Page title for search engines" />
+                  </div>
+                  <div>
+                    <FieldLabel label="Meta Description" hint={`${pageForm.metaDescription.length}/160`} />
+                    <Input value={pageForm.metaDescription} onChange={(e) => setPageForm({ ...pageForm, metaDescription: e.target.value })} className="mt-1" placeholder="Brief description for search engines" />
+                  </div>
+                </div>
+              </details>
+            </div>
+          ) : (
+            /* ===== Rich Text Editor Mode ===== */
+            <div className="space-y-5">
+              {/* Title & Key */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldLabel label="Page Title" required hint="The main heading displayed on the page." />
+                  <Input
+                    value={pageForm.title}
+                    onChange={(e) => { setPageForm({ ...pageForm, title: e.target.value, key: editingPage ? pageForm.key : autoSlug(e.target.value) }); setPageErrors(prev => ({ ...prev, title: "" })); }}
+                    className={`mt-1 ${pageErrors.title ? "border-red-500" : ""}`}
+                    placeholder="e.g., About Us"
+                  />
+                  {pageErrors.title && <p className="text-xs text-red-500 mt-1">{pageErrors.title}</p>}
+                </div>
+                <div>
+                  <FieldLabel label="URL Key" required hint="The URL path for this page (e.g., /about-us). Auto-generated from title." />
+                  <Input
+                    value={pageForm.key}
+                    onChange={(e) => { setPageForm({ ...pageForm, key: e.target.value }); setPageErrors(prev => ({ ...prev, key: "" })); }}
+                    className={`mt-1 font-mono ${pageErrors.key ? "border-red-500" : ""}`}
+                    disabled={!!editingPage}
+                    placeholder="about-us"
+                  />
+                  {pageErrors.key && <p className="text-xs text-red-500 mt-1">{pageErrors.key}</p>}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs font-medium ${pageForm.published ? "text-green-600" : "text-gray-500"}`}>
-                  {pageForm.published ? "Published" : "Draft"}
-                </span>
-                <Switch checked={pageForm.published} onCheckedChange={(v) => setPageForm({ ...pageForm, published: v })} />
+
+              {/* Body */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <FieldLabel label="Body Content" required hint="Write HTML content. Use the media picker to insert images and videos from your library." />
+                  <Button variant="outline" size="sm" onClick={() => { setMediaPickerTarget("page"); setMediaPickerOpen(true); }}>
+                    <Image className="h-3.5 w-3.5 mr-1.5" /> Insert Media
+                  </Button>
+                </div>
+                <RichTextEditor
+                  content={pageForm.body}
+                  onChange={(html) => { setPageForm({ ...pageForm, body: html }); setPageErrors(prev => ({ ...prev, body: "" })); }}
+                  placeholder="Start writing your page content…"
+                  minHeight={250}
+                  error={!!pageErrors.body}
+                />
+                {pageErrors.body && <p className="text-xs text-red-500 mt-1">{pageErrors.body}</p>}
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-xs text-gray-400">{pageForm.body.length} characters</p>
+                  <Button variant="ghost" size="sm" onClick={() => setPreviewHtml(pageForm.body)} className="text-xs">
+                    <Eye className="h-3 w-3 mr-1" /> Preview
+                  </Button>
+                </div>
+              </div>
+
+              {/* SEO */}
+              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-gray-700">SEO Settings</h3>
+                <div>
+                  <FieldLabel label="Meta Title" hint={`${pageForm.metaTitle.length}/70 characters. Appears in search engine results.`} />
+                  <Input
+                    value={pageForm.metaTitle}
+                    onChange={(e) => { setPageForm({ ...pageForm, metaTitle: e.target.value }); setPageErrors(prev => ({ ...prev, metaTitle: "" })); }}
+                    className={`mt-1 ${pageErrors.metaTitle ? "border-amber-500" : ""}`}
+                    placeholder="Page title for search engines"
+                  />
+                  {pageErrors.metaTitle && <p className="text-xs text-amber-600 mt-1">{pageErrors.metaTitle}</p>}
+                </div>
+                <div>
+                  <FieldLabel label="Meta Description" hint={`${pageForm.metaDescription.length}/160 characters. Shown below the title in search results.`} />
+                  <Textarea
+                    value={pageForm.metaDescription}
+                    onChange={(e) => { setPageForm({ ...pageForm, metaDescription: e.target.value }); setPageErrors(prev => ({ ...prev, metaDescription: "" })); }}
+                    className={`mt-1 ${pageErrors.metaDescription ? "border-amber-500" : ""}`}
+                    rows={2}
+                    placeholder="Brief description for search engines"
+                  />
+                  {pageErrors.metaDescription && <p className="text-xs text-amber-600 mt-1">{pageErrors.metaDescription}</p>}
+                </div>
+              </div>
+
+              {/* Publishing */}
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Publishing Status</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {pageForm.published ? "This page is live and visible to visitors." : "This page is saved as a draft and not visible to visitors."}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-medium ${pageForm.published ? "text-green-600" : "text-gray-500"}`}>
+                    {pageForm.published ? "Published" : "Draft"}
+                  </span>
+                  <Switch checked={pageForm.published} onCheckedChange={(v) => setPageForm({ ...pageForm, published: v })} />
+                </div>
               </div>
             </div>
-          </div>
-          <DialogFooter>
+          )}
+
+          <DialogFooter className="flex-shrink-0">
             <Button variant="outline" onClick={() => { setPageDialog(false); resetPageForm(); }}>Cancel</Button>
             <Button
               onClick={() => {
                 if (!validatePageForm()) return;
-                if (editingPage) { updatePage.mutate({ id: editingPage.id, ...pageForm }); } else { createPage.mutate(pageForm); }
+                const payload = { ...pageForm };
+                if (editorMode === "blocks") {
+                  payload.blocksJson = JSON.stringify(pageBlocks);
+                }
+                if (editingPage) { updatePage.mutate({ id: editingPage.id, ...payload }); } else { createPage.mutate(payload); }
               }}
               disabled={createPage.isPending || updatePage.isPending}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -440,13 +593,24 @@ export default function AdminPages() {
                   <Image className="h-3.5 w-3.5 mr-1.5" /> Insert Media
                 </Button>
               </div>
-              <Textarea
-                value={blockForm.content}
-                onChange={(e) => { setBlockForm({ ...blockForm, content: e.target.value }); setBlockErrors(prev => ({ ...prev, content: "" })); }}
-                rows={8}
-                className={`mt-1 font-mono text-xs ${blockErrors.content ? "border-red-500" : ""}`}
-                placeholder={blockForm.blockType === "custom" ? "<div>Your HTML here</div>" : '{"heading": "...", "body": "..."}'}
-              />
+              {blockForm.blockType === "custom" ? (
+                <Textarea
+                  value={blockForm.content}
+                  onChange={(e) => { setBlockForm({ ...blockForm, content: e.target.value }); setBlockErrors(prev => ({ ...prev, content: "" })); }}
+                  rows={8}
+                  className={`mt-1 font-mono text-xs ${blockErrors.content ? "border-red-500" : ""}`}
+                  placeholder="<div>Your HTML here</div>"
+                />
+              ) : (
+                <RichTextEditor
+                  content={blockForm.content}
+                  onChange={(html) => { setBlockForm({ ...blockForm, content: html }); setBlockErrors(prev => ({ ...prev, content: "" })); }}
+                  placeholder="Write your block content…"
+                  minHeight={180}
+                  compact
+                  error={!!blockErrors.content}
+                />
+              )}
               {blockErrors.content && <p className="text-xs text-red-500 mt-1">{blockErrors.content}</p>}
               <div className="flex items-center justify-between mt-1">
                 <p className="text-xs text-gray-400">{blockForm.content.length} characters</p>

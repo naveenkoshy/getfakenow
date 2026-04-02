@@ -1,6 +1,7 @@
 import { useParams, useLocation } from "wouter";
 import { AdminLayout } from "@/components/AdminLayout";
 import { ProductForm } from "@/components/ProductForm";
+import { VariantManager } from "@/components/admin/VariantManager";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -77,6 +78,15 @@ export default function EditProduct() {
           }}
           onSuccess={() => setLocation("/admin/products")}
         />
+
+        {/* Variant Management */}
+        <div>
+          <h2 className="text-xl font-semibold mb-3">Variants</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Manage size, color, and other variant combinations with individual pricing and stock.
+          </p>
+          <VariantManager productId={productId} basePrice={product.price} />
+        </div>
       </div>
     </AdminLayout>
   );

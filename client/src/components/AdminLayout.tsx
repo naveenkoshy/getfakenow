@@ -27,6 +27,7 @@ import {
   MessageSquare,
   Activity,
   Store,
+  Star,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useState } from "react";
@@ -104,6 +105,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       ]
     },
     { name: "Customers", href: "/admin/customers", icon: Users },
+    { name: "Reviews", href: "/admin/reviews", icon: Star },
     { 
       name: "Marketing", 
       icon: Megaphone,

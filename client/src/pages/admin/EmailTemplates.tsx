@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
@@ -192,8 +193,14 @@ export default function AdminEmailTemplates() {
 
             <div>
               <label className="text-sm font-medium text-gray-700">HTML Body <span className="text-red-500">*</span></label>
-              <Textarea value={form.htmlBody} onChange={(e) => { setForm({ ...form, htmlBody: e.target.value }); setErrors(prev => ({ ...prev, htmlBody: "" })); }} rows={12} className={`mt-1 font-mono text-xs ${errors.htmlBody ? "border-red-500" : ""}`} placeholder="<html>...</html>" />
-              {errors.htmlBody ? <p className="text-xs text-red-500 mt-1">{errors.htmlBody}</p> : <HelpText>The HTML content of the email. Use inline CSS for best compatibility across email clients.</HelpText>}
+              <RichTextEditor
+                content={form.htmlBody}
+                onChange={(html) => { setForm({ ...form, htmlBody: html }); setErrors(prev => ({ ...prev, htmlBody: "" })); }}
+                placeholder="Design your email content…"
+                minHeight={280}
+                error={!!errors.htmlBody}
+              />
+              {errors.htmlBody ? <p className="text-xs text-red-500 mt-1">{errors.htmlBody}</p> : <HelpText>The HTML content of the email. Use the toolbar to format text, add links, and insert images. Use {"{{variable_name}}"} for dynamic content.</HelpText>}
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700">Plain Text Body (optional)</label>

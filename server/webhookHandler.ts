@@ -25,7 +25,8 @@ export async function handleStripeWebhook(req: Request, res: Response) {
     const result = await processWebhook(event);
     res.json(result);
   } catch (err) {
-    console.error('[Webhook] Error processing webhook:', err);
-    return res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    // Log full error internally but never expose details to client
+    console.error('[Webhook] Error processing webhook:', err instanceof Error ? err.message : err);
+    return res.status(400).send('Invalid webhook request');
   }
 }

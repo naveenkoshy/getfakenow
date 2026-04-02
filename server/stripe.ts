@@ -27,6 +27,10 @@ export async function createCheckoutSession(params: {
   orderId?: number;
   orderNumber?: string;
 }) {
+  // Validate origin against allowed URLs to prevent open redirect
+  const allowedOrigins = [ENV.siteUrl, "http://localhost:3000", "http://localhost:5173"].filter(Boolean);
+  const safeOrigin = allowedOrigins.includes(params.origin) ? params.origin : ENV.siteUrl;
+
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = params.items.map(item => ({
     price_data: {
       currency: 'myr',
@@ -44,8 +48,8 @@ export async function createCheckoutSession(params: {
     payment_method_types: ['card'],
     line_items: lineItems,
     mode: 'payment',
-    success_url: `${params.origin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${params.origin}/cart`,
+    success_url: `${safeOrigin}/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${safeOrigin}/cart`,
     customer_email: params.userEmail,
     client_reference_id: params.userId.toString(),
     allow_promotion_codes: true,
